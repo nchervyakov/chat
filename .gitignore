@@ -1,0 +1,9 @@
+# Created by .ignore support plugin (hsz.mobi)
+.idea
+web/bundles/*
+vendor
+app/cache/dev
+app/cache/prod
+app/logs/*.log
+app/bootstrap.php.cache
+app/config/parameters.yml
