@@ -18,10 +18,24 @@
         "symfony/monolog-bundle": "~2.4",
         "sensio/distribution-bundle": "~3.0,>=3.0.12",
         "sensio/framework-extra-bundle": "~3.0,>=3.0.2",
-        "incenteev/composer-parameter-handler": "~2.0"
+        "sensio/generator-bundle": "~2.5",
+        "incenteev/composer-parameter-handler": "~2.0",
+        "doctrine/migrations": "1.0.*@dev",
+        "doctrine/doctrine-migrations-bundle": "2.1.*@dev",
+        "doctrine/doctrine-fixtures-bundle": "2.2.*",
+        "friendsofsymfony/user-bundle": "dev-master",
+        "friendsofsymfony/jsrouting-bundle": "@stable",
+        "twig/twig": "~1.0",
+        "knplabs/knp-menu-bundle": "~2",
+        "friendsofsymfony/rest-bundle": "~1.5",
+        "jms/serializer-bundle": "0.13.*",
+        "jms/di-extra-bundle": "~1.5",
+        "sonata-project/admin-bundle": "~2.3",
+        "sonata-project/doctrine-orm-admin-bundle": "~2.3",
+        "jms/translation-bundle": "~1.1",
+        "hwi/oauth-bundle": "0.4.*@dev"
     },
     "require-dev": {
-        "sensio/generator-bundle": "~2.3"
     },
     "scripts": {
         "post-root-package-install": [
