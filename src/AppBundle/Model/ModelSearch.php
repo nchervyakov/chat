@@ -21,17 +21,20 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  */
 class ModelSearch
 {
-    /**
-     * @var integer
-     * @Range(min="0")
-     */
-    private $from;
+    const AGE_MIN = 18;
+    const AGE_MAX = 100;
 
     /**
      * @var integer
-     * @Range(max="150")
+     * @Range(min="0", max="130")
      */
-    private $to;
+    private $from = self::AGE_MIN;
+
+    /**
+     * @var integer
+     * @Range(min="0", max="130")
+     */
+    private $to = self::AGE_MAX;
 
     /**
      * @return int
@@ -65,10 +68,33 @@ class ModelSearch
         $this->to = $to;
     }
 
+    /**
+     * Checks that "from" field is less or equal to "to" field
+     * @param ExecutionContextInterface $context
+     */
     public function checkAgeInterval(ExecutionContextInterface $context)
     {
-        if ($this->to < $this->from) {
-            $context->buildViolation('model_search.validation.incorrect_age_interval')->addViolation();
+        if (is_numeric($this->from) && is_numeric($this->to) && $this->to < $this->from) {
+            $context->buildViolation('model_search.validation.incorrect_age_interval')
+                ->setTranslationDomain('messages')
+                ->addViolation();
         }
+    }
+
+    /**
+     * @return array Possible ages list.
+     */
+    public static function getAgeRange()
+    {
+        return range(self::AGE_MIN, self::AGE_MAX);
+    }
+
+    /**
+     * @return array A list of values for the age fields in search form.
+     */
+    public static function getAgeRangeList()
+    {
+        $ageRange = self::getAgeRange();
+        return array_combine(array_values($ageRange), $ageRange);
     }
 }

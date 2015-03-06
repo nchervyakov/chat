@@ -29,18 +29,21 @@ class SearchController extends Controller
         $page = $request->query->getInt('page', 1);
 
         $modelSearch = new ModelSearch();
-        $form = $this->get('form.factory')->createBuilder(new ModelSearchFormType(), $modelSearch, [
+        $form = $this->get('form.factory')->createNamedBuilder('s', new ModelSearchFormType(), $modelSearch, [
             'method' => 'GET',
-            'action' => $this->generateUrl('search_index')
+            'action' => $this->generateUrl('search_index'),
         ])->getForm();
 
         $form->handleRequest($request);
 
-//        if ($form->isSubmitted() && $form->isValid()) {
-//
-//        }
+        $data = ['form' => $form->createView()];
 
-        $repo = $this->getDoctrine()->getRepository('AppBundle:User')->findBy([], null, self::PER_PAGE, $page * self::PER_PAGE);
-        return $this->render('Search/index.html.twig');
+        if (!$form->isSubmitted() || $form->isValid()) {
+            $repo = $this->getDoctrine()->getRepository('AppBundle:User');
+            $models = $repo->findBy([], null, self::PER_PAGE, $page * self::PER_PAGE);
+            $data['models'] = $models;
+        }
+
+        return $this->render('Search/index.html.twig', $data);
     }
 }

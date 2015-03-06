@@ -5,9 +5,15 @@
 
 {% block page %}
     {{ parent() }}
+    {% include ':Search:_search_form.html.twig' %}
 
-    Search here
-
-    {% dump(app.user.roles) %}
-    {%  dump(is_granted('ROLE_CLIENT')) %}
+    <div class="row">
+        <div class="col-lg-12">
+            {% if models is defined %}
+                {% for model in models %}
+                    {{ model.firstName }}
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
 {% endblock %}

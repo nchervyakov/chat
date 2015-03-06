@@ -10,6 +10,7 @@
 namespace AppBundle\Form\Type;
 
 
+use AppBundle\Model\ModelSearch;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -19,9 +20,18 @@ class ModelSearchFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $ageRange = ModelSearch::getAgeRangeList();
         $builder
-            ->add('from')
-            ->add('to');
+            ->add('from', 'choice', [
+                'choices' => $ageRange,
+                'error_bubbling' => true,
+                'invalid_message' => 'Please select the valid "from" value.'
+            ])
+            ->add('to', 'choice', [
+                'choices' => $ageRange,
+                'error_bubbling' => true,
+                'invalid_message' => 'Please select the valid "to" value.'
+            ]);
     }
 
     /**
@@ -31,7 +41,10 @@ class ModelSearchFormType extends AbstractType
     {
         parent::setDefaultOptions($resolver);
         $resolver->setDefaults([
-            'data_class' => 'AppBundle\Model\ModelSearch'
+            'data_class' => 'AppBundle\Model\ModelSearch',
+            'csrf_protection' => false,
+            'allow_extra_fields' => true,
+            'name' => 's'
         ]);
     }
 
