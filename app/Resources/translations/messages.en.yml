@@ -1,0 +1,37 @@
+Welcome!: Welcome!
+
+Logout: 'Logout'
+
+registration:
+    timeout_message: 'Your session is over. Please log in again.'
+    title: 'Registration'
+
+chat_with_models: 'Chat with Models'
+menu:
+    go_to_homepage: 'Go to homepage'
+    main:
+        home: 'Go to homepage'
+        logout: Logout
+        search: Search
+
+chat_list_page.title: 'Chat List'
+
+search: 'Search'
+
+gender:
+    male: 'Male'
+    female: 'Female'
+default_title: 'Welcome to Chat with Models!'
+profile:
+    edit:
+        title: 'Edit profile'
+    show:
+        title: 'Profile'
+    title: 'Profile'
+login:
+    title: 'Log In'
+stat: 'Statistics'
+photo: 'Photo'
+model_search:
+    validation:
+        incorrect_age_interval: '"From" field must be greater or equal to "To" field.'

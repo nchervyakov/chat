@@ -1,0 +1,11 @@
+{% extends '::layout.html.twig' %}
+
+{% block title 'login.title'|trans %}
+
+{% block page %}
+    <div class="text-center">
+        <br/><br/><br/><br/>
+        <p>To be able to chat please log in via one of your social network accounts.</p><br/>
+        {% embed ':Connect:login_block.html.twig' %}{% endembed %}
+    </div>
+{% endblock %}

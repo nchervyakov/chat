@@ -1,0 +1,166 @@
+{% extends '::base.html.twig' %}
+
+{% block meta %}
+    {{ parent() }}
+
+    {#<meta name="tweetmeme-title" content="{# SiteMeta #-}" />#}
+    {# <meta name="google-site-verification" content="{# { google_site_verification_code }" />#}
+    <meta name="author" content="{{ developer_name }}, {{ developer_email }}">
+    <meta name="web_author" content="{{ developer_name }}, {{ developer_email }}">
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    {#'bundles/app/css/jquery-ui/smoothness/jquery-ui-1.10.4.custom.css'#}
+    {#'bundles/app/vendor/fancybox/jquery.fancybox-1.3.1.css'#}
+    {#'bundles/app/vendor/priceselector/nouislider.css'#}
+    {#'bundles/app/vendor/priceselector/noUiFox.css'#}
+    {#'bundles/app/css/main.css'#}
+    {#'bundles/app/css/login-tab.css'#}
+    {#'bundles/app/css/error.css'#}
+    {#'bundles/app/css/pagination.css'#}
+    {% stylesheets
+        'css/bootstrap.css'
+        'css/styles.css'
+        filter='cssrewrite'
+        output='css/compiled/*.css'
+    %}
+        <link rel="stylesheet" href="{{ asset_url }}"/>
+    {% endstylesheets %}
+
+    {#'bundles/app/vendor/fancybox/jquery.fancybox-1.3.1.ie.css'#}
+    {% stylesheets
+        filter='cssrewrite'
+        output='css/compiled/*.css'
+    %}
+        <!--[if lt IE 8]><link rel="stylesheet" href="{{ asset_url }}"/> <![endif]-->
+    {% endstylesheets %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    {% javascripts
+        'js/vendor/es5-shim.js'
+        'js/vendor/es6-shim.js'
+        'js/vendor/json3.js'
+        filter='?uglifyjs2'
+        output='js/compiled/*.js'
+    %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+
+    {% javascripts
+        'js/vendor/jquery-1.11.2.min.js'
+        'js/vendor/jquery-migrate-1.2.1.min.js'
+        filter='?uglifyjs2'
+        output='js/compiled/*.js'
+    %}
+        <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+
+    {#'bundles/app/js/vendor/moment.min.js'#}
+    {#'bundles/app/js/vendor/jquery.autocomplete.js'#}
+    {#'bundles/app/vendor/fancybox/jquery.easing-1.3.pack.js'#}
+    {#'bundles/app/js/vendor/jquery.mousewheel.js'#}
+    {#'bundles/app/vendor/fancybox/jquery.fancybox-1.3.1.js'#}
+    {#'bundles/app/js/vendor/q.js'#}
+    {#'bundles/app/jquery/jquery.form.js'#}
+
+    {% javascripts
+        'js/vendor/bootstrap.min.js'
+        'js/vendor/can.custom.min.js'
+        'bundles/fosjsrouting/js/router.js'
+        filter='?uglifyjs2'
+        output='js/compiled/*.js'
+    %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+
+    {% javascripts
+        'js/fos_js_routes.js'
+        output='js/compiled/*.js'
+    %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    <script type="text/javascript" src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
+
+    {% javascripts
+        'js/tools.js'
+        'js/application.js'
+        filter='?uglifyjs2'
+        output='js/compiled/*.js'
+    %}
+        <script type="text/javascript" src="{{ asset_url }}" defer="defer"></script>
+    {% endjavascripts %}
+{% endblock %}
+
+{% block body %}
+    {{ parent() }}
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            {% if app.user is not null %}
+                <div class="collapse navbar-collapse pull-right">
+                    <ul class="nav navbar-nav">
+                        <li class="first">
+                            <a href="{{ path("fos_user_profile_show") }}">{{ app.user.fullName }}</a>
+                        </li>
+                        <li class="last"><a href="{{ path('fos_user_security_logout') }}">{{ 'Logout'|trans }}</a></li>
+                    </ul>
+                </div>
+            {% endif %}
+
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{{ path('homepage') }}">Chat with models</a>
+            </div>
+            <div class="collapse navbar-collapse">
+                {{ knp_menu_render('main', {currentClass: 'active' }) }}
+            </div><!--/.nav-collapse -->
+        </div>
+        {# % embed ':Default:header.html.twig' %}{% endembed %#}
+    </div>
+
+    <div class="container main-content">
+        {# % block breadcrumbs %}
+            <!--breadcumb here  -->
+            <div class="breadcrumbs">
+                <ul>
+                    <li><a href="{{ path('homepage') }}">{% trans %}Home{% endtrans %} </a> / </li>
+                    <li>{% trans %}My Account{% endtrans %}</li>
+                </ul>
+            </div>
+        {% endblock %#}
+
+        {% block page_title %}
+            <h1 class="page_title">{% block page_title_text %}{% endblock %}</h1>
+        {% endblock %}
+
+        {% block flash %}
+            {% for type, messages in app.session.flashbag.all() %}
+                {% for key, message in messages %}
+                    <div class="alert alert-dismissable alert-{{ type }}">
+                        <button data-dismiss="alert" class="close" type="button">×</button>
+                        {{ message|trans }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        {% endblock %}
+
+        {% block page %}
+        {% endblock %}
+    </div><!-- /.container -->
+
+    <div class="footer_container">
+        <footer class="footer container">
+            {% embed ':Default:_footer.html.twig' %}{% endembed %}
+        </footer>
+    </div>
+{% endblock %}
+

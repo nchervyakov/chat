@@ -1,0 +1,13 @@
+{% extends '::layout.html.twig' %}
+
+{% block title 'search'|trans %}
+{% block page_title_text %}{{ 'search'|trans }}{% endblock %}
+
+{% block page %}
+    {{ parent() }}
+
+    Search here
+
+    {% dump(app.user.roles) %}
+    {%  dump(is_granted('ROLE_CLIENT')) %}
+{% endblock %}

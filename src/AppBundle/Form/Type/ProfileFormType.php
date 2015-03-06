@@ -11,9 +11,12 @@
 
 namespace AppBundle\Form\Type;
 
+use AppBundle\Entity\User;
 use FOS\UserBundle\Model\UserManager;
 use Symfony\Component\Form\FormBuilderInterface;
 use FOS\UserBundle\Form\Type\ProfileFormType as BaseType;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 
 /**
  * Class ProfileFormType
@@ -32,22 +35,23 @@ class ProfileFormType extends BaseType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        parent::buildForm($builder, $options);
+
         $builder
             ->add('firstName')
             ->add('lastName')
-            ->remove('plainPassword');
+            ->remove('username')
+            ->remove('current_password');
 
-        parent::buildForm($builder, $options);
-
-//        $um = $this->userManager;
-//        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) use ($um) {
-//            $user = $event->getData();
-//            /** @var User $user */
-//            if ($user) {
-//                $user->setUsername($user->getEmail());
-//                $um->updateCanonicalFields($user);
-//            }
-//        });
+        $um = $this->userManager;
+        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) use ($um) {
+            $user = $event->getData();
+            /** @var User $user */
+            if ($user) {
+                $user->setUsername($user->getEmail());
+                $um->updateCanonicalFields($user);
+            }
+        });
     }
 
     public function getName()

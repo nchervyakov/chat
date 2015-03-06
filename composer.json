@@ -33,7 +33,9 @@
         "sonata-project/admin-bundle": "~2.3",
         "sonata-project/doctrine-orm-admin-bundle": "~2.3",
         "jms/translation-bundle": "~1.1",
-        "hwi/oauth-bundle": "0.4.*@dev"
+        "hwi/oauth-bundle": "0.4.*@dev",
+        "ircmaxell/password-compat": "~1.0.3",
+        "hautelook/alice-bundle": "0.2.*"
     },
     "require-dev": {
     },

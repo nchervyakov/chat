@@ -1,0 +1,25 @@
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% form_theme form ':Form:bootstrap3_theme.html.twig' _self %}
+
+<div class="col-lg-6 col-lg-offset-3">
+    <div class="well bs-component">
+        <form action="{{ path('fos_user_profile_edit') }}" {{ form_enctype(form) }} method="POST"
+                class="fos_user_profile_edit form-horizontal">
+            <legend>{{ 'profile.edit.legend'|trans }}</legend>
+
+            {{ form_errors(form) }}
+
+            {{ form_row(form.email) }}
+            {{ form_row(form.firstName) }}
+            {{ form_row(form.lastName) }}
+
+            {{ form_widget(form) }}
+            <div class="form-group">
+                <div class="col-lg-9 col-lg-offset-3">
+                    <input type="submit" value="{{ 'profile.edit.submit'|trans }}" class="btn btn-primary" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,5 +1,11 @@
-{% extends 'base.html.twig' %}
+{% extends '::layout.html.twig' %}
 
-{% block body %}
-    Homepage.
+{% block page %}
+    <br/><br/><br/><br/>
+    {% if not is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+        <div class="text-center">
+            <p>To be able to chat please log in via one of your social network accounts.</p><br/>
+            {% include ':Connect:login_block.html.twig' %}
+        </div>
+    {% endif %}
 {% endblock %}

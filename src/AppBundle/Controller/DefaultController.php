@@ -3,7 +3,6 @@
 namespace AppBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 /**
@@ -14,10 +13,14 @@ class DefaultController extends Controller
 {
     /**
      * @Route("/", name="homepage")
-     * @Template()
      */
     public function indexAction()
     {
-        return [];
+        $checker = $this->container->get('security.authorization_checker');
+        if ($checker->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
+            return $this->redirect($this->generateUrl('chat_list'));
+        }
+
+        return $this->render(':Default:index.html.twig');
     }
 }

@@ -33,6 +33,9 @@ twig:
         sitename: "Chat with Models"
         developer_name: "Nikolay Chervyakov"
         developer_email: "nick.chervyakov@gmail.com"
+#    form:
+#        #resources: ['bootstrap_3_layout.html.twig']
+#        resources: ['bootstrap_3_horizontal_layout.html.twig']
 
 # Assetic Configuration
 assetic:
@@ -108,26 +111,27 @@ hwi_oauth:
     resource_owners:
         facebook:
             type:               facebook
-            client_id:          792240200829885
-            client_secret:      c953e5345d798e15125cacfe7ce28b2e   #6d9eb8ea02d7e1e0b1a757be83fe4837
-            scope:              "email"
-            options:
-                display: popup #dialog is optimized for popup window
+            client_id:          "%oauth.facebook.client_id%"
+            client_secret:      "%oauth.facebook.client_secret%"
+            scope:              "email public_profile"
+#            options:
+#                display: popup #dialog is optimized for popup window
 
         twitter:
             type:               twitter
-            client_id:          jPKFaTQ2VrVbSlqevUyCexLWt
-            client_secret:      AedEovsD1jl5N2qbCG8rytuRs5DTaIoUi8kSwTgwujBs8Irqeo
+            client_id:          "%oauth.twitter.client_id%"
+            client_secret:      "%oauth.twitter.client_secret%"
 
         vkontakte:
             type:               vkontakte
-            client_id:          4799749
-            client_secret:      LYZb88H1UnVfHqwfI5VR
+            client_id:          "%oauth.vkontakte.client_id%"
+            client_secret:      "%oauth.vkontakte.client_secret%"
+            scope:              "email"
 
         google:
             type:               google
-            client_id:          "884605711360-r0j382be6rtnh44qjias4m3k1q3rvp4f.apps.googleusercontent.com"
-            client_secret:      1jxMZnPfrquRVv4uxFavPvbO
+            client_id:          "%oauth.google.client_id%"
+            client_secret:      "%oauth.google.client_secret%"
             scope:              "email profile"
 #            options:
 #                access_type:     offline
@@ -135,8 +139,8 @@ hwi_oauth:
 
         github:
             type:               github
-            client_id:          3b5ba3b3e9ea992aa7cb
-            client_secret:      a1ae774bd4f6a309ce7dd73707dc5f14e5b48e9d
+            client_id:          "%oauth.github.client_id%"
+            client_secret:      "%oauth.github.client_secret%"
 
     fosub:
         # If CURL throws a certificate error, see here how to solve:
@@ -155,6 +159,11 @@ hwi_oauth:
 #            my_custom_provider: customId
 
     connect: ~
+    http_client:
+        timeout:       10
+        verify_peer:   true
+        ignore_errors: true
+        max_redirects: 5
 
 fos_user:
     db_driver: orm
@@ -165,19 +174,23 @@ fos_user:
     registration:
         form:
             type: user_registration
-            validation_groups: [ Registration, Default ]
+            validation_groups: [ AppRegistration, Default ]
         confirmation:
             enabled:    false
             #template:   'AppBundle:Registration:email.html.twig'
+    profile:
+        form:
+            type: user_profile
+            validation_groups: [ AppProfile, Default ]
 
 fos_js_routing:
     routes_to_expose:
-#        - wet_user_login_register
+        - homepage
 #        - fos_user_registration_register
 
 knp_menu:
 #    twig:
-#        template: WestEuroTravelHotelsBundle:Default:knp_menu.html.twig
+#        template: AppBundle:Default:knp_menu.html.twig
 
 jms_di_extra:
     locations:

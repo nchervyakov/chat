@@ -17,4 +17,21 @@ parameters:
     locale:            en
 
     # A secret key that's used to generate certain security-related tokens
-    secret:            ThisTokenIsNotSoSecretChangeIt
+    secret:            asdfp89syfph9m89w4wryfwpa7nt3r
+
+    # OAuth params
+    oauth.facebook.client_id:       792240200829885
+    oauth.facebook.client_secret:   c953e5345d798e15125cacfe7ce28b2e
+
+    oauth.twitter.client_id:        jPKFaTQ2VrVbSlqevUyCexLWt
+    oauth.twitter.client_secret:    AedEovsD1jl5N2qbCG8rytuRs5DTaIoUi8kSwTgwujBs8Irqeo
+
+    oauth.vkontakte.client_id:      4799749
+    oauth.vkontakte.client_secret:  LYZb88H1UnVfHqwfI5VR
+
+    oauth.google.client_id:         "884605711360-r0j382be6rtnh44qjias4m3k1q3rvp4f.apps.googleusercontent.com"
+    oauth.google.client_secret:     1jxMZnPfrquRVv4uxFavPvbO
+
+    oauth.github.client_id:         3b5ba3b3e9ea992aa7cb
+    oauth.github.client_secret:     a1ae774bd4f6a309ce7dd73707dc5f14e5b48e9d
+

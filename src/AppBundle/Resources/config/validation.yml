@@ -1,16 +1,16 @@
 AppBundle\Entity\User:
     properties:
-        username:
-            - NotBlank:
-                message: fos_user.username.blank
-                groups: [ Registration, Profile ]
-
-            - Length:
-                min: 2
-                minMessage: fos_user.username.short
-                max: 255
-                maxMessage: fos_user.username.long
-                groups: [ Registration, Profile ]
+#        username:
+#            - NotBlank:
+#                message: fos_user.username.blank
+#                groups: [ Registration, Profile ]
+#
+#            - Length:
+#                min: 2
+#                minMessage: fos_user.username.short
+#                max: 255
+#                maxMessage: fos_user.username.long
+#                groups: [ Registration, Profile ]
 
         email:
             - NotBlank:
@@ -28,16 +28,17 @@ AppBundle\Entity\User:
                 message: fos_user.email.invalid
                 groups: [ Registration, Profile ]
 
-        plainPassword:
-            - NotBlank:
-                message: fos_user.username.blank
-                groups: [ Registration, ResetPassword, ChangePassword ]
+        plainPassword: []
 
-            - Length:
-                min: 2
-                minMessage: fos_user.password.short
-                max: 4096
-                groups: [ Registration, Profile, ResetPassword, ChangePassword ]
+#            - NotBlank:
+#                message: fos_user.username.blank
+#                groups: [ Registration, ResetPassword, ChangePassword ]
+#
+#            - Length:
+#                min: 2
+#                minMessage: fos_user.password.short
+#                max: 4096
+#                groups: [ Registration, Profile, ResetPassword, ChangePassword ]
 
 
 

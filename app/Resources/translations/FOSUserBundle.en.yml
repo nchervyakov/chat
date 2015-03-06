@@ -1,0 +1,10 @@
+profile:
+    show:
+        firstName: 'First Name'
+        lastName: 'Last Name'
+    edit:
+        legend: 'Profile'
+    edit_link: 'Edit profile'
+Profile: 'Profile'
+registration:
+    legend: 'Registration'

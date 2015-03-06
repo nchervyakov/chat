@@ -7,14 +7,14 @@
     {% block head %}
         <meta charset="utf-8">
         {# <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">#}
-        <title>{% block title %}{% trans %}Welcome!{% endtrans  %}{% endblock %}</title>
+        <title>{% block title %}{{ 'default_title'|trans }}{% endblock %}</title>
     {% block meta %}
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {% endblock %}
 
     {% block stylesheets %}
-        {% stylesheets 'bundles/app/css/normalize.css' output='css/compiled/*.css' %}
+        {% stylesheets 'css/normalize.css' output='css/compiled/*.css' %}
             <link rel="stylesheet" href="{{ asset_url }}"/>
         {% endstylesheets %}
     {% endblock %}
@@ -24,7 +24,7 @@
     {% endimage %#}
 
     {% block head_javascripts %}
-        {% javascripts 'bundles/app/js/vendor/modernizr-2.6.2.min.js' output='js/compiled/*.js' %}
+        {% javascripts 'js/vendor/modernizr-2.6.2.min.js' output='js/compiled/*.js' %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
     {% endblock %}

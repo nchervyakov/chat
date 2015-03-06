@@ -9,9 +9,12 @@
 
 namespace AppBundle\Form\Type;
 
+use AppBundle\Entity\User;
 use FOS\UserBundle\Form\Type\RegistrationFormType as BaseType;
 use FOS\UserBundle\Model\UserManager;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
@@ -34,19 +37,30 @@ class RegistrationFormType extends BaseType
         parent::buildForm($builder, $options);
 
         $builder
+            ->add('gender', 'choice', [
+                'choices' => User::getGendersLabels(),
+                'multiple' => false,
+                'expanded' => true
+            ])
             ->add('firstName')
             ->add('lastName')
-            ->remove('plainPassword');
+            ->add('dateOfBirth', 'birthday')
+            ->remove('plainPassword')
+            ->remove('username')
+        ;
 
-//        $um = $this->userManager;
-//        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) use ($um) {
-//            $user = $event->getData();
-//            /** @var \AppBundle\Entity\User $user */
-//            if ($user) {
-//                $user->setUsername($user->getEmail());
-//                $um->updateCanonicalFields($user);
-//            }
-//        });
+        $um = $this->userManager;
+        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) use ($um) {
+            $user = $event->getData();
+            /** @var \AppBundle\Entity\User $user */
+            if ($user) {
+                $user->setUsername($user->getEmail());
+                if (!$user->getPassword()) { // Set password as empty string for users without password (everyone except admin)
+                    $user->setPassword('');
+                }
+                $um->updateCanonicalFields($user);
+            }
+        });
     }
 
     /**

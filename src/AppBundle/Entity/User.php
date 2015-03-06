@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use FOS\UserBundle\Model\GroupInterface;
 use FOS\UserBundle\Model\User as BaseUser;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -13,11 +14,17 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @ORM\Table(name="users")
  * @ORM\Entity(repositoryClass="AppBundle\Entity\UserRepository")
+ * @UniqueEntity(fields={"emailCanonical"}, errorPath="email", message="fos_user.email.already_used",
+ *      groups={"AppRegistration", "AppProfile"})
+ * @ORM\HasLifecycleCallbacks()
  */
 class User extends BaseUser
 {
     const ROLE_CLIENT = "ROLE_CLIENT";
     const ROLE_MODEL = "ROLE_MODEL";
+
+    const GENDER_MALE = 'male';
+    const GENDER_FEMALE = 'female';
 
     /**
      * @var integer
@@ -27,6 +34,17 @@ class User extends BaseUser
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
+
+    /**
+     * @var string
+     * @Assert\NotBlank(message="fos_user.email.blank", groups={"AppRegistration", "AppProfile"})
+     * @Assert\Length(
+     *      min=2, minMessage="fos_user.email.short",
+     *      max=254, maxMessage="fos_user.email.long",
+     *      groups={"AppRegistration", "AppProfile"})
+     * @Assert\Email(message="fos_user.email.invalid", groups={"AppRegistration", "AppProfile"})
+     */
+    protected $email;
 
     /**
      * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Group")
@@ -40,18 +58,27 @@ class User extends BaseUser
     /**
      * @var string
      * @ORM\Column(type="string", name="first_name", length=255, nullable=true)
-     * @Assert\NotBlank(groups={"Registration", "Profile"})
+     * @Assert\NotBlank(groups={"AppRegistration", "AppProfile", "Registration", "Profile"})
      */
     protected $firstName;
 
     /**
      * @var string
      * @ORM\Column(type="string", name="last_name", length=255, nullable=true)
-     * @Assert\NotBlank(groups={"Registration", "Profile"})
+     * @Assert\NotBlank(groups={"AppRegistration", "AppProfile", "Registration", "Profile"})
      */
     protected $lastName;
 
     /**
+     * @var string
+     * @ORM\Column(name="gender", type="string", nullable=true)
+     * @Assert\Choice(choices={"male", "female"})
+     * @Assert\NotBlank(groups={"AppRegistration"})
+     */
+    protected $gender;
+
+    /**
+     * @var \DateTime
      * @var \DateTime
      * @ORM\Column(name="date_of_birth", type="date", nullable=true)
      */
@@ -87,10 +114,34 @@ class User extends BaseUser
      */
     protected $githubId;
 
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="date_added", type="datetime", nullable=true)
+     */
+    private $dateAdded;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="date_updated", type="datetime", nullable=true)
+     */
+    private $dateUpdated;
+
+    /**
+     * @ORM\Column(name="sort_order", type="bigint", nullable=true, options={"default": 0})
+     * @ORM\OrderBy("DESC")
+     */
+    private $order;
+
+    /**
+     * Constructor
+     */
     public function __construct()
     {
         parent::__construct();
         $this->groups = new ArrayCollection();
+        $this->setDateAdded(new \DateTime());
     }
 
     /**
@@ -294,5 +345,162 @@ class User extends BaseUser
     public function getGroups()
     {
         return $this->groups;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDateAdded()
+    {
+        return $this->dateAdded;
+    }
+
+    /**
+     * @param \DateTime $dateAdded
+     */
+    public function setDateAdded($dateAdded)
+    {
+        $this->dateAdded = $dateAdded;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDateUpdated()
+    {
+        return $this->dateUpdated;
+    }
+
+    /**
+     * @param \DateTime $dateUpdated
+     */
+    public function setDateUpdated($dateUpdated)
+    {
+        $this->dateUpdated = $dateUpdated;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGender()
+    {
+        return $this->gender;
+    }
+
+    /**
+     * @param string $gender
+     */
+    public function setGender($gender)
+    {
+        $this->gender = $gender;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getGenders()
+    {
+        return [self::GENDER_MALE, self::GENDER_FEMALE];
+    }
+
+    /**
+     * @return array
+     */
+    public static function getGendersLabels()
+    {
+        return [
+            self::GENDER_MALE => 'gender.male',
+            self::GENDER_FEMALE => 'gender.female'
+        ];
+    }
+
+    /**
+     * @ORM\PreUpdate()
+     */
+    public function preUpdate()
+    {
+        $this->setDateUpdated(new \DateTime());
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function serialize()
+    {
+        return serialize(array(
+            $this->password,
+            $this->salt,
+            $this->usernameCanonical,
+            $this->username,
+            $this->expired,
+            $this->locked,
+            $this->credentialsExpired,
+            $this->enabled,
+            $this->id,
+            $this->firstName,
+            $this->lastName,
+            $this->gender,
+            $this->dateOfBirth,
+            $this->facebookId,
+            $this->twitterId,
+            $this->vkontakteId,
+            $this->googleId,
+            $this->githubId
+        ));
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function unserialize($serialized)
+    {
+        $data = unserialize($serialized);
+        // add a few extra elements in the array to ensure that we have enough keys when unserializing
+        // older data which does not include all properties.
+        $data = array_merge($data, array_fill(0, 2, null));
+
+        list(
+            $this->password,
+            $this->salt,
+            $this->usernameCanonical,
+            $this->username,
+            $this->expired,
+            $this->locked,
+            $this->credentialsExpired,
+            $this->enabled,
+            $this->id,
+            $this->firstName,
+            $this->lastName,
+            $this->gender,
+            $this->dateOfBirth,
+            $this->facebookId,
+            $this->twitterId,
+            $this->vkontakteId,
+            $this->googleId,
+            $this->githubId
+            ) = $data;
+    }
+
+    /**
+     * Set order
+     *
+     * @param integer $order
+     * @return User
+     */
+    public function setOrder($order)
+    {
+        $this->order = $order;
+
+        return $this;
+    }
+
+    /**
+     * Get order
+     *
+     * @return integer 
+     */
+    public function getOrder()
+    {
+        return $this->order;
     }
 }

@@ -6,6 +6,10 @@ hwi_oauth_login:
     resource: "@HWIOAuthBundle/Resources/config/routing/login.xml"
     prefix:   /login
 
+hwi_oauth_register_custom:
+    pattern: /login/registration/{key}
+    defaults: {_controller: AppBundle:Connect:registration}
+
 hwi_oauth_register:
     resource: "@HWIOAuthBundle/Resources/config/routing/connect.xml"
     prefix:   /login
@@ -50,6 +54,9 @@ fos_user_change_password:
 #fos_user_group:
 #    resource: "@FOSUserBundle/Resources/config/routing/group.xml"
 #    prefix: /group
+
+fos_js_routing:
+    resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"
 
 app:
     resource: @AppBundle/Controller/
