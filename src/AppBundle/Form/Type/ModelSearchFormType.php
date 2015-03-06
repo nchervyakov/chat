@@ -31,6 +31,11 @@ class ModelSearchFormType extends AbstractType
                 'choices' => $ageRange,
                 'error_bubbling' => true,
                 'invalid_message' => 'Please select the valid "to" value.'
+            ])
+            ->add('wp', 'checkbox', [
+                'property_path' => 'withPhoto',
+                'label' => 'model_search.with_photo',
+                'required' => false
             ]);
     }
 
@@ -44,7 +49,6 @@ class ModelSearchFormType extends AbstractType
             'data_class' => 'AppBundle\Model\ModelSearch',
             'csrf_protection' => false,
             'allow_extra_fields' => true,
-            'name' => 's'
         ]);
     }
 

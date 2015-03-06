@@ -35,6 +35,7 @@ photo: 'Photo'
 model_search:
     validation:
         incorrect_age_interval: '"From" field must be greater or equal to "To" field.'
+    with_photo: 'With Photo'
 chat_page:
     title: 'Chat'
 chat: 'Chat'

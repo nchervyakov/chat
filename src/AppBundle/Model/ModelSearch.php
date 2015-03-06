@@ -37,6 +37,11 @@ class ModelSearch
     private $to = self::AGE_MAX;
 
     /**
+     * @var bool
+     */
+    private $withPhoto = false;
+
+    /**
      * @return int
      */
     public function getFrom()
@@ -96,5 +101,21 @@ class ModelSearch
     {
         $ageRange = self::getAgeRange();
         return array_combine(array_values($ageRange), $ageRange);
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isWithPhoto()
+    {
+        return $this->withPhoto;
+    }
+
+    /**
+     * @param boolean $withPhoto
+     */
+    public function setWithPhoto($withPhoto)
+    {
+        $this->withPhoto = $withPhoto;
     }
 }

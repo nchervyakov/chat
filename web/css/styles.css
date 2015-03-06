@@ -13,3 +13,7 @@ body {
 .navbar-inverse label {
     color: #fff;
 }
+
+.search-bar .form-group {
+    margin-right: 15px;
+}
