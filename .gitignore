@@ -7,3 +7,5 @@ app/cache/prod
 app/logs/*.log
 app/bootstrap.php.cache
 app/config/parameters.yml
+!web/uploads/photo/.gitkeep
+web/uploads/photo/*

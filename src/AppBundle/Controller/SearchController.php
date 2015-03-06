@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\User;
 use AppBundle\Form\Type\ModelSearchFormType;
 use AppBundle\Model\ModelSearch;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -17,7 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class SearchController extends Controller
 {
-    const PER_PAGE = 10;
+    const PER_PAGE = 12;
 
     /**
      * @Route("", name="search_index")
@@ -40,7 +41,7 @@ class SearchController extends Controller
 
         if (!$form->isSubmitted() || $form->isValid()) {
             $repo = $this->getDoctrine()->getRepository('AppBundle:User');
-            $models = $repo->findBy([], null, self::PER_PAGE, $page * self::PER_PAGE);
+            $models = $repo->findBy(['gender' => User::GENDER_FEMALE], null, self::PER_PAGE, $page * self::PER_PAGE);
             $data['models'] = $models;
         }
 

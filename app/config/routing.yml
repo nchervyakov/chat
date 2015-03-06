@@ -1,3 +1,6 @@
+user_photo:
+    pattern: /uploads/photo/{file_name}
+
 hwi_oauth_redirect:
     resource: "@HWIOAuthBundle/Resources/config/routing/redirect.xml"
     prefix:   /connect

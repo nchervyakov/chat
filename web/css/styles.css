@@ -9,3 +9,7 @@ body {
     max-width: 360px;
     max-height: 480px;
 }
+
+.navbar-inverse label {
+    color: #fff;
+}

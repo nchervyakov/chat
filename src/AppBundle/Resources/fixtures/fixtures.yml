@@ -1,0 +1,90 @@
+AppBundle\Entity\User:
+    admin:
+        username:           'admin@symchat.com'
+        usernameCanonical:  @self->username
+        email:              @self->username
+        emailCanonical:     @self->username
+        enabled:            1
+        salt:               'iz55lk2rvzcokcskgo48co8kw4004o0'
+        password:           ''
+        lastLogin:          <dt('2015-03-06 13:14:43')>
+        locked:             0
+        expired:            0
+        expiresAt:          null
+        confirmationToken:  null
+        passwordRequestedAt: null
+        roles:              ["ROLE_ADMIN"]
+        credentialsExpired: 0
+        credentialsExpireAt: null
+        firstName:          ''
+        lastName:           ''
+        dateOfBirth:        <dt('2005-03-01')>
+        facebookId:         null
+        vkontakteId:        null
+        twitterId:          null
+        googleId:           null
+        githubId:           null
+        dateAdded:          <dt('2015-03-01 09:15:29')>
+        dateUpdated:        <dt('2015-02-01 04:01:27')>
+        gender:             null
+        order:              1
+
+    nick:
+        username:           'nick.chervyakov@gmail.com'
+        usernameCanonical:  @self->username
+        email:              @self->username
+        emailCanonical:     @self->username
+        enabled:            1
+        salt:               '9z80ds2lbx4ck0oo4c4s4sswgw0ck8o'
+        password:           ''
+        lastLogin:          <dt('2015-03-06 13:14:43')>
+        locked:             0
+        expired:            0
+        expiresAt:          null
+        confirmationToken:  null
+        passwordRequestedAt: null
+        roles:              ["ROLE_CLIENT"]
+        credentialsExpired: 0
+        credentialsExpireAt: null
+        firstName:          'Nikolay'
+        lastName:           'Chervyakov'
+        dateOfBirth:        <dt('1983-01-02')>
+        facebookId:         null
+        vkontakteId:        null
+        twitterId:          '82381251'
+        googleId:           '100799734248236750051'
+        githubId:           null
+        dateAdded:          <dt('2015-03-06 09:13:29')>
+        dateUpdated:        <dt('2015-03-06 13:18:27')>
+        gender:             'male'
+        order:              2
+
+    maria:
+        username:           'masha@yandex.com'
+        usernameCanonical:  @self->username
+        email:              @self->username
+        emailCanonical:     @self->username
+        enabled:            1
+        salt:               '4wi9zydaw0004cg4o848scsk4c8owwo'
+        password:           ''
+        lastLogin:          <dt('2015-02-12 09:34:53')>
+        locked:             0
+        expired:            0
+        expiresAt:          null
+        confirmationToken:  null
+        passwordRequestedAt: null
+        roles:              ["ROLE_MODEL"]
+        credentialsExpired: 0
+        credentialsExpireAt: null
+        firstName:          'Maria'
+        lastName:           'Ivanova'
+        dateOfBirth:        <dt('1992-06-12')>
+        facebookId:         '797550090338709'
+        vkontakteId:        null
+        twitterId:          null
+        googleId:           null
+        githubId:           null
+        dateAdded:          <dt('2015-01-16 19:18:29')>
+        dateUpdated:        <dt('2015-01-21 16:35:27')>
+        gender:             'female'
+        order:              3

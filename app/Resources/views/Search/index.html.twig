@@ -9,10 +9,24 @@
 
     <div class="row">
         <div class="col-lg-12">
+
             {% if models is defined %}
+                <div class="row">
                 {% for model in models %}
-                    {{ model.firstName }}
+
+                    <div class="col-sm-6 col-md-4">
+                        <div class="thumbnail">
+                            <a href="{{ path('chat', {"user_id": model.id}) }}">
+                                <img src="/uploads/photo/{{  model.thumbnail }}" alt="{{ model.fullName }}">
+                                <div class="caption">
+                                    <h3>{{- model.fullName -}}<small>, {{ model.age }}</small></h3>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
                 {% endfor %}
+            </div>
             {% endif %}
         </div>
     </div>

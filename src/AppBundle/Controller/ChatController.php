@@ -14,19 +14,11 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 class ChatController extends Controller
 {
     /**
-     * @Route("", name="chat_list", defaults={"_action": ""})
+     * @Route("/{user_id}", name="chat", defaults={"_action": "", "user_id": ""})
      */
     public function indexAction()
     {
         return $this->render(':Chat:index.html.twig');
-    }
-
-    /**
-     * @Route("/view", name="chat_view")
-     */
-    public function viewAction()
-    {
-
     }
 
     /**

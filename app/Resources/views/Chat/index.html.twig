@@ -1,8 +1,10 @@
 {% extends "::layout.html.twig" %}
 
-{% block title %}{% trans %}chat_list_page.title{% endtrans %}{% endblock %}
-{% block page_title_text %}Your friends{% endblock %}
+{% block title 'chat_page.title'|trans %}
+{% block page_title_text 'chat_page.title'|trans %}
 
 {% block body %}
     {{ parent() }}
+
+    Here is chat
 {% endblock %}

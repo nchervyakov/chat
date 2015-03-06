@@ -135,6 +135,12 @@ class User extends BaseUser
     private $order;
 
     /**
+     * @var string
+     * @ORM\Column(name="thumbnail", length=255, type="string", nullable=true)
+     */
+    private $thumbnail;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -502,5 +508,31 @@ class User extends BaseUser
     public function getOrder()
     {
         return $this->order;
+    }
+
+    /**
+     * @return string
+     */
+    public function getThumbnail()
+    {
+        return $this->thumbnail;
+    }
+
+    /**
+     * @param string $thumbnail
+     */
+    public function setThumbnail($thumbnail)
+    {
+        $this->thumbnail = $thumbnail;
+    }
+
+    public function getAge()
+    {
+        if (!($this->dateOfBirth instanceof \DateTime)) {
+            return null;
+        }
+        $now = new \DateTime();
+        $diff = $now->diff($this->dateOfBirth);
+        return $diff->format('%Y');
     }
 }
