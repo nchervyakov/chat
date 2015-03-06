@@ -13,7 +13,7 @@ menu:
         home: 'Go to homepage'
         logout: Logout
         search: Search
-
+        stat: 'Statistics'
 chat_list_page.title: 'Chat List'
 
 search: 'Search'
@@ -37,3 +37,4 @@ model_search:
         incorrect_age_interval: '"From" field must be greater or equal to "To" field.'
 chat_page:
     title: 'Chat'
+chat: 'Chat'

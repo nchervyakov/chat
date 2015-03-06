@@ -18,7 +18,12 @@ class DefaultController extends Controller
     {
         $checker = $this->container->get('security.authorization_checker');
         if ($checker->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
-            return $this->redirect($this->generateUrl('chat_list'));
+            if ($checker->isGranted('ROLE_MODEL')) {
+                return $this->redirect($this->generateUrl('stat_index'));
+
+            } else {
+                return $this->redirect($this->generateUrl('chat'));
+            }
         }
 
         return $this->render(':Default:index.html.twig');

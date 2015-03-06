@@ -44,12 +44,29 @@ class MenuBuilder extends ContainerAware
 //            ]);
 //        }
 
-        if ($this->container->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
-            $menu->addChild('menu.main.search', [
-                'route' => 'search_index',
-                'label' => $translator->trans('menu.main.search'),
-                'attributes' => ['title' => $translator->trans('menu.main.search')]
+        $checker = $this->container->get('security.authorization_checker');
+
+        if ($checker->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
+            $menu->addChild('chat', [
+                'route' => 'chat',
+                'label' => $translator->trans('chat'),
+                'attributes' => ['title' => $translator->trans('chat')]
             ]);
+
+            if ($checker->isGranted('ROLE_MODEL')) {
+                $menu->addChild('menu.main.stat', [
+                    'route' => 'stat_index',
+                    'label' => $translator->trans('menu.main.stat'),
+                    'attributes' => ['title' => $translator->trans('menu.main.stat')]
+                ]);
+
+            } else {
+                $menu->addChild('menu.main.search', [
+                    'route' => 'search_index',
+                    'label' => $translator->trans('menu.main.search'),
+                    'attributes' => ['title' => $translator->trans('menu.main.search')]
+                ]);
+            }
 
 //            $menu->addChild('menu.main.logout', [
 //                'route' => 'fos_user_security_logout',
