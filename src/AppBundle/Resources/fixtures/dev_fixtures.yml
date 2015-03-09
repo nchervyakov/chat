@@ -1,5 +1,5 @@
 AppBundle\Entity\User:
-    user{1..100}:
+    user{1..200}:
         username (unique):  <email()>
         usernameCanonical:  @self->username
         email:              @self->username
@@ -19,7 +19,7 @@ AppBundle\Entity\User:
         credentialsExpireAt: null
         firstName:          <firstName($gender)>
         lastName:           <lastName()>
-        dateOfBirth:        <dateTimeBetween('-100 years', '-18 years')>
+        dateOfBirth:        <dateTimeBetween('-80 years', '-18 years')>
         facebookId:         50%? <numerify('###############')>
         vkontakteId:        30%? <randomNumber(7)>
         twitterId:          10%? <randomNumber(8)>
@@ -28,4 +28,4 @@ AppBundle\Entity\User:
         dateAdded:          <dateTimeBetween('-3 years', 'now')>
         dateUpdated:        <dateTimeBetween($dateAdded, 'now')>
         order:              <current()>
-        thumbnail:          <imageEx('web/uploads/photo', 348, 348, null, false)>
+        thumbnail:          50%? <imageEx('web/uploads/photo', 348, 348, null, false)>

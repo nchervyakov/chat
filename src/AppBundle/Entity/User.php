@@ -12,7 +12,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * User
  *
- * @ORM\Table(name="users")
+ * @ORM\Table(name="users", indexes={
+ *      @ORM\Index(columns={"date_of_birth"}, name="date_of_birth")
+ * })
  * @ORM\Entity(repositoryClass="AppBundle\Entity\UserRepository")
  * @UniqueEntity(fields={"emailCanonical"}, errorPath="email", message="fos_user.email.already_used",
  *      groups={"AppRegistration", "AppProfile"})
