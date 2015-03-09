@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Model\ModelSearch;
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -12,8 +13,34 @@ use Doctrine\ORM\EntityRepository;
  */
 class UserRepository extends EntityRepository
 {
-    public function getModels()
+    /**
+     * Populates model search query builder based on ModelSearch instance.
+     * @param ModelSearch $search
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    public function prepareQueryBuilderForModelSearch(ModelSearch $search)
     {
+        $qb = $this->getEntityManager()->createQueryBuilder();
 
+        $qb->select('u')
+            ->from('AppBundle:User', 'u')
+            ->where('u.gender LIKE :gender')->setParameter('gender', 'female')
+            ->orderBy('u.order', 'DESC');
+
+        if ($search->getFrom() !== null) {
+            $fromDate = new \DateTime('-' . $search->getFrom() . ' years');
+            $qb->andWhere('u.dateOfBirth <= :from')->setParameter('from', $fromDate);
+        }
+
+        if ($search->getTo() !== null) {
+            $toDate = new \DateTime('-' . $search->getTo() . ' years');
+            $qb->andWhere('u.dateOfBirth >= :to')->setParameter('to', $toDate);
+        }
+
+        if ($search->isWithPhoto()) {
+            $qb->andWhere('u.thumbnail != :thumbnail')->setParameter('thumbnail', '');
+        }
+
+        return $qb;
     }
 }

@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\User;
+use AppBundle\Entity\UserRepository;
 use AppBundle\Form\Type\ModelSearchFormType;
 use AppBundle\Model\ModelSearch;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -41,8 +42,10 @@ class SearchController extends Controller
 
         if (!$form->isSubmitted() || $form->isValid()) {
             $repo = $this->getDoctrine()->getRepository('AppBundle:User');
-            $models = $repo->findBy(['gender' => User::GENDER_FEMALE], null, self::PER_PAGE, $page * self::PER_PAGE);
-            $data['models'] = $models;
+            $qb = $repo->prepareQueryBuilderForModelSearch($modelSearch);
+            $paginator = $this->get('knp_paginator');
+            $pagination = $paginator->paginate($qb, $page, self::PER_PAGE);
+            $data['pagination'] = $pagination;
         }
 
         return $this->render('Search/index.html.twig', $data);

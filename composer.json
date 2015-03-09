@@ -35,7 +35,8 @@
         "jms/translation-bundle": "~1.1",
         "hwi/oauth-bundle": "0.4.*@dev",
         "ircmaxell/password-compat": "~1.0.3",
-        "hautelook/alice-bundle": "0.2.*"
+        "hautelook/alice-bundle": "0.2.*",
+        "knplabs/knp-paginator-bundle": "~2.4"
     },
     "require-dev": {
     },

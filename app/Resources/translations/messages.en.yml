@@ -39,3 +39,4 @@ model_search:
 chat_page:
     title: 'Chat'
 chat: 'Chat'
+total_models_found: 'Total models found: %count%'

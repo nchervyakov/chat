@@ -17,3 +17,9 @@ body {
 .search-bar .form-group {
     margin-right: 15px;
 }
+
+.search-results .thumbnail .img-wrapper {
+    display: inline-block;
+    width: 348px;
+    height: 348px;
+}

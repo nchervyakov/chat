@@ -54,7 +54,7 @@ class ModelSearch
      */
     public function setFrom($from)
     {
-        $this->from = $from;
+        $this->from = is_numeric($from) ? (int) $from : null;
     }
 
     /**
@@ -70,7 +70,7 @@ class ModelSearch
      */
     public function setTo($to)
     {
-        $this->to = $to;
+        $this->to = is_numeric($to) ? (int) $to : null;;
     }
 
     /**
@@ -116,6 +116,6 @@ class ModelSearch
      */
     public function setWithPhoto($withPhoto)
     {
-        $this->withPhoto = $withPhoto;
+        $this->withPhoto = (boolean) $withPhoto;
     }
 }
