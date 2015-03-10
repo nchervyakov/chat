@@ -12,4 +12,79 @@ use Doctrine\ORM\EntityRepository;
  */
 class ConversationRepository extends EntityRepository
 {
+    /**
+     * @param User $user1
+     * @param User $user2
+     * @return null|Conversation
+     */
+    public function getByUsers(User $user1, User $user2)
+    {
+        list($id1, $id2) = $this->sortUserIds($user1, $user2);
+        return $this->findOneBy([
+            'user1' => $id1,
+            'user2' => $id2
+        ]);
+    }
+
+    /**
+     * @param User $user1
+     * @param User $user2
+     * @return null
+     */
+    public function createByUsers(User $user1, User $user2)
+    {
+        $sortedUsers = $this->sortUsers($user1, $user2);
+
+        try {
+            $conversation = new Conversation();
+            $conversation->setUser1($sortedUsers[0]);
+            $conversation->setUser2($sortedUsers[1]);
+            return $conversation;
+
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    /**
+     * @param User $user1
+     * @param User $user2
+     * @return Conversation|null
+     */
+    public function getOrCreateByUsers(User $user1, User $user2)
+    {
+        $conversation = $this->getByUsers($user1, $user2);
+        if (!$conversation) {
+            $conversation = $this->createByUsers($user1, $user2);
+            $this->getEntityManager()->persist($conversation);
+            $this->getEntityManager()->flush();
+        }
+        return $conversation;
+    }
+
+    /**
+     * @param User $user1
+     * @param User $user2
+     * @return array
+     */
+    protected function sortUserIds(User $user1, User $user2)
+    {
+        $sortedUsers = $this->sortUsers($user1, $user2);
+        return [$sortedUsers[0]->getId(), $sortedUsers[1]->getId()];
+    }
+
+    /**
+     * @param User $user1
+     * @param User $user2
+     * @return array|User[]
+     */
+    protected function sortUsers(User $user1, User $user2)
+    {
+        if ($user1->getId() < $user2->getId()) {
+            return [$user1, $user2];
+
+        } else {
+            return [$user2, $user1];
+        }
+    }
 }

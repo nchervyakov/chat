@@ -40,9 +40,9 @@ twig:
 # Assetic Configuration
 assetic:
     debug:          "%kernel.debug%"
-    use_controller: false
+    use_controller: true
     bundles:        [ AppBundle ]
-    #java: /usr/bin/java
+    java: ~ # /usr/bin/java
     filters:
         cssrewrite: ~
         #closure:
@@ -186,6 +186,8 @@ fos_user:
 fos_js_routing:
     routes_to_expose:
         - homepage
+        - chat
+        - chat_add_message
 #        - fos_user_registration_register
 
 knp_menu:
@@ -220,3 +222,31 @@ knp_paginator:
     template:
         pagination: KnpPaginatorBundle:Pagination:twitter_bootstrap_v3_pagination.html.twig     # sliding pagination controls template
         sortable: KnpPaginatorBundle:Pagination:sortable_link.html.twig # sort link template
+
+jms_security_extra:
+    # Whether you want to secure all services (true), or only secure specific
+    # services (false); see also below
+    secure_all_services: false
+
+    # Enabling this setting will add an additional special attribute "ROLE_IDDQD".
+    # Anybody with this attribute will effectively bypass all security checks.
+    enable_iddqd_attribute: false
+
+    # Enables expression language
+    expressions: true
+
+    # Allows you to disable some, or all built-in voters
+    voters:
+        disable_authenticated: false
+        disable_role:          false
+        disable_acl:           false
+
+    # Allows you to specify access control rules for specific methods, such
+    # as controller actions
+    method_access_control: { }
+
+    util:
+        secure_random:
+#            connection: # the doctrine connection name
+            table_name: seed_table
+#            seed_provider: # service id of your own seed provider implementation

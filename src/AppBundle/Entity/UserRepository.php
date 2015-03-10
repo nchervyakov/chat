@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use AppBundle\Model\ModelSearch;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 
 /**
  * UserRepository
@@ -42,5 +43,37 @@ class UserRepository extends EntityRepository
         }
 
         return $qb;
+    }
+
+    public function findUserFriends(User $user, User $companion = null)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $expr = $qb->expr();
+        $qb->select('u1, u2')
+            ->from('AppBundle\\Entity\\Conversation', 'c')
+            ->leftJoin('AppBundle\\Entity\\User', 'u1', Join::WITH, 'c.user1 = u1')
+            ->leftJoin('AppBundle\\Entity\\User', 'u2', Join::WITH, 'c.user2 = u2')
+            ->where($expr->andX(
+                $expr->orX('u1 = :user', 'u2 = :user')
+            ))
+            ->setParameter('user', $user)
+        ;
+
+        if ($companion) {
+            $qb->andWhere($expr->not($expr->orX(
+                $expr->andX('u1 = :user', 'u2 = :companion'),
+                $expr->andX('u1 = :companion', 'u2 = :user')
+            )))->setParameter('companion', $companion);
+        }
+
+        /** @var User[] $result */
+        $result = $qb->getQuery()->execute();
+        foreach ($result as $key => $item) {
+            if ($item->getId() == $user->getId()) {
+                unset($result[$key]);
+                break;
+            }
+        }
+        return $result;
     }
 }

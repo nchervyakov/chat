@@ -12,9 +12,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * User
  *
- * @ORM\Table(name="users", indexes={
- *      @ORM\Index(columns={"date_of_birth"}, name="date_of_birth")
- * })
+ * @ORM\Table(name="users",
+ *      indexes={
+ *          @ORM\Index(columns={"date_of_birth"}, name="date_of_birth"),
+ *          @ORM\Index(columns={"sort_order"}, name="sort_order")
+ *      }
+ * )
  * @ORM\Entity(repositoryClass="AppBundle\Entity\UserRepository")
  * @UniqueEntity(fields={"emailCanonical"}, errorPath="email", message="fos_user.email.already_used",
  *      groups={"AppRegistration", "AppProfile"})
@@ -528,6 +531,10 @@ class User extends BaseUser
         $this->thumbnail = $thumbnail;
     }
 
+    /**
+     * Calculated user age.
+     * @return null|string
+     */
     public function getAge()
     {
         if (!($this->dateOfBirth instanceof \DateTime)) {

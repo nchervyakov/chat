@@ -1,10 +1,173 @@
 {% extends "::layout.html.twig" %}
 
-{% block title 'chat_page.title'|trans %}
+{% block title -%}
+    {% if companion is not null %}
+        {{ 'chat_with_companion'|trans({'%companion%': companion.firstName}) }}
+    {% else %}
+        {{ 'chat_page.title'|trans }}
+    {% endif %}
+{%- endblock %}
+
 {% block page_title_text 'chat_page.title'|trans %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('js/chat.js') }}"></script>
+{% endblock %}
 
 {% block page %}
     {{ parent() }}
 
-    Here is chat
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="well bs-component chat-friends">
+                <h3>{{ 'your_friends'|trans }}</h3>
+                {% if friends %}
+                    <ul class="friend-list">
+                    {% for friend in friends %}
+                        <li class="friend">
+                            <a href="{{ path('chat', {"companion_id": friend.id}) }}" class="clearfix">
+                                <span class="photo">
+                                    <img src="/uploads/photo/{{ friend.thumbnail }}" alt="{{ friend.fullName }}"/>
+                                </span>
+                                <span class="description">{{ friend.fullName }}, {{ friend.age }}</span>
+                            </a>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>{{ 'chat_page.no_companions'|trans }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-lg-9">
+            {% if companion is not null %}
+                <div class="panel panel-primary chat-widget" data-companion-id="{{ companion.id }}">
+                    <div class="panel-heading">
+                        <span class="glyphicon glyphicon-comment"></span> {{ 'chat_with_companion'|trans({'%companion%': companion.firstName}) }}
+                        {#<div class="btn-group pull-right">
+                            <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                                <span class="glyphicon glyphicon-chevron-down"></span>
+                            </button>
+                            <ul class="dropdown-menu slidedown">
+                                <li><a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-refresh">
+                            </span>Refresh</a></li>
+                                <li><a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-ok-sign">
+                            </span>Available</a></li>
+                                <li><a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-remove">
+                            </span>Busy</a></li>
+                                <li><a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-time"></span>
+                                        Away</a></li>
+                                <li class="divider"></li>
+                                <li><a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-off"></span>
+                                        Sign Out</a></li>
+                            </ul>
+                        </div>#}
+                    </div>
+                    <div class="panel-body chat-messages">
+                        <ul class="chat">
+                            {% if messages is defined %}
+                                {% for message in messages %}
+                                    {{ include(':Chat:_message.html.twig') }}
+                                {% endfor %}
+                            {% else %}
+                                <li class="no-messages"><i>{{ 'chat_page.no_messages_yet'|trans }}</i></li>
+                            {% endif %}
+                            {#<li class="left clearfix">
+                                <span class="chat-img pull-left">
+                                    <img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar"
+                                         class="img-circle"/>
+                                </span>
+
+                                <div class="chat-body clearfix">
+                                    <div class="header">
+                                        <strong class="primary-font">Jack Sparrow</strong>
+                                        <small class="pull-right text-muted">
+                                            <span class="glyphicon glyphicon-time"></span>12 mins ago
+                                        </small>
+                                    </div>
+                                    <p>
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum
+                                        ornare
+                                        dolor, quis ullamcorper ligula sodales.
+                                    </p>
+                                </div>
+                            </li>
+                            <li class="right clearfix"><span class="chat-img pull-right">
+                                    <img src="http://placehold.it/50/FA6F57/fff&text=ME" alt="User Avatar"
+                                         class="img-circle"/>
+                                </span>
+
+                                <div class="chat-body clearfix">
+                                    <div class="header">
+                                        <small class=" text-muted"><span class="glyphicon glyphicon-time"></span>13 mins
+                                            ago
+                                        </small>
+                                        <strong class="pull-right primary-font">Bhaumik Patel</strong>
+                                    </div>
+                                    <p>
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum
+                                        ornare
+                                        dolor, quis ullamcorper ligula sodales.
+                                    </p>
+                                </div>
+                            </li>
+                            <li class="left clearfix"><span class="chat-img pull-left">
+                                    <img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar"
+                                         class="img-circle"/>
+                                </span>
+
+                                <div class="chat-body clearfix">
+                                    <div class="header">
+                                        <strong class="primary-font">Jack Sparrow</strong>
+                                        <small class="pull-right text-muted">
+                                            <span class="glyphicon glyphicon-time"></span>14 mins ago
+                                        </small>
+                                    </div>
+                                    <p>
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum
+                                        ornare
+                                        dolor, quis ullamcorper ligula sodales.
+                                    </p>
+                                </div>
+                            </li>
+                            <li class="right clearfix"><span class="chat-img pull-right">
+                                    <img src="http://placehold.it/50/FA6F57/fff&text=ME" alt="User Avatar" class="img-circle"/>
+                                </span>
+
+                                <div class="chat-body clearfix">
+                                    <div class="header">
+                                        <small class=" text-muted"><span class="glyphicon glyphicon-time"></span>15 mins
+                                            ago
+                                        </small>
+                                        <strong class="pull-right primary-font">Bhaumik Patel</strong>
+                                    </div>
+                                    <p>
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum
+                                        ornare
+                                        dolor, quis ullamcorper ligula sodales.
+                                    </p>
+                                </div>
+                            </li>#}
+                        </ul>
+                    </div>
+                    <div class="panel-footer">
+                        <form action="{{ path('chat_add_message', { "companion_id": companion.id }) }}" method="post"
+                              id="addMessageForm" class="js-message-form">
+                            <div class="input-group">
+                                <input type="text" class="form-control input-sm js-message-input"
+                                       placeholder="{{ 'type_your_message'|trans }}" />
+                            <span class="input-group-btn">
+                                <button class="btn btn-default btn-sm js-submit-button">{{ 'send'|trans }}</button>
+                            </span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            {% else %}
+                <p>{{ 'please_select_companion'|trans }}</p>
+            {% endif %}
+        </div>
+    </div>
 {% endblock %}

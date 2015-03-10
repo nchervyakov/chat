@@ -10,7 +10,11 @@ use Symfony\Bridge\Doctrine\Validator\Constraints as DoctrineConstraints;
 /**
  * Conversation
  *
- * @ORM\Table(name="conversations")
+ * @ORM\Table(name="conversations",
+ *      uniqueConstraints={
+ *          @ORM\UniqueConstraint(columns={"user1_id", "user2_id"})
+ *      }
+ * )
  * @ORM\Entity(repositoryClass="AppBundle\Entity\ConversationRepository")
  * @ORM\HasLifecycleCallbacks()
  */
@@ -29,26 +33,26 @@ class Conversation
      * Initiator of the conversation.
      * @var User
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
-     * @ORM\JoinColumn(name="initiator_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="user1_id", referencedColumnName="id")
      */
-    protected $initiator;
+    protected $user1;
 
     /**
      * Acceptor (target user) of the conversation.
      * @var User
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
-     * @ORM\JoinColumn(name="acceptor_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="user2_id", referencedColumnName="id")
      */
-    protected $acceptor;
+    protected $user2;
 
     /**
-     * @var Collection|array
+     * @var Collection|array|Message[]
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Message", mappedBy="conversation")
      */
     protected $messages;
 
     /**
-     * @var ConversationInterval
+     * @var ConversationInterval[]|array|Collection
      */
     protected $intervals;
 
@@ -69,6 +73,7 @@ class Conversation
     function __construct()
     {
         $this->messages = new ArrayCollection();
+        $this->intervals = new ArrayCollection();
         $this->setDateAdded(new \DateTime());
     }
 
@@ -85,33 +90,33 @@ class Conversation
     /**
      * @return User
      */
-    public function getInitiator()
+    public function getUser1()
     {
-        return $this->initiator;
+        return $this->user1;
     }
 
     /**
-     * @param User $initiator
+     * @param User $user1
      */
-    public function setInitiator($initiator)
+    public function setUser1($user1)
     {
-        $this->initiator = $initiator;
+        $this->user1 = $user1;
     }
 
     /**
      * @return User
      */
-    public function getAcceptor()
+    public function getUser2()
     {
-        return $this->acceptor;
+        return $this->user2;
     }
 
     /**
-     * @param User $acceptor
+     * @param User $user2
      */
-    public function setAcceptor($acceptor)
+    public function setUser2($user2)
     {
-        $this->acceptor = $acceptor;
+        $this->user2 = $user2;
     }
 
     /**
@@ -147,7 +152,7 @@ class Conversation
     }
 
     /**
-     * @return array|Collection
+     * @return array|Collection|Message[]
      */
     public function getMessages()
     {
@@ -155,11 +160,11 @@ class Conversation
     }
 
     /**
-     * @param array|Collection $messages
+     * @param array|Collection|Message[] $messages
      */
     public function setMessages($messages)
     {
-        $this->messages = $messages;
+        $this->messages = $messages instanceof Collection ? $messages : new ArrayCollection($messages);
     }
 
     /**
@@ -173,10 +178,10 @@ class Conversation
     /**
      * Add messages
      *
-     * @param \AppBundle\Entity\Message $messages
+     * @param Message $messages
      * @return Conversation
      */
-    public function addMessage(\AppBundle\Entity\Message $messages)
+    public function addMessage(Message $messages)
     {
         $this->messages[] = $messages;
 
@@ -186,9 +191,9 @@ class Conversation
     /**
      * Remove messages
      *
-     * @param \AppBundle\Entity\Message $messages
+     * @param Message $messages
      */
-    public function removeMessage(\AppBundle\Entity\Message $messages)
+    public function removeMessage(Message $messages)
     {
         $this->messages->removeElement($messages);
     }

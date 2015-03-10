@@ -26,6 +26,7 @@ class AppKernel extends Kernel
             new JMS\AopBundle\JMSAopBundle(),
             new JMS\SerializerBundle\JMSSerializerBundle(),
             new JMS\DiExtraBundle\JMSDiExtraBundle($this),
+            new JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),
             new Hautelook\AliceBundle\HautelookAliceBundle(),
             new AppBundle\AppBundle(),
         );

@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serialize;
 
 /**
  * Message
@@ -32,6 +33,7 @@ abstract class Message
      * @var Conversation
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Conversation", inversedBy="messages")
      * @ORM\JoinColumn(name="conversation_id", referencedColumnName="id")
+     * @Serialize\MaxDepth(0)
      */
     private $conversation;
 
@@ -59,11 +61,13 @@ abstract class Message
      * @var User
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumn(name="author_id", referencedColumnName="id")
+     * @Serialize\MaxDepth(0)
      */
     private $author;
 
-    function __construct()
+    function __construct($content = null)
     {
+        $this->content = $content;
         $this->setDateAdded(new \DateTime());
     }
 

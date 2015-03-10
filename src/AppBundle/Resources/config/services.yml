@@ -33,3 +33,12 @@ services:
             - @fos_user.user_manager
         tags:
             - {name: form.type, alias: user_profile}
+
+    app.conversation:
+        class: AppBundle\Conversation\ConversationService
+
+    app.request_access_evaluator:
+        class: AppBundle\Security\RequestAccessEvaluator
+        calls:
+            - [setContainer, ["@service_container"]]
+

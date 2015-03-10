@@ -30,6 +30,7 @@
         "friendsofsymfony/rest-bundle": "~1.5",
         "jms/serializer-bundle": "0.13.*",
         "jms/di-extra-bundle": "~1.5",
+        "jms/security-extra-bundle": "dev-master",
         "sonata-project/admin-bundle": "~2.3",
         "sonata-project/doctrine-orm-admin-bundle": "~2.3",
         "jms/translation-bundle": "~1.1",

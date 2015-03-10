@@ -38,5 +38,12 @@ model_search:
     with_photo: 'With Photo'
 chat_page:
     title: 'Chat'
+    no_companions: "You don't have anybody in your list."
+    no_messages_yet: 'You do not have any messages yet.'
 chat: 'Chat'
 total_models_found: 'Total models found: %count%'
+your_friends: 'Your Friends'
+please_select_companion: 'Please select a companion to chat on the left, or find one on the search page.'
+chat_with_companion: 'Chat with %companion%'
+type_your_message: 'Type your message here...'
+send: 'Send'

@@ -12,4 +12,16 @@ use Doctrine\ORM\EntityRepository;
  */
 class MessageRepository extends EntityRepository
 {
+    public function getConversationLatestMessages(Conversation $conversation, $num = 10, $page = 1)
+    {
+        $offset = ($page - 1) * $num;
+        $offset = $offset < 0 ? 0 : $offset;
+
+        return $this->getEntityManager()
+            ->createQuery('SELECT m FROM AppBundle:Message m WHERE m.conversation = :conversation ORDER BY m.dateAdded')
+            ->setMaxResults($num)
+            ->setFirstResult($offset)
+            ->setParameter('conversation', $conversation)
+            ->execute();
+    }
 }

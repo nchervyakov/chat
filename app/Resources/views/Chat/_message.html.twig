@@ -1,0 +1,22 @@
+{% if message.author == app.user %}
+    {% set orientation = 'left' %}
+    {% set reverseOrientation = 'right' %}
+{% else %}
+    {% set orientation = 'right' %}
+    {% set reverseOrientation = 'left' %}
+{% endif %}
+<li class="{{ orientation }} clearfix">
+    <span class="chat-img pull-{{ orientation }}">
+        <img src="{% if message.author.thumbnail %}/uploads/photo/{{ message.author.thumbnail }}{% else %}http://placehold.it/50/55C1E7/fff&text=U{% endif %}" alt="{{ message.author.fullName }}" class="img-circle message-avatar"/>
+    </span>
+
+    <div class="chat-body clearfix">
+        <div class="header">
+            <strong class="primary-font">{{ message.author.fullName }}</strong>
+            <small class="pull-reverseOrientation text-muted">
+                <span class="glyphicon glyphicon-time"></span>{{ message.dateAdded|date('Y.m.d H:i:s') }}
+            </small>
+        </div>
+        <p>{{ message.content|replace("\n", "<br>") }}</p>
+    </div>
+</li>
