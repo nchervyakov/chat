@@ -45,7 +45,6 @@
         'js/vendor/es5-shim.js'
         'js/vendor/es6-shim.js'
         'js/vendor/json3.js'
-        filter='?uglifyjs2'
         output='js/compiled/*.js'
     %}
         <script type="text/javascript" src="{{ asset_url }}"></script>
@@ -54,7 +53,6 @@
     {% javascripts
         'js/vendor/jquery-1.11.2.min.js'
         'js/vendor/jquery-migrate-1.2.1.min.js'
-        filter='?uglifyjs2'
         output='js/compiled/*.js'
     %}
         <script src="{{ asset_url }}"></script>
@@ -72,7 +70,6 @@
         'js/vendor/bootstrap.min.js'
         'js/vendor/can.custom.min.js'
         'bundles/fosjsrouting/js/router.js'
-        filter='?uglifyjs2'
         output='js/compiled/*.js'
     %}
         <script type="text/javascript" src="{{ asset_url }}"></script>
@@ -89,7 +86,6 @@
     {% javascripts
         'js/tools.js'
         'js/application.js'
-        filter='?uglifyjs2'
         output='js/compiled/*.js'
     %}
         <script type="text/javascript" src="{{ asset_url }}" defer="defer"></script>
