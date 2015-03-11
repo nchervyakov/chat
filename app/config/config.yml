@@ -188,6 +188,8 @@ fos_js_routing:
         - homepage
         - chat
         - chat_add_message
+        - chat_show
+        - chat_get_new_messages
 #        - fos_user_registration_register
 
 knp_menu:

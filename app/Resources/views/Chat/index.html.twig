@@ -68,9 +68,7 @@
                     <div class="panel-body chat-messages">
                         <ul class="chat">
                             {% if messages is defined %}
-                                {% for message in messages %}
-                                    {{ include(':Chat:_message.html.twig') }}
-                                {% endfor %}
+                                {{ include(':Chat:_messages.html.twig') }}
                             {% else %}
                                 <li class="no-messages"><i>{{ 'chat_page.no_messages_yet'|trans }}</i></li>
                             {% endif %}

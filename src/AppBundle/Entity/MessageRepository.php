@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query;
 
 /**
  * MessageRepository
@@ -17,11 +18,42 @@ class MessageRepository extends EntityRepository
         $offset = ($page - 1) * $num;
         $offset = $offset < 0 ? 0 : $offset;
 
-        return $this->getEntityManager()
-            ->createQuery('SELECT m FROM AppBundle:Message m WHERE m.conversation = :conversation ORDER BY m.dateAdded')
+        return $this->createLatestMessagesQuery($conversation)
             ->setMaxResults($num)
             ->setFirstResult($offset)
-            ->setParameter('conversation', $conversation)
             ->execute();
+    }
+
+    /**
+     * @param Conversation $conversation
+     * @param int $latestMessageId
+     * @return mixed|Message[]
+     */
+    public function getLatestMessages(Conversation $conversation, $latestMessageId = 0)
+    {
+        $latestMessageId = (int) $latestMessageId;
+        $messages = $this->getEntityManager()
+            ->createQuery('SELECT m '
+                . 'FROM AppBundle:Message m '
+                . 'WHERE m.conversation = :conversation AND m.id > :latest_message_id '
+                . 'ORDER BY m.dateAdded')
+            ->setParameters([
+                'conversation' => $conversation,
+                'latest_message_id' => $latestMessageId
+            ])
+            ->execute();
+
+        return $messages;
+    }
+
+    /**
+     * @param Conversation $conversation
+     * @return Query
+     */
+    public function createLatestMessagesQuery(Conversation $conversation)
+    {
+        return $this->getEntityManager()
+            ->createQuery('SELECT m FROM AppBundle:Message m WHERE m.conversation = :conversation ORDER BY m.dateAdded')
+            ->setParameter('conversation', $conversation);
     }
 }

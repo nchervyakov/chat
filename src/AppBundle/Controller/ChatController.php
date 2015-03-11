@@ -110,10 +110,37 @@ class ChatController extends Controller
         }
     }
 
-    protected function getDummyMessage()
+    /**
+     * @Route("/{companion_id}/new-messages", name="chat_get_new_messages", methods={"GET"})
+     * @ParamConverter("companion", class="AppBundle:User", options={"id": "companion_id"})
+     * @param User $companion
+     * @param Request $request
+     * @return Response|JsonResponse
+     */
+    public function getLatestMessages(User $companion, Request $request)
     {
-        $message = new TextMessage();
-        $author = new User();
-        $message->setAuthor($author);
+        if (!$this->get('app.request_access_evaluator')->canChatWith($companion)) {
+            throw new AccessDeniedHttpException();
+        }
+
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $conversationRepo = $this->getDoctrine()->getRepository('AppBundle:Conversation');
+        $conversation = $conversationRepo->getOrCreateByUsers($user, $companion);
+
+        $latestMessageId = $request->query->get('latest_message_id', 0);
+
+        $latestMessages = $this->getDoctrine()->getRepository('AppBundle:Message')
+            ->getLatestMessages($conversation, $latestMessageId);
+
+        foreach ($latestMessages as $message) {
+            if ($message->getId() > $latestMessageId) {
+                $latestMessageId = $message->getId();
+            }
+        }
+
+        return new JsonResponse([
+            'messages' => $this->renderView(':Chat:_messages.html.twig', ['messages' => $latestMessages]),
+            'latestMessageId' => $latestMessageId
+        ]);
     }
 }
