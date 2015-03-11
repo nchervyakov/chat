@@ -3,7 +3,6 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\TextMessage;
 use AppBundle\Entity\User;
-use Buzz\Test\Message\Message;
 use JMS\SecurityExtraBundle\Annotation as DI;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -14,8 +13,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpKernel\Exception\PreconditionRequiredHttpException;
 
 /**
  * Class ChatController
@@ -28,19 +25,29 @@ class ChatController extends Controller
     const MESSAGES_PER_PAGE = 10;
 
     /**
-     * @param User $companion
-     * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response
-     * @Route("/{companion_id}", name="chat", defaults={"_action": "", "companion_id": ""})
-     * @ParamConverter("companion", class="AppBundle:User", isOptional=true, options={"id": "companion_id"})
+     * @Route("/", name="chat", defaults={"_action": ""})
      */
-    public function indexAction(Request $request, User $companion = null)
+    public function indexAction()
     {
-        if ($request->attributes->get('companion_id') && !$companion) {
-            throw new NotFoundHttpException("Missing companion.");
-        }
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $params = ['user' => $user];
 
-        if ($companion && !$this->get('app.request_access_evaluator')->canChatWith($companion)) {
+        $userRepo = $this->getDoctrine()->getRepository('AppBundle:User');
+        $params['friends'] = $userRepo->findUserFriends($user);
+
+        return $this->render(':Chat:index.html.twig', $params);
+    }
+
+    /**
+     * @param User $companion
+     * @Route("/{companion_id}", name="chat_show")
+     * @ParamConverter("companion", class="AppBundle:User", options={"id": "companion_id"})
+     * @return Response
+     */
+    public function showAction(User $companion)
+    {
+        if (!$this->get('app.request_access_evaluator')->canChatWith($companion)) {
             throw new AccessDeniedHttpException();
         }
 
@@ -48,19 +55,14 @@ class ChatController extends Controller
         $params = [
             'user' => $user,
             'companion' => $companion,
-            'friends' => []
+            'friends' => [$companion]
         ];
 
-        if ($companion) {
-            $params['friends'][] = $companion;
-
-            $conversation = $this->getDoctrine()->getRepository('AppBundle:Conversation')->getByUsers($user, $companion);
-
-            if ($conversation) {
-                $params['conversation'] = $conversation;
-                $params['messages'] = $this->getDoctrine()->getRepository('AppBundle:Message')
-                    ->getConversationLatestMessages($conversation, self::MESSAGES_PER_PAGE);
-            }
+        $conversation = $this->getDoctrine()->getRepository('AppBundle:Conversation')->getByUsers($user, $companion);
+        if ($conversation) {
+            $params['conversation'] = $conversation;
+            $params['messages'] = $this->getDoctrine()->getRepository('AppBundle:Message')
+                ->getConversationLatestMessages($conversation, self::MESSAGES_PER_PAGE);
         }
 
         $userRepo = $this->getDoctrine()->getRepository('AppBundle:User');

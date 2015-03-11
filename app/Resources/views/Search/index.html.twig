@@ -21,7 +21,7 @@
                     {% for model in pagination %}
                         <div class="col-sm-6 col-md-4">
                             <div class="thumbnail">
-                                <a href="{{ path('chat', {"companion_id": model.id}) }}">
+                                <a href="{{ path('chat_show', {"companion_id": model.id}) }}">
                                     <div class="img-wrapper">
                                         <img src="/uploads/photo/{{ model.thumbnail }}" alt="{{ model.fullName }}">
                                     </div>

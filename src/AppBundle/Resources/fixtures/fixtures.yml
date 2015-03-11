@@ -58,6 +58,7 @@ AppBundle\Entity\User:
         dateUpdated:        <dt('2015-03-06 13:18:27')>
         gender:             'male'
         order:              2
+        thumbnail:          <imageEx('web/uploads/photo', 348, 348, null, false)>
 
     maria:
         username:           'masha@yandex.com'
@@ -88,3 +89,4 @@ AppBundle\Entity\User:
         dateUpdated:        <dt('2015-01-21 16:35:27')>
         gender:             'female'
         order:              3
+        thumbnail:          <imageEx('web/uploads/photo', 348, 348, null, false)>

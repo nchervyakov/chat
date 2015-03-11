@@ -36,13 +36,19 @@ can.Control('ChatWidget', {
                 widget.submitButton.removeAttr('disabled');
             }
         }).success(function (res) {
-            var list;
+            var list, messageContainer, containerHeight, listHeight;
             if (res.message) {
                 list = widget.element.find('.chat');
                 list.find('.no-messages').remove();
                 list.append(res.message);
                 widget.inputElement.val('')
                     .focus();
+                messageContainer = widget.element.find('.chat-messages');
+                listHeight = list.outerHeight();
+                containerHeight = messageContainer.height();
+                if (listHeight > containerHeight) {
+                    messageContainer.scrollTop(listHeight - containerHeight);
+                }
             }
         });
     }
