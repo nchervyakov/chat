@@ -1,32 +1,43 @@
 {% extends '::layout.html.twig' %}
 
-{% block page_title_text %}{{ 'stat'|trans }}{% endblock %}
+{% block page_title_text 'stat'|trans %}
 
 {% block page %}
     {{ parent() }}
 
-    {% if pagination|length > 0 %}
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>{{ 'client'|trans }}</th>
-                    <th>{{ 'stat_page.not_payed_time'|trans }}</th>
-                    <th>{{ 'stat_page.payed_time'|trans }}</th>
-                    <th>{{ 'stat_page.total_time'|trans }}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for conversation in pagination %}
-                    <tr>
-                        <td>{{ conversation.client.fullName }}</td>{% dump(conversation.totalTimeInterval) %}
-                        <td></td>
-                        <td></td>
-                        <td>{{ conversation.totalTimeInterval|date('%H:%I:%S') }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No statistics yet.</p>
-    {% endif %}
+    <div class="row">
+        <div class="col-lg-12">
+            {% if pagination|length > 0 %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>{{ 'client'|trans }}</th>
+                            <th>{{ 'stat_page.not_payed_time'|trans }}</th>
+                            <th>{{ 'stat_page.payed_time'|trans }}</th>
+                            <th>{{ 'stat_page.total_time'|trans }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for conversation in pagination %}
+                            <tr>
+                                <td>{{ conversation.client.fullName }}</td>{% dump(conversation.totalTimeInterval) %}
+                                <td></td>
+                                <td></td>
+                                <td>{{ conversation.totalTimeInterval|date('%H:%I:%S') }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <div class="row">
+                    <nav class="navigation col-lg-12 col-md-12 text-right">
+                        {{ knp_pagination_render(pagination) }}
+                    </nav>
+                </div>
+
+            {% else %}
+                <p>No statistics yet.</p>
+            {% endif %}
+        </div>
+    </div>
 {% endblock %}
