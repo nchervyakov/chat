@@ -280,7 +280,7 @@ class ConversationInterval
                 $seconds += self::TIME_WINDOW;
 
             } else {
-                $seconds += self::TIME_WINDOW - ($time - $lastTime);
+                $seconds += $time - $lastTime;
             }
 
             $lastTime = $time;
