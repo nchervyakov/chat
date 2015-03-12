@@ -73,7 +73,7 @@ class ConnectController extends \HWI\Bundle\OAuthBundle\Controller\ConnectContro
                 $redirectUrl = $this->generate('stat_index');
             }
 
-            $this->container->get('doctrine')->getEntityManager()->flush();
+            $this->container->get('doctrine')->getManager()->flush();
 
             // Authenticate the user
             $this->authenticateUser($request, $user, $error->getResourceOwnerName(), $error->getRawToken());

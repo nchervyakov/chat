@@ -45,7 +45,30 @@ class UserRepository extends EntityRepository
         return $qb;
     }
 
+    /**
+     * @param User $user
+     * @param User $companion
+     * @return User[]
+     */
     public function findUserFriends(User $user, User $companion = null)
+    {
+        /** @var User[] $result */
+        $result = $this->createUserFriendsQueryBuilder($user, $companion)->getQuery()->execute();
+        foreach ($result as $key => $item) {
+            if ($item->getId() == $user->getId()) {
+                unset($result[$key]);
+                break;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param User $user
+     * @param User $companion
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    public function createUserFriendsQueryBuilder(User $user, User $companion = null)
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $expr = $qb->expr();
@@ -56,6 +79,7 @@ class UserRepository extends EntityRepository
             ->where($expr->andX(
                 $expr->orX('u1 = :user', 'u2 = :user')
             ))
+            ->orderBy('c.lastMessageDate', 'DESC')
             ->setParameter('user', $user)
         ;
 
@@ -66,14 +90,33 @@ class UserRepository extends EntityRepository
             )))->setParameter('companion', $companion);
         }
 
-        /** @var User[] $result */
-        $result = $qb->getQuery()->execute();
-        foreach ($result as $key => $item) {
-            if ($item->getId() == $user->getId()) {
-                unset($result[$key]);
-                break;
-            }
+        return $qb;
+    }
+
+    /**
+     * @param User $user
+     * @param User $companion
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    public function createUserConversationsQueryBuilder(User $user, User $companion = null)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $expr = $qb->expr();
+        $qb->select('c')
+            ->from('AppBundle\\Entity\\Conversation', 'c')
+            ->where($expr->andX(
+                $expr->orX('c.user1 = :user', 'c.user2 = :user')
+            ))
+            ->orderBy('c.lastMessageDate', 'DESC')
+            ->setParameter('user', $user)
+        ;
+
+        if ($companion) {
+            $qb->andWhere($expr->not($expr->orX(
+                $expr->andX('c.user1 = :user', 'c.user2 = :companion'),
+                $expr->andX('c.user1 = :companion', 'c.user2 = :user')
+            )))->setParameter('companion', $companion);
         }
-        return $result;
+        return $qb;
     }
 }

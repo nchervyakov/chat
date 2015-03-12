@@ -16,6 +16,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * Class ChatController
+ *
  * @package AppBundle\Controller
  * @Route("/chat")
  * @Security("has_role('ROLE_USER')")
@@ -41,7 +42,7 @@ class ChatController extends Controller
 
     /**
      * @param User $companion
-     * @Route("/{companion_id}", name="chat_show")
+     * @Route("/{companion_id}", name="chat_show", requirements={"companion_id": "\d+"})
      * @ParamConverter("companion", class="AppBundle:User", options={"id": "companion_id"})
      * @return Response
      */
@@ -93,7 +94,7 @@ class ChatController extends Controller
             throw new BadRequestHttpException("add_message.empty_message");
         }
 
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
 
         $message = new TextMessage($content);
         $message->setAuthor($user);
@@ -103,8 +104,10 @@ class ChatController extends Controller
 
         if ($request->isXmlHttpRequest()) {
             return new JsonResponse([
-                'message' => $this->renderView(':Chat:_message.html.twig', ['message' => $message])
+                'message' => $this->renderView(':Chat:_message.html.twig', ['message' => $message]),
+                'id' => $message->getId()
             ]);
+
         } else {
             return $this->redirectToRoute('chat', ['companion_id' => $companion->getId()]);
         }
@@ -125,16 +128,19 @@ class ChatController extends Controller
 
         $user = $this->get('security.token_storage')->getToken()->getUser();
         $conversationRepo = $this->getDoctrine()->getRepository('AppBundle:Conversation');
-        $conversation = $conversationRepo->getOrCreateByUsers($user, $companion);
+        $conversation = $conversationRepo->getByUsers($user, $companion);
 
         $latestMessageId = $request->query->get('latest_message_id', 0);
+        $latestMessages = [];
 
-        $latestMessages = $this->getDoctrine()->getRepository('AppBundle:Message')
-            ->getLatestMessages($conversation, $latestMessageId);
+        if ($conversation) {
+            $latestMessages = $this->getDoctrine()->getRepository('AppBundle:Message')
+                ->getLatestMessages($conversation, $latestMessageId);
 
-        foreach ($latestMessages as $message) {
-            if ($message->getId() > $latestMessageId) {
-                $latestMessageId = $message->getId();
+            foreach ($latestMessages as $message) {
+                if ($message->getId() > $latestMessageId) {
+                    $latestMessageId = $message->getId();
+                }
             }
         }
 

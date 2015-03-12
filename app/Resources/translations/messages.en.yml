@@ -31,6 +31,7 @@ profile:
 login:
     title: 'Log In'
 stat: 'Statistics'
+
 photo: 'Photo'
 model_search:
     validation:
@@ -47,3 +48,8 @@ please_select_companion: 'Please select a companion to chat on the left, or find
 chat_with_companion: 'Chat with %companion%'
 type_your_message: 'Type your message here...'
 send: 'Send'
+client: 'Client'
+stat_page:
+    total_time: 'Total time'
+    not_payed_time: 'Not Payed Time'
+    payed_time: 'Payed Time'

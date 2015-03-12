@@ -5,5 +5,28 @@
 {% block page %}
     {{ parent() }}
 
-    Search here
+    {% if pagination|length > 0 %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>{{ 'client'|trans }}</th>
+                    <th>{{ 'stat_page.not_payed_time'|trans }}</th>
+                    <th>{{ 'stat_page.payed_time'|trans }}</th>
+                    <th>{{ 'stat_page.total_time'|trans }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for conversation in pagination %}
+                    <tr>
+                        <td>{{ conversation.client.fullName }}</td>{% dump(conversation.totalTimeInterval) %}
+                        <td></td>
+                        <td></td>
+                        <td>{{ conversation.totalTimeInterval|date('%H:%I:%S') }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No statistics yet.</p>
+    {% endif %}
 {% endblock %}

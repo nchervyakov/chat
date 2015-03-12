@@ -48,11 +48,14 @@ class Conversation
     /**
      * @var Collection|array|Message[]
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Message", mappedBy="conversation")
+     * @ORM\OrderBy({"dateAdded" = "ASC"})
      */
     protected $messages;
 
     /**
      * @var ConversationInterval[]|array|Collection
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\ConversationInterval", mappedBy="conversation")
+     *
      */
     protected $intervals;
 
@@ -69,6 +72,13 @@ class Conversation
      * @ORM\Column(name="date_updated", type="datetime", nullable=true)
      */
     private $dateUpdated;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="last_message_date", type="datetime", nullable=true)
+     */
+    private $lastMessageDate;
 
     function __construct()
     {
@@ -184,6 +194,7 @@ class Conversation
     public function addMessage(Message $messages)
     {
         $this->messages[] = $messages;
+        $this->lastMessageDate = new \DateTime();
 
         return $this;
     }
@@ -196,5 +207,123 @@ class Conversation
     public function removeMessage(Message $messages)
     {
         $this->messages->removeElement($messages);
+    }
+
+    /**
+     * Fetches current active interval or null
+     *
+     * @return ConversationInterval|mixed|null
+     */
+    public function getActiveInterval()
+    {
+        foreach ($this->getIntervals() as $interval) {
+            if ($interval->getStatus() === ConversationInterval::STATUS_ACTIVE) {
+                return $interval;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Add intervals
+     *
+     * @param ConversationInterval $intervals
+     * @return Conversation
+     */
+    public function addInterval(ConversationInterval $intervals)
+    {
+        $this->intervals[] = $intervals;
+
+        return $this;
+    }
+
+    /**
+     * Remove intervals
+     *
+     * @param ConversationInterval $intervals
+     */
+    public function removeInterval(ConversationInterval $intervals)
+    {
+        $this->intervals->removeElement($intervals);
+    }
+
+    /**
+     * Get intervals
+     *
+     * @return \Doctrine\Common\Collections\Collection|ConversationInterval[]
+     */
+    public function getIntervals()
+    {
+        return $this->intervals;
+    }
+
+    /**
+     * Set lastMessageDate
+     *
+     * @param \DateTime $lastMessageDate
+     * @return Conversation
+     */
+    public function setLastMessageDate($lastMessageDate)
+    {
+        $this->lastMessageDate = $lastMessageDate;
+
+        return $this;
+    }
+
+    /**
+     * Get lastMessageDate
+     *
+     * @return \DateTime 
+     */
+    public function getLastMessageDate()
+    {
+        return $this->lastMessageDate;
+    }
+
+    /**
+     * @return User|null
+     */
+    public function getClient()
+    {
+        if ($this->user1 && $this->user1->hasRole('ROLE_CLIENT')) {
+            return $this->user1;
+
+        } else if ($this->user2 && $this->user2->hasRole('ROLE_CLIENT')) {
+            return $this->user2;
+
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Get total conversation time in seconds.
+     *
+     * @return int
+     */
+    public function getTotalTime()
+    {
+        $time = 0;
+        foreach ($this->getIntervals() as $interval) {
+            $time += $interval->getSeconds();
+        }
+
+        return $time;
+    }
+
+    /**
+     * Get total conversation time as \DateInterval instance.
+     *
+     * @return bool|\DateInterval
+     */
+    public function getTotalTimeInterval()
+    {
+        $time = $this->getTotalTime();
+
+        $now = new \DateTime();
+        $before = new \DateTime('-' . $time . ' seconds');
+
+        return $now->diff($before);
     }
 }

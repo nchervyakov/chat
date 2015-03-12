@@ -36,6 +36,8 @@ services:
 
     app.conversation:
         class: AppBundle\Conversation\ConversationService
+        calls:
+            - [setContainer, ["@service_container"]]
 
     app.request_access_evaluator:
         class: AppBundle\Security\RequestAccessEvaluator

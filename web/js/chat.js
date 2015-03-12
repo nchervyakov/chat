@@ -47,6 +47,7 @@ can.Control('ChatWidget', {
         }).success(function (res) {
             if (res.message) {
                 widget.addNewMessages(res.message);
+                widget.latestMessageId = res.id;
             }
         });
     },

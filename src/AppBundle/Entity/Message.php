@@ -38,6 +38,14 @@ abstract class Message
     private $conversation;
 
     /**
+     * @var ConversationInterval
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\ConversationInterval", inversedBy="messages")
+     * @ORM\JoinColumn(name="interval_id", referencedColumnName="id")
+     * @Serialize\MaxDepth(0)
+     */
+    private $interval;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="date_added", type="datetime", nullable=true)
@@ -56,6 +64,12 @@ abstract class Message
      * @ORM\Column(name="content", type="text", nullable=true)
      */
     private $content;
+
+    /**
+     * @var boolean
+     * @ORM\Column(name="deleted_by_user", type="boolean", options={"default": false})
+     */
+    private $deletedByUser = false;
 
     /**
      * @var User
@@ -174,5 +188,61 @@ abstract class Message
     public function preUpdate()
     {
         $this->setDateUpdated(new \DateTime());
+    }
+
+    /**
+     * Set interval
+     *
+     * @param ConversationInterval $interval
+     * @return Message
+     */
+    public function setInterval(ConversationInterval $interval = null)
+    {
+        $this->interval = $interval;
+
+        return $this;
+    }
+
+    /**
+     * Get interval
+     *
+     * @return ConversationInterval
+     */
+    public function getInterval()
+    {
+        return $this->interval;
+    }
+
+    /**
+     * Set deletedByUser
+     *
+     * @param boolean $deletedByUser
+     * @return Message
+     */
+    public function setDeletedByUser($deletedByUser)
+    {
+        $this->deletedByUser = $deletedByUser;
+
+        return $this;
+    }
+
+    /**
+     * Get deletedByUser
+     *
+     * @return boolean
+     */
+    public function isDeletedByUser()
+    {
+        return $this->deletedByUser;
+    }
+
+    /**
+     * Get deletedByUser
+     *
+     * @return boolean 
+     */
+    public function getDeletedByUser()
+    {
+        return $this->deletedByUser;
     }
 }
