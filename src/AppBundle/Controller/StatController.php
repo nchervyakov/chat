@@ -33,6 +33,11 @@ class StatController extends Controller
         $paginator = $this->get('knp_paginator');
         $pagination = $paginator->paginate($conversationsQB, $page, self::PER_PAGE);
 
+        $convService = $this->get('app.conversation');
+        foreach ($pagination as $conversation) {
+            $convService->estimateConversation($conversation);
+        }
+
         return $this->render('Stat/index.html.twig', [
             'pagination' => $pagination
         ]);

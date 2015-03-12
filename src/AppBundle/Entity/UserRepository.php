@@ -57,7 +57,7 @@ class UserRepository extends EntityRepository
         foreach ($result as $key => $item) {
             if ($item->getId() == $user->getId()) {
                 unset($result[$key]);
-                break;
+                //break;
             }
         }
         return $result;
@@ -73,6 +73,7 @@ class UserRepository extends EntityRepository
         $qb = $this->getEntityManager()->createQueryBuilder();
         $expr = $qb->expr();
         $qb->select('u1, u2')
+            ->distinct(true)
             ->from('AppBundle\\Entity\\Conversation', 'c')
             ->leftJoin('AppBundle\\Entity\\User', 'u1', Join::WITH, 'c.user1 = u1')
             ->leftJoin('AppBundle\\Entity\\User', 'u2', Join::WITH, 'c.user2 = u2')

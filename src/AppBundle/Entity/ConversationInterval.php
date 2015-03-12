@@ -64,6 +64,30 @@ class ConversationInterval
     private $seconds = 0;
 
     /**
+     * @var float
+     * @ORM\Column(name="price", type="decimal", scale=2, options={"default": 0.0})
+     */
+    private $price;
+
+    /**
+     * @var float
+     * @ORM\Column(name="minute_rate", type="decimal", scale=2, options={"default": 0.0})
+     */
+    private $minuteRate = 0.0;
+
+    /**
+     * @var float
+     * @ORM\Column(name="model_share", type="decimal", scale=2, options={"default": 0.0})
+     */
+    private $modelShare = 0.0;
+
+    /**
+     * @var float
+     * @ORM\Column(name="model_earnings", type="decimal", scale=2, options={"default": 0.0})
+     */
+    private $modelEarnings = 0.0;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="date_added", type="datetime", nullable=true)
@@ -335,5 +359,102 @@ class ConversationInterval
     public function getPreviousInterval()
     {
         return $this->previousInterval;
+    }
+
+    /**
+     * Set price
+     *
+     * @param float $price
+     * @return ConversationInterval
+     * @throws \ErrorException
+     */
+    public function setPrice($price)
+    {
+        if ($this->status == self::STATUS_PAYED) {
+            throw new \ErrorException("Cannot modify the price if interval is already paid.");
+        }
+
+        $this->price = $price;
+
+        return $this;
+    }
+
+    /**
+     * Get price
+     *
+     * @return float
+     */
+    public function getPrice()
+    {
+        return $this->price;
+    }
+
+    /**
+     * Set minuteRate
+     *
+     * @param string $minuteRate
+     * @return ConversationInterval
+     */
+    public function setMinuteRate($minuteRate)
+    {
+        $this->minuteRate = $minuteRate;
+
+        return $this;
+    }
+
+    /**
+     * Get minuteRate
+     *
+     * @return string 
+     */
+    public function getMinuteRate()
+    {
+        return $this->minuteRate;
+    }
+
+    /**
+     * Set modelShare
+     *
+     * @param string $modelShare
+     * @return ConversationInterval
+     */
+    public function setModelShare($modelShare)
+    {
+        $this->modelShare = $modelShare;
+
+        return $this;
+    }
+
+    /**
+     * Get modelShare
+     *
+     * @return string 
+     */
+    public function getModelShare()
+    {
+        return $this->modelShare;
+    }
+
+    /**
+     * Set modelEarnings
+     *
+     * @param float $modelEarnings
+     * @return ConversationInterval
+     */
+    public function setModelEarnings($modelEarnings)
+    {
+        $this->modelEarnings = $modelEarnings;
+
+        return $this;
+    }
+
+    /**
+     * Get modelEarnings
+     *
+     * @return float
+     */
+    public function getModelEarnings()
+    {
+        return $this->modelEarnings;
     }
 }

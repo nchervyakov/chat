@@ -33,20 +33,21 @@ class ConversationService extends ContainerAware
         $conn = $this->container->get('doctrine')->getConnection();
         try {
             $conn->beginTransaction();
+
             $conversation->addMessage($message);
             $message->setConversation($conversation);
 
             $interval = $this->getActiveInterval($conversation);
-            dump($interval->calculateIntervalSeconds());
-
             $interval->addMessage($message);
             $message->setInterval($interval);
-            dump($interval->calculateIntervalSeconds());
             $interval->setSeconds($interval->calculateIntervalSeconds());
+            $this->estimateInterval($interval);
+
             $conn->commit();
 
         } catch (\Exception $e) {
             $conn->rollBack();
+            throw new \ErrorException("Cannot add new message", 0, 1, __FILE__, __LINE__, $e);
         }
     }
 
@@ -65,8 +66,46 @@ class ConversationService extends ContainerAware
             $em->persist($interval);
             $conversation->addInterval($interval);
             $interval->setConversation($conversation);
+            $this->estimateInterval($interval);
         }
 
         return $interval;
+    }
+
+    /**
+     * @param Conversation $conversation
+     */
+    public function estimateConversation(Conversation $conversation)
+    {
+        foreach ($conversation->getIntervals() as $interval) {
+            $this->estimateInterval($interval);
+        }
+    }
+
+    /**
+     * @param ConversationInterval $interval
+     * @throws \ErrorException
+     */
+    public function estimateInterval(ConversationInterval $interval)
+    {
+        $rate = (float) $this->container->getParameter('payment.minute_rate');
+        $modelShare = (float) $this->container->getParameter('payment.model_share');
+
+        if ($interval->getStatus() != ConversationInterval::STATUS_PAYED) {
+            $interval->setPrice($interval->getSeconds() / 60 * $rate);
+            $interval->setMinuteRate($rate);
+            $interval->setModelShare($modelShare);
+            $interval->setModelEarnings($interval->getPrice() * $modelShare);
+        }
+    }
+
+    /**
+     * @param Conversation[] $conversations
+     */
+    public function estimateConversations($conversations)
+    {
+        foreach ($conversations as $conversation) {
+            $this->estimateConversation($conversation);
+        }
     }
 }

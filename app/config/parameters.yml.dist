@@ -35,3 +35,6 @@ parameters:
     oauth.github.client_id:         3b5ba3b3e9ea992aa7cb
     oauth.github.client_secret:     a1ae774bd4f6a309ce7dd73707dc5f14e5b48e9d
 
+    payment.minute_rate:            2
+    payment.model_share:            0.7
+
