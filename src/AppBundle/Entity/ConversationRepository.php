@@ -19,10 +19,10 @@ class ConversationRepository extends EntityRepository
      */
     public function getByUsers(User $user1, User $user2)
     {
-        list($id1, $id2) = $this->sortUserIds($user1, $user2);
+        list($client, $model) = $this->reorderUsersByRoles($user1, $user2);
         return $this->findOneBy([
-            'user1' => $id1,
-            'user2' => $id2
+            'client' => $client,
+            'model' => $model
         ]);
     }
 
@@ -33,12 +33,12 @@ class ConversationRepository extends EntityRepository
      */
     public function createByUsers(User $user1, User $user2)
     {
-        $sortedUsers = $this->sortUsers($user1, $user2);
+        $sortedUsers = $this->reorderUsersByRoles($user1, $user2);
 
         try {
             $conversation = new Conversation();
-            $conversation->setUser1($sortedUsers[0]);
-            $conversation->setUser2($sortedUsers[1]);
+            $conversation->setClient($sortedUsers[0]);
+            $conversation->setModel($sortedUsers[1]);
             return $conversation;
 
         } catch (\Exception $e) {
@@ -65,26 +65,10 @@ class ConversationRepository extends EntityRepository
     /**
      * @param User $user1
      * @param User $user2
-     * @return array
-     */
-    protected function sortUserIds(User $user1, User $user2)
-    {
-        $sortedUsers = $this->sortUsers($user1, $user2);
-        return [$sortedUsers[0]->getId(), $sortedUsers[1]->getId()];
-    }
-
-    /**
-     * @param User $user1
-     * @param User $user2
      * @return array|User[]
      */
-    protected function sortUsers(User $user1, User $user2)
+    protected function reorderUsersByRoles(User $user1, User $user2)
     {
-        if ($user1->getId() < $user2->getId()) {
-            return [$user1, $user2];
-
-        } else {
-            return [$user2, $user1];
-        }
+        return $user1->hasRole('ROLE_CLIENT') ? [$user1, $user2] : [$user2, $user1];
     }
 }

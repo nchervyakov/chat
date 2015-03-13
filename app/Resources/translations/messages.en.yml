@@ -55,3 +55,4 @@ stat_page:
     paid_time: 'Paid Time'
     earned_money: 'Earned'
     got_money: 'Got'
+no_stat_available: 'No statistics yet.'

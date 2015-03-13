@@ -33,7 +33,7 @@ class ConversationInterval
     /**
      * @var Conversation
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Conversation", inversedBy="intervals")
-     * @ORM\JoinColumn(name="conversation_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="conversation_id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $conversation;
 
@@ -45,7 +45,7 @@ class ConversationInterval
 
     /**
      * @var Message[]|Collection<Message>
-     * @ORM\OneToMany(targetEntity="Message", mappedBy="interval")
+     * @ORM\OneToMany(targetEntity="Message", mappedBy="interval", cascade={"remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"dateAdded" = "ASC"})
      */
     private $messages;
@@ -53,7 +53,7 @@ class ConversationInterval
     /**
      * @var ConversationInterval
      * @ORM\OneToOne(targetEntity="AppBundle\Entity\ConversationInterval")
-     * @ORM\JoinColumn(name="previous_interval_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="previous_interval_id", referencedColumnName="id", onDelete="SET NULL")
      */
     private $previousInterval;
 

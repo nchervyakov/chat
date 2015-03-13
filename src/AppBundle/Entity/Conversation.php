@@ -6,13 +6,14 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints as DoctrineConstraints;
+use Symfony\Component\Validator\Constraints\CardScheme;
 
 /**
  * Conversation
  *
  * @ORM\Table(name="conversations",
  *      uniqueConstraints={
- *          @ORM\UniqueConstraint(columns={"user1_id", "user2_id"})
+ *          @ORM\UniqueConstraint(columns={"client_id", "model_id"})
  *      }
  * )
  * @ORM\Entity(repositoryClass="AppBundle\Entity\ConversationRepository")
@@ -30,32 +31,31 @@ class Conversation
     private $id;
 
     /**
-     * Initiator of the conversation.
+     * Client user.
      * @var User
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
-     * @ORM\JoinColumn(name="user1_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="client_id", referencedColumnName="id")
      */
-    protected $user1;
+    protected $client;
 
     /**
-     * Acceptor (target user) of the conversation.
+     * Model user.
      * @var User
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
-     * @ORM\JoinColumn(name="user2_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="model_id", referencedColumnName="id")
      */
-    protected $user2;
+    protected $model;
 
     /**
      * @var Collection|array|Message[]
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Message", mappedBy="conversation")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Message", mappedBy="conversation", cascade={"remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"dateAdded" = "ASC"})
      */
     protected $messages;
 
     /**
      * @var ConversationInterval[]|array|Collection
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\ConversationInterval", mappedBy="conversation")
-     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\ConversationInterval", mappedBy="conversation", cascade={"remove"}, orphanRemoval=true)
      */
     protected $intervals;
 
@@ -100,33 +100,33 @@ class Conversation
     /**
      * @return User
      */
-    public function getUser1()
+    public function getClient()
     {
-        return $this->user1;
+        return $this->client;
     }
 
     /**
-     * @param User $user1
+     * @param User $client
      */
-    public function setUser1($user1)
+    public function setClient(User $client = null)
     {
-        $this->user1 = $user1;
+        $this->client = $client;
     }
 
     /**
      * @return User
      */
-    public function getUser2()
+    public function getModel()
     {
-        return $this->user2;
+        return $this->model;
     }
 
     /**
-     * @param User $user2
+     * @param User $model
      */
-    public function setUser2($user2)
+    public function setModel(User $model = null)
     {
-        $this->user2 = $user2;
+        $this->model = $model;
     }
 
     /**
@@ -279,22 +279,6 @@ class Conversation
     public function getLastMessageDate()
     {
         return $this->lastMessageDate;
-    }
-
-    /**
-     * @return User|null
-     */
-    public function getClient()
-    {
-        if ($this->user1 && $this->user1->hasRole('ROLE_CLIENT')) {
-            return $this->user1;
-
-        } else if ($this->user2 && $this->user2->hasRole('ROLE_CLIENT')) {
-            return $this->user2;
-
-        } else {
-            return null;
-        }
     }
 
     /**

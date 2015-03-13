@@ -35,7 +35,7 @@ class ChatController extends Controller
         $params = ['user' => $user];
 
         $userRepo = $this->getDoctrine()->getRepository('AppBundle:User');
-        $params['friends'] = $userRepo->findUserFriends($user);
+        $params['companions'] = $userRepo->findUserCompanions($user);
 
         return $this->render(':Chat:index.html.twig', $params);
     }
@@ -56,7 +56,7 @@ class ChatController extends Controller
         $params = [
             'user' => $user,
             'companion' => $companion,
-            'friends' => [$companion]
+            'companions' => [$companion]
         ];
 
         $conversation = $this->getDoctrine()->getRepository('AppBundle:Conversation')->getByUsers($user, $companion);
@@ -67,7 +67,7 @@ class ChatController extends Controller
         }
 
         $userRepo = $this->getDoctrine()->getRepository('AppBundle:User');
-        $params['friends'] = array_merge($params['friends'], $userRepo->findUserFriends($user, $companion));
+        $params['companions'] = array_merge($params['companions'], $userRepo->findUserCompanions($user, $companion));
 
         return $this->render(':Chat:index.html.twig', $params);
     }

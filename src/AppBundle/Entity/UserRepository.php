@@ -50,7 +50,7 @@ class UserRepository extends EntityRepository
      * @param User $companion
      * @return User[]
      */
-    public function findUserFriends(User $user, User $companion = null)
+    public function findUserCompanions(User $user, User $companion = null)
     {
         /** @var User[] $result */
         $result = $this->createUserFriendsQueryBuilder($user, $companion)->getQuery()->execute();
@@ -71,24 +71,23 @@ class UserRepository extends EntityRepository
     public function createUserFriendsQueryBuilder(User $user, User $companion = null)
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $expr = $qb->expr();
-        $qb->select('u1, u2')
-            ->distinct(true)
-            ->from('AppBundle\\Entity\\Conversation', 'c')
-            ->leftJoin('AppBundle\\Entity\\User', 'u1', Join::WITH, 'c.user1 = u1')
-            ->leftJoin('AppBundle\\Entity\\User', 'u2', Join::WITH, 'c.user2 = u2')
-            ->where($expr->andX(
-                $expr->orX('u1 = :user', 'u2 = :user')
-            ))
+
+        if ($user->hasRole('ROLE_CLIENT')) {
+            list($field, $oppositeField) = ['c.model', 'c.client'];
+
+        } else {
+            list($field, $oppositeField) = ['c.client', 'c.model'];
+        }
+
+        $qb->select('u')
+            ->from('AppBundle:Conversation', 'c')
+            ->join('AppBundle:User', 'u', Join::WITH, $field . ' = u')
+            ->where($oppositeField . ' = :user')
             ->orderBy('c.lastMessageDate', 'DESC')
-            ->setParameter('user', $user)
-        ;
+            ->setParameter('user', $user);
 
         if ($companion) {
-            $qb->andWhere($expr->not($expr->orX(
-                $expr->andX('u1 = :user', 'u2 = :companion'),
-                $expr->andX('u1 = :companion', 'u2 = :user')
-            )))->setParameter('companion', $companion);
+            $qb->andWhere($field . ' != :companion')->setParameter('companion', $companion);
         }
 
         return $qb;
@@ -101,22 +100,18 @@ class UserRepository extends EntityRepository
      */
     public function createUserConversationsQueryBuilder(User $user, User $companion = null)
     {
+        $field = $user->hasRole('ROLE_CLIENT') ? 'c.client' : 'c.model';
+
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $expr = $qb->expr();
         $qb->select('c')
             ->from('AppBundle\\Entity\\Conversation', 'c')
-            ->where($expr->andX(
-                $expr->orX('c.user1 = :user', 'c.user2 = :user')
-            ))
+            ->where($field . ' = :user')
             ->orderBy('c.lastMessageDate', 'DESC')
             ->setParameter('user', $user)
         ;
 
         if ($companion) {
-            $qb->andWhere($expr->not($expr->orX(
-                $expr->andX('c.user1 = :user', 'c.user2 = :companion'),
-                $expr->andX('c.user1 = :companion', 'c.user2 = :user')
-            )))->setParameter('companion', $companion);
+            $qb->andWhere($field . ' != :companion')->setParameter('companion', $companion);
         }
         return $qb;
     }

@@ -32,7 +32,7 @@ abstract class Message
     /**
      * @var Conversation
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Conversation", inversedBy="messages")
-     * @ORM\JoinColumn(name="conversation_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="conversation_id", referencedColumnName="id", onDelete="CASCADE")
      * @Serialize\MaxDepth(0)
      */
     private $conversation;
