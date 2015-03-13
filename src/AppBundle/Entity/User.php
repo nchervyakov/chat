@@ -3,6 +3,7 @@ namespace AppBundle\Entity;
 
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use FOS\UserBundle\Model\GroupInterface;
 use FOS\UserBundle\Model\User as BaseUser;
@@ -146,12 +147,19 @@ class User extends BaseUser
     private $thumbnail;
 
     /**
+     * @var Collection|UserPhoto[]
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\UserPhoto", mappedBy="owner")
+     */
+    private $photos;
+
+    /**
      * Constructor
      */
     public function __construct()
     {
         parent::__construct();
         $this->groups = new ArrayCollection();
+        $this->photos = new ArrayCollection();
         $this->setDateAdded(new \DateTime());
     }
 
@@ -543,5 +551,38 @@ class User extends BaseUser
         $now = new \DateTime();
         $diff = $now->diff($this->dateOfBirth);
         return $diff->format('%Y');
+    }
+
+    /**
+     * Add photos
+     *
+     * @param UserPhoto $photos
+     * @return User
+     */
+    public function addPhoto(UserPhoto $photos)
+    {
+        $this->photos[] = $photos;
+
+        return $this;
+    }
+
+    /**
+     * Remove photos
+     *
+     * @param UserPhoto $photos
+     */
+    public function removePhoto(UserPhoto $photos)
+    {
+        $this->photos->removeElement($photos);
+    }
+
+    /**
+     * Get photos
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPhotos()
+    {
+        return $this->photos;
     }
 }

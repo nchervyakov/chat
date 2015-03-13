@@ -24,10 +24,12 @@ class AppKernel extends Kernel
             new FOS\UserBundle\FOSUserBundle(),
             new FOS\JsRoutingBundle\FOSJsRoutingBundle(),
             new JMS\AopBundle\JMSAopBundle(),
-            new JMS\SerializerBundle\JMSSerializerBundle(),
-            new JMS\DiExtraBundle\JMSDiExtraBundle($this),
-            new JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),
+            //new JMS\SerializerBundle\JMSSerializerBundle(),
+            //new JMS\DiExtraBundle\JMSDiExtraBundle($this),
+            //new JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),
             new Hautelook\AliceBundle\HautelookAliceBundle(),
+            new Vich\UploaderBundle\VichUploaderBundle(),
+            new Liip\ImagineBundle\LiipImagineBundle(),
             new AppBundle\AppBundle(),
         );
 

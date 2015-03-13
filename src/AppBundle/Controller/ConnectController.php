@@ -50,7 +50,7 @@ class ConnectController extends \HWI\Bundle\OAuthBundle\Controller\ConnectContro
             ->getResourceOwnerByName($error->getResourceOwnerName())
             ->getUserInformation($error->getRawToken())
         ;
-        dump($userInformation);
+
         // enable compatibility with FOSUserBundle 1.3.x and 2.x
         if (interface_exists('FOS\UserBundle\Form\Factory\FactoryInterface')) {
             $form = $this->container->get('hwi_oauth.registration.form.factory')->createForm();

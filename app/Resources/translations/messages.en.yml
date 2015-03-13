@@ -28,6 +28,12 @@ profile:
     show:
         title: 'Profile'
     title: 'Profile'
+    photos:
+        edit_photos: 'Edit photos'
+        no_photos: 'You do not have any photos yet.'
+        add_photo: 'Add photo'
+        add: 'Add'
+        successfully_added_photo: 'Your photo was successfully added.'
 login:
     title: 'Log In'
 stat: 'Statistics'
@@ -56,3 +62,10 @@ stat_page:
     earned_money: 'Earned'
     got_money: 'Got'
 no_stat_available: 'No statistics yet.'
+user:
+    page_title: 'User'
+    age: 'Age'
+chat_with_model: 'Chat with %model%'
+user_page:
+    about: 'About'
+title: 'Title'

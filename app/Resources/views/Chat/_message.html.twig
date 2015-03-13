@@ -5,7 +5,7 @@
 {% endif %}
 <li class="{{ orientation }} clearfix js-message" data-id="{{ message.id }}">
     <span class="chat-img pull-{{ orientation }}">
-        <img src="{%- if message.author.thumbnail -%}/uploads/photo/{{ message.author.thumbnail }}
+        <img src="{%- if message.author.thumbnail -%}{{ ('/uploads/photo/' ~ message.author.thumbnail)|imagine_filter('user_message_thumb') }}
             {%- else -%}http://placehold.it/50/55C1E7/fff&text=U{%- endif -%}"
              alt="{{ message.author.fullName }}" class="img-circle message-avatar"/>
     </span>
@@ -13,7 +13,8 @@
     <div class="chat-body clearfix">
         <div class="header">
             {% if message.author == app.user %}
-                <strong class="primary-font">{{ message.author.fullName }}</strong>
+                <strong class="primary-font"><a href="{{ path('user_show', {'user_id': message.author.id}) }}"
+                            >{{ message.author.fullName }}</a></strong>
                 <small class="pull-right text-muted">
                     <span class="glyphicon glyphicon-time"></span>{{ message.dateAdded|date("F jS \\a\\t G:i") }}
                 </small>
@@ -21,7 +22,8 @@
                 <small class="text-muted">
                     <span class="glyphicon glyphicon-time"></span>{{ message.dateAdded|date("F jS \\a\\t G:i") }}
                 </small>
-                <strong class="primary-font pull-right">{{ message.author.fullName }}</strong>
+                <strong class="primary-font pull-right"><a href="{{ path('user_show', {'user_id': message.author.id}) }}"
+                            >{{ message.author.fullName }}</a></strong>
             {% endif %}
         </div>
         <p>{{ message.content|replace("\n", "<br>") }}</p>

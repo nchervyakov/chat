@@ -4,7 +4,9 @@ profile:
         lastName: 'Last Name'
     edit:
         legend: 'Profile'
+        photos: 'Edit photos'
     edit_link: 'Edit profile'
+    photos_link: 'Edit photos'
 Profile: 'Profile'
 registration:
     legend: 'Registration'

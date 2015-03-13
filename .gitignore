@@ -9,3 +9,5 @@ app/bootstrap.php.cache
 app/config/parameters.yml
 !web/uploads/photo/.gitkeep
 web/uploads/photo/*
+web/media/cache/*
+!web/media/cache/.gitkeep

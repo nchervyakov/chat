@@ -24,13 +24,13 @@
                 <h3>{{ 'your_friends'|trans }}</h3>
                 {% if companions %}
                     <ul class="friend-list">
-                    {% for friend in companions %}
+                    {% for companion in companions %}
                         <li class="friend">
-                            <a href="{{ path('chat_show', {"companion_id": friend.id}) }}" class="clearfix">
+                            <a href="{{ path('chat_show', {"companion_id": companion.id}) }}" class="clearfix">
                                 <span class="photo">
-                                    <img src="/uploads/photo/{{ friend.thumbnail }}" alt="{{ friend.fullName }}"/>
+                                    <img src="{{ ('/uploads/photo/' ~ companion.thumbnail)|imagine_filter('user_message_thumb') }}" alt="{{ companion.fullName }}"/>
                                 </span>
-                                <span class="description">{{ friend.fullName }}, {{ friend.age }}</span>
+                                <span class="description">{{ companion.fullName }}, {{ companion.age }}</span>
                             </a>
                         </li>
                     {% endfor %}

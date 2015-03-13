@@ -36,6 +36,9 @@ twig:
 #    form:
 #        #resources: ['bootstrap_3_layout.html.twig']
 #        resources: ['bootstrap_3_horizontal_layout.html.twig']
+    form_themes:
+        # other form themes
+        - 'VichUploaderBundle:Form:fields.html.twig'
 
 # Assetic Configuration
 assetic:
@@ -190,25 +193,26 @@ fos_js_routing:
         - chat_add_message
         - chat_show
         - chat_get_new_messages
+        - user_show
 #        - fos_user_registration_register
 
 knp_menu:
 #    twig:
 #        template: AppBundle:Default:knp_menu.html.twig
 
-jms_di_extra:
-    locations:
-        all_bundles: false
-        bundles: [ AppBundle ]
-        directories: ["%kernel.root_dir%/../src"]
-
-    automatic_controller_injections:
-        properties:
-            request: "@request"
-            router: "@router"
-
-        method_calls:
-            setRouter: ["@router"]
+#jms_di_extra:
+#    locations:
+#        all_bundles: false
+#        bundles: [ AppBundle ]
+#        directories: ["%kernel.root_dir%/../src"]
+#
+#    automatic_controller_injections:
+#        properties:
+#            request: "@request"
+#            router: "@router"
+#
+#        method_calls:
+#            setRouter: ["@router"]
 
 hautelook_alice:
     locale: en_US   # default
@@ -225,30 +229,60 @@ knp_paginator:
         pagination: KnpPaginatorBundle:Pagination:twitter_bootstrap_v3_pagination.html.twig     # sliding pagination controls template
         sortable: KnpPaginatorBundle:Pagination:sortable_link.html.twig # sort link template
 
-jms_security_extra:
-    # Whether you want to secure all services (true), or only secure specific
-    # services (false); see also below
-    secure_all_services: false
+vich_uploader:
+    db_driver: orm # or mongodb or propel or phpcr
+    mappings:
+        user_image:
+            uri_prefix:         /uploads/photo
+            upload_destination: %kernel.root_dir%/../web/uploads/photo
+            inject_on_load:     false
+            delete_on_update:   true
+            delete_on_remove:   true
 
-    # Enabling this setting will add an additional special attribute "ROLE_IDDQD".
-    # Anybody with this attribute will effectively bypass all security checks.
-    enable_iddqd_attribute: false
+#jms_security_extra:
+#    # Whether you want to secure all services (true), or only secure specific
+#    # services (false); see also below
+#    secure_all_services: false
+#
+#    # Enabling this setting will add an additional special attribute "ROLE_IDDQD".
+#    # Anybody with this attribute will effectively bypass all security checks.
+#    enable_iddqd_attribute: false
+#
+#    # Enables expression language
+#    expressions: true
+#
+#    # Allows you to disable some, or all built-in voters
+#    voters:
+#        disable_authenticated: false
+#        disable_role:          false
+#        disable_acl:           false
+#
+#    # Allows you to specify access control rules for specific methods, such
+#    # as controller actions
+#    method_access_control: { }
+#
+#    util:
+#        secure_random:
+##            connection: # the doctrine connection name
+#            table_name: seed_table
+##            seed_provider: # service id of your own seed provider implementation
 
-    # Enables expression language
-    expressions: true
+liip_imagine:
+    resolvers:
+       default:
+          web_path: ~
 
-    # Allows you to disable some, or all built-in voters
-    voters:
-        disable_authenticated: false
-        disable_role:          false
-        disable_acl:           false
-
-    # Allows you to specify access control rules for specific methods, such
-    # as controller actions
-    method_access_control: { }
-
-    util:
-        secure_random:
-#            connection: # the doctrine connection name
-            table_name: seed_table
-#            seed_provider: # service id of your own seed provider implementation
+    filter_sets:
+        cache: ~
+        user_photo_thumb:
+            quality: 75
+            filters:
+                thumbnail: { size: [252, 196], mode: outbond }
+        user_photo_big:
+            quality: 75
+            filters:
+                thumbnail: { size: [800, 600], mode: outbond, allow_upscale: true }
+        user_message_thumb:
+            quality: 75
+            filters:
+                thumbnail: { size: [52, 52], mode: outbond }

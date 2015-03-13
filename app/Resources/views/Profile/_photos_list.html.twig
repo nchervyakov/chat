@@ -1,0 +1,14 @@
+<div class="row user-photos">
+    {% for photo in photos %}
+        <div class="col-sm-6 col-md-3 user-photo">
+            <div class="thumbnail">
+                <a href="{{ vich_uploader_asset(photo, 'file')|imagine_filter('user_photo_big') }}">
+                    <div class="img-wrapper">
+                        <img src="{{ vich_uploader_asset(photo, 'file')|imagine_filter('user_photo_thumb') }}" alt="{{ photo.title }}">
+                    </div>
+                    <div class="caption">{{ photo.title }}</div>
+                </a>
+            </div>
+        </div>
+    {% endfor %}
+</div>
