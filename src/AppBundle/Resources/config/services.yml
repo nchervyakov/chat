@@ -44,3 +44,11 @@ services:
         calls:
             - [setContainer, ["@service_container"]]
 
+    app.downloader:
+        class: AppBundle\Http\Downloader
+
+    app.user_manager:
+        class: AppBundle\User\UserManager
+        calls:
+            - [setContainer, ["@service_container"]]
+

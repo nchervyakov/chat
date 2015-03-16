@@ -3,8 +3,11 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\User;
+use AppBundle\Entity\UserPhoto;
+use Buzz\Browser;
 use HWI\Bundle\OAuthBundle\Security\Core\Exception\AccountNotLinkedException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -71,6 +74,10 @@ class ConnectController extends \HWI\Bundle\OAuthBundle\Controller\ConnectContro
             } else {
                 $user->addRole(User::ROLE_MODEL);
                 $redirectUrl = $this->generate('stat_index');
+            }
+
+            if ($userInformation->getProfilePicture()) {
+                $this->container->get('app.user_manager')->downloadProfilePicture($user, $userInformation->getProfilePicture());
             }
 
             $this->container->get('doctrine')->getManager()->flush();

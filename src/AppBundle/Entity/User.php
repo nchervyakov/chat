@@ -160,6 +160,9 @@ class User extends BaseUser
         parent::__construct();
         $this->groups = new ArrayCollection();
         $this->photos = new ArrayCollection();
+        $birthDay = new \DateTime();
+        $birthDay->modify('- 20 years');
+        $this->setDateOfBirth($birthDay);
         $this->setDateAdded(new \DateTime());
     }
 

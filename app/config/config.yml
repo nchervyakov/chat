@@ -3,6 +3,9 @@ imports:
     - { resource: security.yml }
     - { resource: services.yml }
 
+parameters:
+    hwi_oauth.registration.form.handler.fosub_bridge.class: AppBundle\Form\FOSUBRegistrationFormHandler
+
 framework:
     #esi:             ~
     translator:      { fallbacks: ["%locale%"] }

@@ -43,6 +43,7 @@ class ProfileController extends Controller
     /**
      * @Route("/add-photo", name="profile_add_photo", methods={"POST"})
      * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function addPhotoAction(Request $request)
     {
@@ -66,12 +67,7 @@ class ProfileController extends Controller
             $em->flush();
 
             // Pregenerate thumbs
-            $vich = $this->get('vich_uploader.templating.helper.uploader_helper');
-            $imagine = $this->get('liip_imagine.cache.manager');
-            $relativePath = $vich->asset($photo, 'file');
-            $imagine->getBrowserPath($relativePath, 'user_photo_thumb');
-            $imagine->getBrowserPath($relativePath, 'user_photo_big');
-            $imagine->getBrowserPath($relativePath, 'user_message_thumb');
+            $this->get('app.user_manager')->pregeneratePhotoThumbs($photo);
 
             $this->get('session')->getFlashBag()->add('success', 'profile.photos.successfully_added_photo');
             return $this->redirect($this->generateUrl('profile_photos'));
