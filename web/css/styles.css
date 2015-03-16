@@ -169,6 +169,15 @@ body {
     text-align: center;
 }
 
+.user-photos .thumbnail img {
+    max-width: 100%;
+}
+
 .footer {
     padding-top: 30px;
+}
+
+.blueimp-gallery > .indicator > li {
+    width: 32px;
+    height: 32px;
 }

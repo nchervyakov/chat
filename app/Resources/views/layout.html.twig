@@ -12,29 +12,23 @@
 {% block stylesheets %}
     {{ parent() }}
 
-    {#'bundles/app/css/jquery-ui/smoothness/jquery-ui-1.10.4.custom.css'#}
-    {#'bundles/app/vendor/fancybox/jquery.fancybox-1.3.1.css'#}
-    {#'bundles/app/vendor/priceselector/nouislider.css'#}
-    {#'bundles/app/vendor/priceselector/noUiFox.css'#}
-    {#'bundles/app/css/main.css'#}
-    {#'bundles/app/css/login-tab.css'#}
-    {#'bundles/app/css/error.css'#}
-    {#'bundles/app/css/pagination.css'#}
     {% stylesheets
         'css/bootstrap.css'
-        'css/styles.css'
         filter='cssrewrite'
         output='css/compiled/*.css'
     %}
         <link rel="stylesheet" href="{{ asset_url }}"/>
     {% endstylesheets %}
 
-    {#'bundles/app/vendor/fancybox/jquery.fancybox-1.3.1.ie.css'#}
+    {% block plugin_css %}
+    {% endblock %}
+
     {% stylesheets
+        'css/styles.css'
         filter='cssrewrite'
         output='css/compiled/*.css'
     %}
-        <!--[if lt IE 8]><link rel="stylesheet" href="{{ asset_url }}"/> <![endif]-->
+        <link rel="stylesheet" href="{{ asset_url }}"/>
     {% endstylesheets %}
 {% endblock %}
 
@@ -83,6 +77,9 @@
         <script type="text/javascript" src="{{ asset_url }}"></script>
     {% endjavascripts %}
     <script type="text/javascript" src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
+
+    {# Contains different plugins which are used in application.js #}
+    {% block jsplugins %}{% endblock %}
 
     {% javascripts
         'js/tools.js'

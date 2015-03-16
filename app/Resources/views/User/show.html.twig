@@ -3,6 +3,32 @@
 {% block title user.fullName %}
 {% block page_title_text user.fullName %}
 
+{% block plugin_css %}
+    {{ parent() }}
+
+    {% stylesheets
+        'css/blueimp-gallery.min.css'
+        'css/bootstrap-image-gallery.min.css'
+        filter='cssrewrite'
+        output='css/compiled/*.css'
+    %}
+        <link rel="stylesheet" href="{{ asset_url }}"/>
+    {% endstylesheets %}
+{% endblock %}
+
+{% block jsplugins %}
+    {{ parent() }}
+
+    {% javascripts
+        'js/vendor/jquery.blueimp-gallery.min.js'
+        'js/vendor/blueimp-gallery-fullscreen.js'
+        'js/vendor/bootstrap-image-gallery.min.js'
+        output='js/compiled/*.js'
+    %}
+        <script type="text/javascript" src="{{ asset_url }}" defer="defer"></script>
+    {% endjavascripts %}
+{% endblock %}
+
 {% block page %}
     {{ parent() }}
 
@@ -20,4 +46,8 @@
             <p>{{ 'user.age'|trans }}: {{ user.age }}</p>
         </div>
     </div>
+{% endblock %}
+
+{% block gallery_template %}
+    {{ include(':Common:gallery_widget.html.twig') }}
 {% endblock %}
