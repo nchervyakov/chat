@@ -30,22 +30,34 @@ class SearchController extends Controller
     {
         $page = $request->query->getInt('page', 1);
 
-        $modelSearch = new ModelSearch();
-        $form = $this->get('form.factory')->createNamedBuilder('s', new ModelSearchFormType(), $modelSearch, [
+        // Try to fetch saved to session search parameters
+        if ($model = $this->get('session')->get('search.model')) {
+            $modelSearchModel = $model;
+
+        } else {
+            $modelSearchModel = new ModelSearch();
+        }
+
+        $form = $this->get('form.factory')->createNamedBuilder('s', new ModelSearchFormType(), $modelSearchModel, [
             'method' => 'GET',
             'action' => $this->generateUrl('search_index'),
         ])->getForm();
 
         $form->handleRequest($request);
-
         $data = ['form' => $form->createView()];
 
         if (!$form->isSubmitted() || $form->isValid()) {
+            if ($form->isSubmitted()) {
+                // Save requested search parameters to session
+                $this->get('session')->set('search.model', $modelSearchModel);
+            }
+
             $repo = $this->getDoctrine()->getRepository('AppBundle:User');
-            $qb = $repo->prepareQueryBuilderForModelSearch($modelSearch);
+            $qb = $repo->prepareQueryBuilderForModelSearch($modelSearchModel);
             $paginator = $this->get('knp_paginator');
             $pagination = $paginator->paginate($qb, $page, self::PER_PAGE);
             $data['pagination'] = $pagination;
+
         }
 
         return $this->render('Search/index.html.twig', $data);
