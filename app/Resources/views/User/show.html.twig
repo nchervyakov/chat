@@ -1,7 +1,10 @@
 {% extends '::layout.html.twig' %}
 
 {% block title user.fullName %}
-{% block page_title_text user.fullName %}
+{% block page_title_text %}
+    {{ user.fullName }}
+    <small>(<a href="{{ path('chat_show', {'companion_id': user.id}) }}">chat</a>)</small>
+{% endblock %}
 
 {% block plugin_css %}
     {{ parent() }}
