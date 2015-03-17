@@ -1,3 +1,9 @@
+AppBundle\Entity\UserPhoto:
+    photo{1..200}:
+        owner:              @user<current()>
+        title:              <text(40)>
+        fileName:           <uploadPhoto(null, 'web/uploads/photo', 640, 480, null, false)>
+
 AppBundle\Entity\User:
     user{1..200}:
         username (unique):  <email()>
@@ -28,4 +34,5 @@ AppBundle\Entity\User:
         dateAdded:          <dateTimeBetween('-3 years', 'now')>
         dateUpdated:        <dateTimeBetween($dateAdded, 'now')>
         order:              <current()>
-        thumbnail:          50%? <imageEx('web/uploads/photo', 348, 348, null, false)>
+        addPhoto:           [@photo<current()>]
+#        thumbnail:          50%? <imageEx('web/uploads/photo', 348, 348, null, false)>

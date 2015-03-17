@@ -41,9 +41,9 @@ class UserPhoto
 
     /**
      * @var string
-     * @ORM\Column(name="file_name", type="string", length=255)
+     * @ORM\Column(name="file_name", type="string", length=255, options={"default": ""})
      */
-    private $fileName;
+    private $fileName = '';
 
     /**
      * @var string
@@ -95,6 +95,10 @@ class UserPhoto
      */
     public function setFile($file)
     {
+        if ($file !== $this->file) {
+            $this->dateUpdated = new \DateTime();
+        }
+
         $this->file = $file;
 
         return $this;

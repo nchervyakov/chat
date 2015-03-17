@@ -10,8 +10,10 @@ namespace AppBundle\DataFixtures\ORM;
 
 
 use AppBundle\Entity\User;
+use AppBundle\Entity\UserPhoto;
 use Faker\Provider\Image;
 use Hautelook\AliceBundle\Alice\DataFixtureLoader;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Class FixtureLoader
@@ -73,7 +75,7 @@ class FixtureLoader extends DataFixtureLoader
         return implode('/', [realpath(__DIR__.'/../../../../'), $path]);
     }
 
-    public static function imageEx($dir = 'web/uploads', $width = 640, $height = 480, $category = null, $fullPath = true)
+    public function imageEx($dir = 'web/uploads', $width = 640, $height = 480, $category = null, $fullPath = true)
     {
         // Validate directory path
         if (!is_dir($dir) || !is_writable($dir)) {
@@ -114,5 +116,21 @@ class FixtureLoader extends DataFixtureLoader
         }
 
         return $fullPath ? $filepath : $filename;
+    }
+
+    public function uploadPhoto(User $owner = null, $dir = 'web/uploads', $width = 640, $height = 480, $category = null, $fullPath = true)
+    {
+        $imagePath = $this->imageEx($dir, $width, $height, $category, $fullPath);
+
+        if ($imagePath) {
+            $userPhoto = new UserPhoto();
+            $uploadedFile = new UploadedFile($dir . '/' . $imagePath, $imagePath, null, null, null, true);
+            $userPhoto->setFile($uploadedFile);
+            $this->container->get('vich_uploader.upload_handler')->upload($userPhoto, 'file');
+            $this->container->get('app.user_manager')->pregeneratePhotoThumbs($userPhoto);
+            return $userPhoto->getFileName();
+        }
+
+        return null;
     }
 }

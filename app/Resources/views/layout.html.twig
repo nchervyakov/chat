@@ -3,8 +3,6 @@
 {% block meta %}
     {{ parent() }}
 
-    {#<meta name="tweetmeme-title" content="{# SiteMeta #-}" />#}
-    {# <meta name="google-site-verification" content="{# { google_site_verification_code }" />#}
     <meta name="author" content="{{ developer_name }}, {{ developer_email }}">
     <meta name="web_author" content="{{ developer_name }}, {{ developer_email }}">
 {% endblock %}
@@ -52,14 +50,6 @@
         <script src="{{ asset_url }}"></script>
     {% endjavascripts %}
 
-    {#'bundles/app/js/vendor/moment.min.js'#}
-    {#'bundles/app/js/vendor/jquery.autocomplete.js'#}
-    {#'bundles/app/vendor/fancybox/jquery.easing-1.3.pack.js'#}
-    {#'bundles/app/js/vendor/jquery.mousewheel.js'#}
-    {#'bundles/app/vendor/fancybox/jquery.fancybox-1.3.1.js'#}
-    {#'bundles/app/js/vendor/q.js'#}
-    {#'bundles/app/jquery/jquery.form.js'#}
-
     {% javascripts
         'js/vendor/bootstrap.min.js'
         'js/vendor/can.custom.min.js'
@@ -98,7 +88,15 @@
             {% if app.user is not null %}
                 <div class="collapse navbar-collapse pull-right">
                     <ul class="nav navbar-nav">
-                        <li class="first">
+                        {% if app.user.thumbnail is not null and app.user.thumbnail.fileName %}
+                            <li>
+                                <a href="{{ path("fos_user_profile_show") }}" class="user-photo-link">
+                                    <img src="{{ vich_uploader_asset(app.user.thumbnail, 'file', 'AppBundle\\Entity\\UserPhoto')
+                                    | imagine_filter('user_message_thumb') }}" alt="" title=""{{ app.user.fullName }} />
+                                </a>
+                            </li>
+                        {% endif %}
+                        <li>
                             <a href="{{ path("fos_user_profile_show") }}">{{ app.user.fullName }}</a>
                         </li>
                         <li class="last"><a href="{{ path('fos_user_security_logout') }}">{{ 'Logout'|trans }}</a></li>
@@ -122,15 +120,15 @@
     </div>
 
     <div class="container main-content">
-        {# % block breadcrumbs %}
-            <!--breadcumb here  -->
+        {% block breadcrumbs %}
+            {#<!--breadcumb here  -->
             <div class="breadcrumbs">
                 <ul>
                     <li><a href="{{ path('homepage') }}">{% trans %}Home{% endtrans %} </a> / </li>
                     <li>{% trans %}My Account{% endtrans %}</li>
                 </ul>
-            </div>
-        {% endblock %#}
+            </div>#}
+        {% endblock %}
 
         {% block page_title %}
             <h1 class="page_title">{% block page_title_text %}{% endblock %}</h1>

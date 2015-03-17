@@ -52,3 +52,15 @@ services:
         calls:
             - [setContainer, ["@service_container"]]
 
+    form.user_photo:
+        class: AppBundle\Form\Type\UserPhotoType
+        tags:
+            - {name: form.type, alias: user_photo}
+
+    app.event.profile_listener:
+        class: AppBundle\Event\Listener\FOSProfileListener
+        calls:
+            - [setContainer, ["@service_container"]]
+        tags:
+            - {name: kernel.event_listener, event: fos_user.profile.edit.success, method: onProfileSuccess}
+

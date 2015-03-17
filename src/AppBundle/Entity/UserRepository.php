@@ -39,7 +39,9 @@ class UserRepository extends EntityRepository
         }
 
         if ($search->isWithPhoto()) {
-            $qb->andWhere('u.thumbnail != :thumbnail')->setParameter('thumbnail', '');
+            $qb->innerJoin('u.thumbnail', 't')
+                ->andWhere('t.fileName != :thumbnail')
+                ->setParameter('thumbnail', '');
         }
 
         return $qb;

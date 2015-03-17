@@ -28,7 +28,9 @@
                         <li class="friend">
                             <a href="{{ path('chat_show', {"companion_id": companion.id}) }}" class="clearfix">
                                 <span class="photo">
-                                    <img src="{{ ('/uploads/photo/' ~ companion.thumbnail)|imagine_filter('user_message_thumb') }}" alt="{{ companion.fullName }}"/>
+                                    {% if companion.thumbnail is not null %}
+                                        <img src="{{ vich_uploader_asset(companion.thumbnail, 'file', 'AppBundle\\Entity\\UserPhoto')|imagine_filter('user_message_thumb') }}" alt="{{ companion.fullName }}"/>
+                                    {% endif %}
                                 </span>
                                 <span class="description">{{ companion.fullName }}, {{ companion.age }}</span>
                             </a>

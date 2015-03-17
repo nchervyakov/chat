@@ -43,20 +43,26 @@ class UserManager extends ContainerAware
                 $targetDir . '/' . $fileName);
 
             if ($imagePath) {
-                $em = $this->container->get('doctrine')->getManager();
-                $userPhoto = new UserPhoto();
-                $uploadedFile = new UploadedFile($imagePath, $fileName, null, null, null, true);
-                $userPhoto->setFile($uploadedFile);
-                $this->container->get('vich_uploader.upload_handler')->upload($userPhoto, 'file');
-
-                $em->persist($userPhoto);
-                $user->setThumbnail($userPhoto->getFileName());
-                $em->flush();
-
-                $this->pregeneratePhotoThumbs($userPhoto);
+                $this->addPhotoFromPath($user, $imagePath, $fileName);
             }
 
         } catch (\Exception $e) {
         }
+    }
+
+    public function addPhotoFromPath(User $user, $imagePath, $fileName)
+    {
+        $em = $this->container->get('doctrine')->getManager();
+        $userPhoto = new UserPhoto();
+        $uploadedFile = new UploadedFile($imagePath, $fileName, null, null, null, true);
+        $userPhoto->setFile($uploadedFile);
+        $this->container->get('vich_uploader.upload_handler')->upload($userPhoto, 'file');
+
+        $em->persist($userPhoto);
+        $user->addPhoto($userPhoto);
+        $em->flush();
+
+        $this->pregeneratePhotoThumbs($userPhoto);
+        return $userPhoto;
     }
 }

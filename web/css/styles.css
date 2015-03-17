@@ -24,6 +24,16 @@ body {
     height: 348px;
 }
 
+.navbar .user-photo-link {
+    padding: 0;
+    padding-top: 5px;
+}
+
+.navbar .user-photo-link img {
+    height: 32px;
+    width: 32px;
+}
+
 /* CHAT */
 
 .chat
@@ -180,4 +190,12 @@ body {
 .blueimp-gallery > .indicator > li {
     width: 32px;
     height: 32px;
+}
+
+.profile-form .vich-image img {
+    max-width: 320px;
+}
+
+.user-profile-block .user-photo {
+    max-width: 320px;
 }

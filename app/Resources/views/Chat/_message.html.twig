@@ -5,7 +5,8 @@
 {% endif %}
 <li class="{{ orientation }} clearfix js-message" data-id="{{ message.id }}">
     <span class="chat-img pull-{{ orientation }}">
-        <img src="{%- if message.author.thumbnail -%}{{ ('/uploads/photo/' ~ message.author.thumbnail)|imagine_filter('user_message_thumb') }}
+        <img src="{%- if message.author.thumbnail -%}{{ vich_uploader_asset(app.user.thumbnail, 'file', 'AppBundle\\Entity\\UserPhoto')
+            | imagine_filter('user_message_thumb') }}
             {%- else -%}http://placehold.it/50/55C1E7/fff&text=U{%- endif -%}"
              alt="{{ message.author.fullName }}" class="img-circle message-avatar"/>
     </span>

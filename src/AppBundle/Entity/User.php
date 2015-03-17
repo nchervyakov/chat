@@ -142,13 +142,14 @@ class User extends BaseUser
 
     /**
      * @var string
-     * @ORM\Column(name="thumbnail", length=255, type="string", nullable=true)
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\UserPhoto", cascade={"remove", "persist", "merge"}, orphanRemoval=true)
+     * @ORM\JoinColumn(name="thumbnail_id", referencedColumnName="id", onDelete="SET NULL")
      */
     private $thumbnail;
 
     /**
      * @var Collection|UserPhoto[]
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\UserPhoto", mappedBy="owner")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\UserPhoto", mappedBy="owner", cascade={"merge", "persist", "remove"})
      */
     private $photos;
 
@@ -527,7 +528,7 @@ class User extends BaseUser
     }
 
     /**
-     * @return string
+     * @return UserPhoto|null
      */
     public function getThumbnail()
     {
@@ -535,10 +536,19 @@ class User extends BaseUser
     }
 
     /**
-     * @param string $thumbnail
+     * @param UserPhoto|string $thumbnail
      */
-    public function setThumbnail($thumbnail)
+    public function setThumbnail(UserPhoto $thumbnail = null)
     {
+        if (!$thumbnail) {
+            $this->thumbnail = $thumbnail;
+            return;
+        }
+        if (!$this->photos->contains($thumbnail)) {
+            $thumbnail->setOwner($this);
+            $this->addPhoto($thumbnail);
+        }
+
         $this->thumbnail = $thumbnail;
     }
 
@@ -559,12 +569,17 @@ class User extends BaseUser
     /**
      * Add photos
      *
-     * @param UserPhoto $photos
+     * @param UserPhoto $photo
      * @return User
      */
-    public function addPhoto(UserPhoto $photos)
+    public function addPhoto(UserPhoto $photo)
     {
-        $this->photos[] = $photos;
+        $photo->setOwner($this);
+        $this->photos[] = $photo;
+
+        if (!$this->thumbnail) {
+            $this->thumbnail = $photo;
+        }
 
         return $this;
     }
@@ -572,11 +587,17 @@ class User extends BaseUser
     /**
      * Remove photos
      *
-     * @param UserPhoto $photos
+     * @param UserPhoto $photo
      */
-    public function removePhoto(UserPhoto $photos)
+    public function removePhoto(UserPhoto $photo)
     {
-        $this->photos->removeElement($photos);
+        if ($this->thumbnail && $this->thumbnail == $photo) {
+            $this->photos->removeElement($photo);
+            $this->thumbnail = $this->photos[0] ?: null;
+
+        } else {
+            $this->photos->removeElement($photo);
+        }
     }
 
     /**

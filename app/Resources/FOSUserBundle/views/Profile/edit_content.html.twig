@@ -5,7 +5,7 @@
 <div class="col-lg-6 col-lg-offset-3">
     <div class="well bs-component">
         <form action="{{ path('fos_user_profile_edit') }}" {{ form_enctype(form) }} method="POST"
-                class="fos_user_profile_edit form-horizontal">
+                class="fos_user_profile_edit form-horizontal profile-form">
             <legend>{{ 'profile.edit.legend'|trans }}</legend>
 
             {{ form_errors(form) }}

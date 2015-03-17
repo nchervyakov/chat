@@ -41,7 +41,11 @@ class ProfileFormType extends BaseType
             ->add('firstName')
             ->add('lastName')
             ->remove('username')
-            ->remove('current_password');
+            ->remove('current_password')
+            ->add('thumbnail', 'user_photo', [
+                'required' => false,
+                'title' => false
+            ]);
 
         $um = $this->userManager;
         $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) use ($um) {

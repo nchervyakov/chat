@@ -28,11 +28,14 @@ class UserPhotoType extends AbstractType
                 'required' => true,
                 'label' => false,
                 'error_bubbling' => true
-            ])
-            ->add('title', null, [
+            ]);
+
+        if ($options['title']) {
+            $builder->add('title', null, [
                 'required' => false,
                 'error_bubbling' => true,
             ]);
+        }
     }
 
     /**
@@ -41,7 +44,8 @@ class UserPhotoType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'AppBundle\Entity\UserPhoto'
+            'data_class' => 'AppBundle\Entity\UserPhoto',
+            'title' => true
         ]);
     }
 
