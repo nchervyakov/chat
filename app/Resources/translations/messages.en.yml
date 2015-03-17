@@ -47,6 +47,7 @@ chat_page:
     title: 'Chat'
     no_companions: "You don't have anybody in your list."
     no_messages_yet: 'You do not have any messages yet.'
+    ctrl_plus_enter_send_message: 'Press Ctrl + Enter to send a message.'
 chat: 'Chat'
 total_models_found: 'Total models found: %count%'
 your_friends: 'Your Friends'

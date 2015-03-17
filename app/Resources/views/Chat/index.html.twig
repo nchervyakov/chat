@@ -67,24 +67,26 @@
                             </ul>
                         </div>#}
                     </div>
-                    <div class="panel-body chat-messages">
-                        <ul class="chat">
-                            {% if messages is defined %}
-                                {{ include(':Chat:_messages.html.twig') }}
-                            {% else %}
-                                <li class="no-messages"><i>{{ 'chat_page.no_messages_yet'|trans }}</i></li>
-                            {% endif %}
-                        </ul>
-                    </div>
                     <div class="panel-footer">
+                        <div class="panel-body chat-messages">
+                            <ul class="chat">
+                                {% if messages is defined %}
+                                    {{ include(':Chat:_messages.html.twig') }}
+                                {% else %}
+                                    <li class="no-messages"><i>{{ 'chat_page.no_messages_yet'|trans }}</i></li>
+                                {% endif %}
+                            </ul>
+                        </div>
                         <form action="{{ path('chat_add_message', { "companion_id": companion.id }) }}" method="post"
                               id="addMessageForm" class="js-message-form">
-                            <div class="input-group">
-                                <input type="text" class="form-control input-sm js-message-input"
-                                       placeholder="{{ 'type_your_message'|trans }}" />
-                            <span class="input-group-btn">
-                                <button class="btn btn-default btn-sm js-submit-button">{{ 'send'|trans }}</button>
-                            </span>
+                            <div class="form-group">
+                                <textarea class="form-control input-sm js-message-input message-input"
+                                       placeholder="{{ 'type_your_message'|trans }}"></textarea>
+                                </div>
+                                <div class="form-group clearfix">
+                                    <span class="pale">{{ 'chat_page.ctrl_plus_enter_send_message'|trans }}</span>
+                                    <button class="btn btn-default btn-sm js-submit-button pull-right">{{ 'send'|trans }}</button>
+                                </div>
                             </div>
                         </form>
                     </div>

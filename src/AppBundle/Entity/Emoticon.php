@@ -23,6 +23,24 @@ class Emoticon
     private $id;
 
     /**
+     * @var string
+     * @ORM\Column(name="symbol", type="string", length=32)
+     */
+    private $symbol;
+
+    /**
+     * @var array
+     * @ORM\Column(name="aliases", type="array")
+     */
+    private $aliases = [];
+
+    /**
+     * @var string
+     * @ORM\Column(name="icon", type="string", length=255)
+     */
+    private $icon;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="date_added", type="datetime", nullable=true)
@@ -89,5 +107,85 @@ class Emoticon
     public function preUpdate()
     {
         $this->setDateUpdated(new \DateTime());
+    }
+
+    /**
+     * Set symbol
+     *
+     * @param string $symbol
+     * @return Emoticon
+     */
+    public function setSymbol($symbol)
+    {
+        $this->symbol = $symbol;
+
+        return $this;
+    }
+
+    /**
+     * Get symbol
+     *
+     * @return string 
+     */
+    public function getSymbol()
+    {
+        return $this->symbol;
+    }
+
+    /**
+     * Set aliases
+     *
+     * @param array $aliases
+     * @return Emoticon
+     */
+    public function setAliases(array $aliases)
+    {
+        $this->aliases = $aliases;
+
+        return $this;
+    }
+
+    /**
+     * @param string $alias
+     * @return $this
+     */
+    public function addAlias($alias)
+    {
+        $this->aliases[] = $alias;
+
+        return $this;
+    }
+
+    /**
+     * Get aliases
+     *
+     * @return array 
+     */
+    public function getAliases()
+    {
+        return $this->aliases;
+    }
+
+    /**
+     * Set icon
+     *
+     * @param string $icon
+     * @return Emoticon
+     */
+    public function setIcon($icon)
+    {
+        $this->icon = $icon;
+
+        return $this;
+    }
+
+    /**
+     * Get icon
+     *
+     * @return string 
+     */
+    public function getIcon()
+    {
+        return $this->icon;
     }
 }

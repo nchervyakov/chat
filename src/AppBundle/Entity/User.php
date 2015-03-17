@@ -545,7 +545,6 @@ class User extends BaseUser
             return;
         }
         if (!$this->photos->contains($thumbnail)) {
-            $thumbnail->setOwner($this);
             $this->addPhoto($thumbnail);
         }
 

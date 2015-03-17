@@ -199,3 +199,13 @@ body {
 .user-profile-block .user-photo {
     max-width: 320px;
 }
+
+.chat-widget .message-input {
+    resize: vertical;
+    max-height: 200px;
+    min-height: 3em;
+}
+
+.pale {
+    opacity: 0.5;
+}

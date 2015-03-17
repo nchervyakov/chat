@@ -64,3 +64,16 @@ services:
         tags:
             - {name: kernel.event_listener, event: fos_user.profile.edit.success, method: onProfileSuccess}
 
+    app.twig.extension:
+        class: AppBundle\Twig\Extension\AppExtension
+        calls:
+            - [setContainer, ["@service_container"]]
+        tags:
+            - {name: twig.extension}
+
+    app.emoticon_manager:
+        class: AppBundle\Emoticon\EmoticonManager
+        calls:
+            - [setContainer, ["@service_container"]]
+
+

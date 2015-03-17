@@ -241,6 +241,12 @@ vich_uploader:
             inject_on_load:     false
             delete_on_update:   true
             delete_on_remove:   true
+        emoticon:
+            uri_prefix:         /images/emoticons
+            upload_destination: %kernel.root_dir%/../web/images/emoticons
+            inject_on_load:     false
+            delete_on_update:   true
+            delete_on_remove:   true
 
 #jms_security_extra:
 #    # Whether you want to secure all services (true), or only secure specific

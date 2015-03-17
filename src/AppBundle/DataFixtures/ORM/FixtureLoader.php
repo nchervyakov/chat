@@ -28,6 +28,7 @@ class FixtureLoader extends DataFixtureLoader
 
     protected function getFixtures() {
         $fixtures = [
+            __DIR__.'/../../Resources/fixtures/emoticons.yml',
             __DIR__.'/../../Resources/fixtures/fixtures.yml'
         ];
 

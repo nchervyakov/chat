@@ -27,6 +27,6 @@
                             >{{ message.author.fullName }}</a></strong>
             {% endif %}
         </div>
-        <p>{{ message.content|replace("\n", "<br>") }}</p>
+        <p>{{ message.content|nl2br|emoticons }}</p>
     </div>
 </li>

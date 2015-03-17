@@ -52,6 +52,12 @@ can.Control('ChatWidget', {
         });
     },
 
+    '.js-message-input keypress': function (el, ev) {
+        if (ev.ctrlKey && ev.key == 'Enter') {
+            el.closest('form').submit();
+        }
+    },
+
     addNewMessages: function (messagesHtml) {
         var list, messageContainer, containerHeight, listHeight;
         list = this.element.find('.chat');
