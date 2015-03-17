@@ -53,7 +53,7 @@ can.Control('ChatWidget', {
     },
 
     '.js-message-input keypress': function (el, ev) {
-        if (ev.ctrlKey && ev.key == 'Enter') {
+        if (ev.ctrlKey && (ev.key == 'Enter' || ev.keyCode == 13 || ev.keyCode == 10)) {
             el.closest('form').submit();
         }
     },
