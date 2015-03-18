@@ -56,7 +56,8 @@ class ChatController extends Controller
         $params = [
             'user' => $user,
             'companion' => $companion,
-            'companions' => [$companion]
+            'companions' => [$companion],
+            'emoticons' => $this->getDoctrine()->getRepository('AppBundle:Emoticon')->findAllOrdered()
         ];
 
         $conversation = $this->getDoctrine()->getRepository('AppBundle:Conversation')->getByUsers($user, $companion);

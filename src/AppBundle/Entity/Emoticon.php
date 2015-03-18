@@ -7,7 +7,11 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Emoticon
  *
- * @ORM\Table(name="emoticons")
+ * @ORM\Table(name="emoticons",
+ *      indexes={
+ *          @ORM\Index(columns={"symbol"}, name="symbol")
+ *      }
+ * )
  * @ORM\Entity(repositoryClass="AppBundle\Entity\EmoticonRepository")
  * @ORM\HasLifecycleCallbacks()
  */
@@ -39,6 +43,12 @@ class Emoticon
      * @ORM\Column(name="icon", type="string", length=255)
      */
     private $icon;
+
+    /**
+     * @var int
+     * @ORM\Column(name="sort_order", type="integer")
+     */
+    private $sortOrder;
 
     /**
      * @var \DateTime
@@ -187,5 +197,28 @@ class Emoticon
     public function getIcon()
     {
         return $this->icon;
+    }
+
+    /**
+     * Set sortOrder
+     *
+     * @param integer $sortOrder
+     * @return Emoticon
+     */
+    public function setSortOrder($sortOrder)
+    {
+        $this->sortOrder = $sortOrder;
+
+        return $this;
+    }
+
+    /**
+     * Get sortOrder
+     *
+     * @return integer 
+     */
+    public function getSortOrder()
+    {
+        return $this->sortOrder;
     }
 }

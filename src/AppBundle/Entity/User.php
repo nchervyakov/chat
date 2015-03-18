@@ -141,7 +141,7 @@ class User extends BaseUser
     private $order;
 
     /**
-     * @var string
+     * @var UserPhoto
      * @ORM\OneToOne(targetEntity="AppBundle\Entity\UserPhoto", cascade={"remove", "persist", "merge"}, orphanRemoval=true)
      * @ORM\JoinColumn(name="thumbnail_id", referencedColumnName="id", onDelete="SET NULL")
      */
@@ -607,5 +607,14 @@ class User extends BaseUser
     public function getPhotos()
     {
         return $this->photos;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasThumbnail()
+    {
+        return (boolean) ($this->thumbnail
+            && ($this->thumbnail->getFile() && $this->thumbnail->getFile()->isValid() || $this->thumbnail->getFileName()));
     }
 }

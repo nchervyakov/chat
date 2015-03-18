@@ -28,7 +28,7 @@
                         <li class="friend">
                             <a href="{{ path('chat_show', {"companion_id": companion.id}) }}" class="clearfix">
                                 <span class="photo">
-                                    {% if companion.thumbnail is not null %}
+                                    {% if companion.hasThumbnail %}
                                         <img src="{{ vich_uploader_asset(companion.thumbnail, 'file', 'AppBundle\\Entity\\UserPhoto')|imagine_filter('user_message_thumb') }}" alt="{{ companion.fullName }}"/>
                                     {% endif %}
                                 </span>
@@ -80,18 +80,30 @@
                         <form action="{{ path('chat_add_message', { "companion_id": companion.id }) }}" method="post"
                               id="addMessageForm" class="js-message-form">
                             <div class="form-group">
+                                <a href="#" onclick="return false;" class="js-emoticon-invocation-link" data-toggle="popover"
+                                        ><img src="{{ asset('images/emoticons/ab.gif') }}" alt=""/></a>
+                                <div class="hidden">
+                                    <div class="emoticons js-emoticons">
+                                        {% for emoticon in emoticons %}
+                                            <a href="#" onclick="return false;" class="js-emoticon emoticon" title="{{ emoticon.symbol }}"
+                                                    ><img src="/images/emoticons/{{ emoticon.icon }}" alt="{{ emoticon.symbol }}" /></a>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
                                 <textarea class="form-control input-sm js-message-input message-input"
                                        placeholder="{{ 'type_your_message'|trans }}"></textarea>
-                                </div>
-                                <div class="form-group clearfix">
-                                    <span class="pale">{{ 'chat_page.ctrl_plus_enter_send_message'|trans }}</span>
-                                    <button class="btn btn-default btn-sm js-submit-button pull-right">{{ 'send'|trans }}</button>
-                                </div>
+                            </div>
+                            <div class="form-group clearfix">
+                                <span class="pale">{{ 'chat_page.ctrl_plus_enter_send_message'|trans }}</span>
+                                <button class="btn btn-default btn-sm js-submit-button pull-right">{{ 'send'|trans }}</button>
                             </div>
                         </form>
                     </div>
                 </div>
             {% else %}
+
                 <p>{{ 'please_select_companion'|trans }}</p>
             {% endif %}
         </div>

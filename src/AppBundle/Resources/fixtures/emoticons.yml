@@ -1,113 +1,113 @@
 AppBundle\Entity\Emoticon:
-    emoticon1: { symbol: 'O:-)', aliases: [O=), "<##icqimage000e>\r\n"], icon: aa.gif }
-    emoticon2: { symbol: ':-)', aliases: [':)', '=)', "<##icqimage0000>\r\n"], icon: ab.gif }
-    emoticon3: { symbol: ':-(', aliases: [':(', ;(, '=(', "<##icqimage0004>\r\n"], icon: ac.gif }
-    emoticon4: { symbol: ;-), aliases: [;), "<##icqimage0008>\r\n"], icon: ad.gif }
-    emoticon5: { symbol: ':-P', aliases: [':P', '=P', "<##icqimage000c>\r\n"], icon: ae.gif }
-    emoticon6: { symbol: 8-), aliases: [B), "<##icqimage000d>\r\n"], icon: af.gif }
-    emoticon7: { symbol: ':-D', aliases: [':D', '=D', "<##icqimage000f>\r\n"], icon: ag.gif }
-    emoticon8: { symbol: ':-[', aliases: ["<##icqimage000a>\r\n"], icon: ah.gif }
-    emoticon9: { symbol: '=-O', aliases: ['=-O', ':-O', '=O', '=0', O_O, O_o, o_O, O_0, o_0, 0_O, 0_o, "<##icqimage0001>\r\n"], icon: ai.gif }
-    emoticon10: { symbol: ':-*', aliases: [':-{}', "<##icqimage0005>\r\n"], icon: aj.gif }
-    emoticon11: { symbol: ':''(', aliases: [':''-(', "<##icqimage0007>\r\n"], icon: ak.gif }
-    emoticon12: { symbol: ':-X', aliases: [':-x', "<##icqimage000b>\r\n"], icon: al.gif }
-    emoticon13: { symbol: '>:o', aliases: ["<##icqimage0009>\r\n"], icon: am.gif }
-    emoticon14: { symbol: ':-|', aliases: ["<##icqimage0002>\r\n"], icon: an.gif }
-    emoticon15: { symbol: ':-\', aliases: [':-/', "<##icqimage0003>\r\n"], icon: ao.gif }
-    emoticon16: { symbol: '*JOKINGLY*', aliases: ["*8P*\r\n"], icon: ap.gif }
-    emoticon17: { symbol: ']:->', aliases: ['}:->', ']:>', '}:>', '>:-]', '>:]', "*DIABLO*\r\n"], icon: aq.gif }
-    emoticon18: { symbol: '[:-}', aliases: ['[:}', "*MUSIC*\r\n"], icon: ar.gif }
-    emoticon19: { symbol: "*KISSED*\r\n", aliases: {  }, icon: as.gif }
-    emoticon20: { symbol: ':-!', aliases: [;-!, ':!', ;!, ':-~', ;-~, "<##icqimage0006>\r\n"], icon: at.gif }
-    emoticon21: { symbol: "*TIRED*\r\n", aliases: {  }, icon: au.gif }
-    emoticon22: { symbol: "*STOP*\r\n", aliases: {  }, icon: av.gif }
-    emoticon23: { symbol: "*KISSING*\r\n", aliases: {  }, icon: aw.gif }
-    emoticon24: { symbol: '@}->--', aliases: ['@}-:--', "@>}--`---\r\n"], icon: ax.gif }
-    emoticon25: { symbol: '*THUMBS UP*', aliases: ["*GOOD*\r\n"], icon: ay.gif }
-    emoticon26: { symbol: "*DRINK*\r\n", aliases: {  }, icon: az.gif }
-    emoticon27: { symbol: "*IN LOVE*\r\n", aliases: {  }, icon: ba.gif }
-    emoticon28: { symbol: "@=\r\n", aliases: {  }, icon: bb.gif }
-    emoticon29: { symbol: "*HELP*\r\n", aliases: {  }, icon: bc.gif }
-    emoticon30: { symbol: "\\m/\r\n", aliases: {  }, icon: bd.gif }
-    emoticon31: { symbol: '%)', aliases: ["%-)\r\n"], icon: be.gif }
-    emoticon32: { symbol: "*OK*\r\n", aliases: {  }, icon: bf.gif }
-    emoticon33: { symbol: '*WASSUP*', aliases: ["*SUP*\r\n"], icon: bg.gif }
-    emoticon34: { symbol: "*SORRY*\r\n", aliases: {  }, icon: bh.gif }
-    emoticon35: { symbol: "*BRAVO*\r\n", aliases: {  }, icon: bi.gif }
-    emoticon36: { symbol: "*ROFL*\r\n", aliases: {  }, icon: bj.gif }
-    emoticon37: { symbol: '*PARDON*', aliases: ["=]\r\n"], icon: bk.gif }
-    emoticon38: { symbol: "*NO*\r\n", aliases: {  }, icon: bl.gif }
-    emoticon39: { symbol: "*CRAZY*\r\n", aliases: {  }, icon: bm.gif }
-    emoticon40: { symbol: '*DONT_KNOW*', aliases: ['*UNKNOWN*', ":-$\r\n"], icon: bn.gif }
-    emoticon41: { symbol: "*DANCE*\r\n", aliases: {  }, icon: bo.gif }
-    emoticon42: { symbol: '*YAHOO*', aliases: ["*YAHOO!*\r\n"], icon: bp.gif }
-    emoticon43: { symbol: '*HI*', aliases: ['*PREVED*', "*PRIVET*\r\n"], icon: bq.gif }
-    emoticon44: { symbol: "*BYE*\r\n", aliases: {  }, icon: br.gif }
-    emoticon45: { symbol: "*YES*\r\n", aliases: {  }, icon: bs.gif }
-    emoticon46: { symbol: ;D, aliases: ["*ACUTE*\r\n"], icon: bt.gif }
-    emoticon47: { symbol: '*WALL*', aliases: ["*DASH*\r\n"], icon: bu.gif }
-    emoticon48: { symbol: '*WRITE*', aliases: ["*MAIL*\r\n"], icon: bv.gif }
-    emoticon49: { symbol: "*SCRATCH*\r\n", aliases: {  }, icon: bw.gif }
-    emoticon50: { symbol: "*YEEES!*\r\n", aliases: {  }, icon: bx.gif }
-    emoticon51: { symbol: "*SMOKE*\r\n", aliases: {  }, icon: by.gif }
-    emoticon52: { symbol: "*BOSS*\r\n", aliases: {  }, icon: bz.gif }
-    emoticon53: { symbol: "*SARCASTIC*\r\n", aliases: {  }, icon: ca.gif }
-    emoticon54: { symbol: "*BOAST*\r\n", aliases: {  }, icon: cb.gif }
-    emoticon55: { symbol: "*GAMER*\r\n", aliases: {  }, icon: cc.gif }
-    emoticon56: { symbol: "*db*\r\n", aliases: {  }, icon: cd.gif }
-    emoticon57: { symbol: "*HOHO*\r\n", aliases: {  }, icon: ce.gif }
-    emoticon58: { symbol: '*SHOUT*', aliases: [":-@\r\n"], icon: cf.gif }
-    emoticon59: { symbol: "*VAVA*\r\n", aliases: {  }, icon: cg.gif }
-    emoticon60: { symbol: "*CENSORED*\r\n", aliases: {  }, icon: ch.gif }
-    emoticon61: { symbol: "*SEARCH*\r\n", aliases: {  }, icon: ci.gif }
-    emoticon62: { symbol: "*BEACH*\r\n", aliases: {  }, icon: cj.gif }
-    emoticon63: { symbol: "*FOCUS*\r\n", aliases: {  }, icon: ck.gif }
-    emoticon64: { symbol: "*HUNTER*\r\n", aliases: {  }, icon: cl.gif }
-    emoticon65: { symbol: '*GIRL_CRY*', aliases: ["*GIRL_CRAY*\r\n"], icon: cm.gif }
-    emoticon66: { symbol: "*GIRL_CRAZY*\r\n", aliases: {  }, icon: cn.gif }
-    emoticon67: { symbol: "*HOSPITAL*\r\n", aliases: {  }, icon: co.gif }
-    emoticon68: { symbol: "*GIRL_IN_LOVE*\r\n", aliases: {  }, icon: cp.gif }
-    emoticon69: { symbol: "*PINKGLASSES*\r\n", aliases: {  }, icon: cq.gif }
-    emoticon70: { symbol: "*HYSTERIC*\r\n", aliases: {  }, icon: cr.gif }
-    emoticon71: { symbol: "*TENDER*\r\n", aliases: {  }, icon: cs.gif }
-    emoticon72: { symbol: "*SPRUSE_UP*\r\n", aliases: {  }, icon: ct.gif }
-    emoticon73: { symbol: "*FLIRT*\r\n", aliases: {  }, icon: cu.gif }
-    emoticon74: { symbol: "*GIVE_HEART*\r\n", aliases: {  }, icon: cv.gif }
-    emoticon75: { symbol: "*CURTSEY*\r\n", aliases: {  }, icon: cw.gif }
-    emoticon76: { symbol: "*FEMINIST*\r\n", aliases: {  }, icon: cx.gif }
-    emoticon77: { symbol: "*GIRL_DRINK*\r\n", aliases: {  }, icon: cy.gif }
-    emoticon78: { symbol: "*HAHA*\r\n", aliases: {  }, icon: cz.gif }
-    emoticon79: { symbol: "*IMPOSSIBLE*\r\n", aliases: {  }, icon: da.gif }
-    emoticon80: { symbol: "*SIGH*\r\n", aliases: {  }, icon: db.gif }
-    emoticon81: { symbol: X-), aliases: ["X)\r\n"], icon: dc.gif }
-    emoticon82: { symbol: "*SLOW*\r\n", aliases: {  }, icon: dd.gif }
-    emoticon83: { symbol: '*MOIL*', aliases: ["*JOB*\r\n"], icon: de.gif }
-    emoticon84: { symbol: "*BB*\r\n", aliases: {  }, icon: df.gif }
-    emoticon85: { symbol: "*MEGA_SHOK*\r\n", aliases: {  }, icon: dg.gif }
-    emoticon86: { symbol: "*THANK*\r\n", aliases: {  }, icon: dh.gif }
-    emoticon87: { symbol: "*KING*\r\n", aliases: {  }, icon: di.gif }
-    emoticon88: { symbol: "*LAZY*\r\n", aliases: {  }, icon: dj.gif }
-    emoticon89: { symbol: "*FRIEND*\r\n", aliases: {  }, icon: dk.gif }
-    emoticon90: { symbol: "*PUNISH*\r\n", aliases: {  }, icon: dl.gif }
-    emoticon91: { symbol: "*WIZARD*\r\n", aliases: {  }, icon: dm.gif }
-    emoticon92: { symbol: "*V*\r\n", aliases: {  }, icon: dn.gif }
-    emoticon93: { symbol: "*SPITEFUL*\r\n", aliases: {  }, icon: do.gif }
-    emoticon94: { symbol: "*TEASE*\r\n", aliases: {  }, icon: dp.gif }
-    emoticon95: { symbol: "*HELLO*\r\n", aliases: {  }, icon: dq.gif }
-    emoticon96: { symbol: "*SCARE*\r\n", aliases: {  }, icon: dr.gif }
-    emoticon97: { symbol: "*THIS*\r\n", aliases: {  }, icon: ds.gif }
-    emoticon98: { symbol: "*PAINT*\r\n", aliases: {  }, icon: dt.gif }
-    emoticon99: { symbol: "*TRAINING*\r\n", aliases: {  }, icon: du.gif }
-    emoticon100: { symbol: "*PARTY*\r\n", aliases: {  }, icon: dv.gif }
-    emoticon101: { symbol: "*POPCORN*\r\n", aliases: {  }, icon: dw.gif }
-    emoticon102: { symbol: "*IREFUL*\r\n", aliases: {  }, icon: dx.gif }
-    emoticon103: { symbol: "*LOL*\r\n", aliases: {  }, icon: dy.gif }
-    emoticon104: { symbol: "*HAPPY*\r\n", aliases: {  }, icon: dz.gif }
-    emoticon105: { symbol: '*VAMPIRE*', aliases: ['*BAT*', '>:-E', ">:E\r\n"], icon: ea.gif }
-    emoticon106: { symbol: "*FACEPALM*\r\n", aliases: {  }, icon: eb.gif }
-    emoticon107: { symbol: "*SCARED*\r\n", aliases: {  }, icon: ec.gif }
-    emoticon108: { symbol: '*NEGATIVE*', aliases: ['*THUMBS DOWN*', "*DISLIKE*\r\n"], icon: ed.gif }
-    emoticon109: { symbol: "*SARCASM*\r\n", aliases: {  }, icon: ee.gif }
-    emoticon110: { symbol: "*SUPERMAN*\r\n", aliases: {  }, icon: ef.gif }
-    emoticon111: { symbol: "*WILD*\r\n", aliases: {  }, icon: eg.gif }
+    emoticon1: { symbol: 'O:-)', aliases: [O=), '<##icqimage000e>'], icon: aa.gif }
+    emoticon2: { symbol: ':-)', aliases: [':)', '=)', '<##icqimage0000>'], icon: ab.gif }
+    emoticon3: { symbol: ':-(', aliases: [':(', ;(, '=(', '<##icqimage0004>'], icon: ac.gif }
+    emoticon4: { symbol: ;-), aliases: [;), '<##icqimage0008>'], icon: ad.gif }
+    emoticon5: { symbol: ':-P', aliases: [':P', '=P', '<##icqimage000c>'], icon: ae.gif }
+    emoticon6: { symbol: 8-), aliases: [B), '<##icqimage000d>'], icon: af.gif }
+    emoticon7: { symbol: ':-D', aliases: [':D', '=D', '<##icqimage000f>'], icon: ag.gif }
+    emoticon8: { symbol: ':-[', aliases: ['<##icqimage000a>'], icon: ah.gif }
+    emoticon9: { symbol: '=-O', aliases: ['=-O', ':-O', '=O', '=0', O_O, O_o, o_O, O_0, o_0, 0_O, 0_o, '<##icqimage0001>'], icon: ai.gif }
+    emoticon10: { symbol: ':-*', aliases: [':-{}', '<##icqimage0005>'], icon: aj.gif }
+    emoticon11: { symbol: ':''(', aliases: [':''-(', '<##icqimage0007>'], icon: ak.gif }
+    emoticon12: { symbol: ':-X', aliases: [':-x', '<##icqimage000b>'], icon: al.gif }
+    emoticon13: { symbol: '>:o', aliases: ['<##icqimage0009>'], icon: am.gif }
+    emoticon14: { symbol: ':-|', aliases: ['<##icqimage0002>'], icon: an.gif }
+    emoticon15: { symbol: ':-\', aliases: [':-/', '<##icqimage0003>'], icon: ao.gif }
+    emoticon16: { symbol: '*JOKINGLY*', aliases: ['*8P*'], icon: ap.gif }
+    emoticon17: { symbol: ']:->', aliases: ['}:->', ']:>', '}:>', '>:-]', '>:]', '*DIABLO*'], icon: aq.gif }
+    emoticon18: { symbol: '[:-}', aliases: ['[:}', '*MUSIC*'], icon: ar.gif }
+    emoticon19: { symbol: '*KISSED*', aliases: {  }, icon: as.gif }
+    emoticon20: { symbol: ':-!', aliases: [;-!, ':!', ;!, ':-~', ;-~, '<##icqimage0006>'], icon: at.gif }
+    emoticon21: { symbol: '*TIRED*', aliases: {  }, icon: au.gif }
+    emoticon22: { symbol: '*STOP*', aliases: {  }, icon: av.gif }
+    emoticon23: { symbol: '*KISSING*', aliases: {  }, icon: aw.gif }
+    emoticon24: { symbol: '@}->--', aliases: ['@}-:--', '@>}--`---'], icon: ax.gif }
+    emoticon25: { symbol: '*THUMBS UP*', aliases: ['*GOOD*'], icon: ay.gif }
+    emoticon26: { symbol: '*DRINK*', aliases: {  }, icon: az.gif }
+    emoticon27: { symbol: '*IN LOVE*', aliases: {  }, icon: ba.gif }
+    emoticon28: { symbol: '@=', aliases: {  }, icon: bb.gif }
+    emoticon29: { symbol: '*HELP*', aliases: {  }, icon: bc.gif }
+    emoticon30: { symbol: \m/, aliases: {  }, icon: bd.gif }
+    emoticon31: { symbol: '%)', aliases: ['%-)'], icon: be.gif }
+    emoticon32: { symbol: '*OK*', aliases: {  }, icon: bf.gif }
+    emoticon33: { symbol: '*WASSUP*', aliases: ['*SUP*'], icon: bg.gif }
+    emoticon34: { symbol: '*SORRY*', aliases: {  }, icon: bh.gif }
+    emoticon35: { symbol: '*BRAVO*', aliases: {  }, icon: bi.gif }
+    emoticon36: { symbol: '*ROFL*', aliases: {  }, icon: bj.gif }
+    emoticon37: { symbol: '*PARDON*', aliases: ['=]'], icon: bk.gif }
+    emoticon38: { symbol: '*NO*', aliases: {  }, icon: bl.gif }
+    emoticon39: { symbol: '*CRAZY*', aliases: {  }, icon: bm.gif }
+    emoticon40: { symbol: '*DONT_KNOW*', aliases: ['*UNKNOWN*', ':-$'], icon: bn.gif }
+    emoticon41: { symbol: '*DANCE*', aliases: {  }, icon: bo.gif }
+    emoticon42: { symbol: '*YAHOO*', aliases: ['*YAHOO!*'], icon: bp.gif }
+    emoticon43: { symbol: '*HI*', aliases: ['*PREVED*', '*PRIVET*'], icon: bq.gif }
+    emoticon44: { symbol: '*BYE*', aliases: {  }, icon: br.gif }
+    emoticon45: { symbol: '*YES*', aliases: {  }, icon: bs.gif }
+    emoticon46: { symbol: ;D, aliases: ['*ACUTE*'], icon: bt.gif }
+    emoticon47: { symbol: '*WALL*', aliases: ['*DASH*'], icon: bu.gif }
+    emoticon48: { symbol: '*WRITE*', aliases: ['*MAIL*'], icon: bv.gif }
+    emoticon49: { symbol: '*SCRATCH*', aliases: {  }, icon: bw.gif }
+    emoticon50: { symbol: '*YEEES!*', aliases: {  }, icon: bx.gif }
+    emoticon51: { symbol: '*SMOKE*', aliases: {  }, icon: by.gif }
+    emoticon52: { symbol: '*BOSS*', aliases: {  }, icon: bz.gif }
+    emoticon53: { symbol: '*SARCASTIC*', aliases: {  }, icon: ca.gif }
+    emoticon54: { symbol: '*BOAST*', aliases: {  }, icon: cb.gif }
+    emoticon55: { symbol: '*GAMER*', aliases: {  }, icon: cc.gif }
+    emoticon56: { symbol: '*db*', aliases: {  }, icon: cd.gif }
+    emoticon57: { symbol: '*HOHO*', aliases: {  }, icon: ce.gif }
+    emoticon58: { symbol: '*SHOUT*', aliases: [':-@'], icon: cf.gif }
+    emoticon59: { symbol: '*VAVA*', aliases: {  }, icon: cg.gif }
+    emoticon60: { symbol: '*CENSORED*', aliases: {  }, icon: ch.gif }
+    emoticon61: { symbol: '*SEARCH*', aliases: {  }, icon: ci.gif }
+    emoticon62: { symbol: '*BEACH*', aliases: {  }, icon: cj.gif }
+    emoticon63: { symbol: '*FOCUS*', aliases: {  }, icon: ck.gif }
+    emoticon64: { symbol: '*HUNTER*', aliases: {  }, icon: cl.gif }
+    emoticon65: { symbol: '*GIRL_CRY*', aliases: ['*GIRL_CRAY*'], icon: cm.gif }
+    emoticon66: { symbol: '*GIRL_CRAZY*', aliases: {  }, icon: cn.gif }
+    emoticon67: { symbol: '*HOSPITAL*', aliases: {  }, icon: co.gif }
+    emoticon68: { symbol: '*GIRL_IN_LOVE*', aliases: {  }, icon: cp.gif }
+    emoticon69: { symbol: '*PINKGLASSES*', aliases: {  }, icon: cq.gif }
+    emoticon70: { symbol: '*HYSTERIC*', aliases: {  }, icon: cr.gif }
+    emoticon71: { symbol: '*TENDER*', aliases: {  }, icon: cs.gif }
+    emoticon72: { symbol: '*SPRUSE_UP*', aliases: {  }, icon: ct.gif }
+    emoticon73: { symbol: '*FLIRT*', aliases: {  }, icon: cu.gif }
+    emoticon74: { symbol: '*GIVE_HEART*', aliases: {  }, icon: cv.gif }
+    emoticon75: { symbol: '*CURTSEY*', aliases: {  }, icon: cw.gif }
+    emoticon76: { symbol: '*FEMINIST*', aliases: {  }, icon: cx.gif }
+    emoticon77: { symbol: '*GIRL_DRINK*', aliases: {  }, icon: cy.gif }
+    emoticon78: { symbol: '*HAHA*', aliases: {  }, icon: cz.gif }
+    emoticon79: { symbol: '*IMPOSSIBLE*', aliases: {  }, icon: da.gif }
+    emoticon80: { symbol: '*SIGH*', aliases: {  }, icon: db.gif }
+    emoticon81: { symbol: X-), aliases: [X)], icon: dc.gif }
+    emoticon82: { symbol: '*SLOW*', aliases: {  }, icon: dd.gif }
+    emoticon83: { symbol: '*MOIL*', aliases: ['*JOB*'], icon: de.gif }
+    emoticon84: { symbol: '*BB*', aliases: {  }, icon: df.gif }
+    emoticon85: { symbol: '*MEGA_SHOK*', aliases: {  }, icon: dg.gif }
+    emoticon86: { symbol: '*THANK*', aliases: {  }, icon: dh.gif }
+    emoticon87: { symbol: '*KING*', aliases: {  }, icon: di.gif }
+    emoticon88: { symbol: '*LAZY*', aliases: {  }, icon: dj.gif }
+    emoticon89: { symbol: '*FRIEND*', aliases: {  }, icon: dk.gif }
+    emoticon90: { symbol: '*PUNISH*', aliases: {  }, icon: dl.gif }
+    emoticon91: { symbol: '*WIZARD*', aliases: {  }, icon: dm.gif }
+    emoticon92: { symbol: '*V*', aliases: {  }, icon: dn.gif }
+    emoticon93: { symbol: '*SPITEFUL*', aliases: {  }, icon: do.gif }
+    emoticon94: { symbol: '*TEASE*', aliases: {  }, icon: dp.gif }
+    emoticon95: { symbol: '*HELLO*', aliases: {  }, icon: dq.gif }
+    emoticon96: { symbol: '*SCARE*', aliases: {  }, icon: dr.gif }
+    emoticon97: { symbol: '*THIS*', aliases: {  }, icon: ds.gif }
+    emoticon98: { symbol: '*PAINT*', aliases: {  }, icon: dt.gif }
+    emoticon99: { symbol: '*TRAINING*', aliases: {  }, icon: du.gif }
+    emoticon100: { symbol: '*PARTY*', aliases: {  }, icon: dv.gif }
+    emoticon101: { symbol: '*POPCORN*', aliases: {  }, icon: dw.gif }
+    emoticon102: { symbol: '*IREFUL*', aliases: {  }, icon: dx.gif }
+    emoticon103: { symbol: '*LOL*', aliases: {  }, icon: dy.gif }
+    emoticon104: { symbol: '*HAPPY*', aliases: {  }, icon: dz.gif }
+    emoticon105: { symbol: '*VAMPIRE*', aliases: ['*BAT*', '>:-E', '>:E'], icon: ea.gif }
+    emoticon106: { symbol: '*FACEPALM*', aliases: {  }, icon: eb.gif }
+    emoticon107: { symbol: '*SCARED*', aliases: {  }, icon: ec.gif }
+    emoticon108: { symbol: '*NEGATIVE*', aliases: ['*THUMBS DOWN*', '*DISLIKE*'], icon: ed.gif }
+    emoticon109: { symbol: '*SARCASM*', aliases: {  }, icon: ee.gif }
+    emoticon110: { symbol: '*SUPERMAN*', aliases: {  }, icon: ef.gif }
+    emoticon111: { symbol: '*WILD*', aliases: {  }, icon: eg.gif }
     emoticon112: { symbol: '*NEWS*', aliases: ['*READ*'], icon: eh.gif }

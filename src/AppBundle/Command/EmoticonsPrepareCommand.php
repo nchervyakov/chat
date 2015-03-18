@@ -59,7 +59,7 @@ class EmoticonsPrepareCommand extends ContainerAwareCommand
 
         $targetConfig = [];
         foreach ($config as $key => $configString) {
-            $variants = preg_split('/,/', $configString, -1, PREG_SPLIT_NO_EMPTY);
+            $variants = preg_split('/\s*,\s*/', trim($configString), -1, PREG_SPLIT_NO_EMPTY);
             $emoticon = [
                 'symbol' => array_shift($variants),
                 'aliases' => $variants,

@@ -8,6 +8,7 @@
 can.Control('ChatWidget', {
     pluginName: 'chatWidget',
     defaults: {
+        emoticonPopup: null
     }
 }, {
     init: function () {
@@ -16,6 +17,14 @@ can.Control('ChatWidget', {
         this.submitButton = this.form.find('.js-submit-button');
         this.companionId = this.element.data('companion-id');
         this.list = this.element.find('.chat');
+        this.emoticons =  this.element.find('.js-emoticons');
+        this.emoticonLink = this.element.find('[data-toggle=popover]');
+        this.emoticonLink.popover({
+            container: 'body',
+            placement: 'right',
+            content: this.emoticons[0],
+            html: true
+        });
 
         var allMessageIds = this.list.children('.js-message').map(function () { return parseInt($(this).data('id'), 10); }).toArray();
         if (!allMessageIds.length) {
@@ -55,6 +64,35 @@ can.Control('ChatWidget', {
     '.js-message-input keypress': function (el, ev) {
         if (ev.ctrlKey && (ev.key == 'Enter' || ev.keyCode == 13 || ev.keyCode == 10)) {
             el.closest('form').submit();
+        }
+    },
+
+    '.js-emoticon click': function (el, ev) {
+        ev.preventDefault();
+        this.inputElement.insertAtCaret(el.attr('title'));
+    },
+
+    '{emoticonPopup} .js-emoticon click': function (el, ev) {
+        ev.preventDefault();
+        this.inputElement.insertAtCaret(el.attr('title'));
+        this.emoticonLink.popover('hide');
+        this.options.emoticonPopup = null;
+        this.on();
+    },
+
+    '.js-emoticon-invocation-link click': function (el, ev) {
+        ev.preventDefault();
+        var tip = el.data('bs.popover').$tip;
+        this.options.emoticonPopup = tip;
+        tip.addClass('emoticon-popover');
+        this.on();
+        //this.emoticons.popover('show');
+    },
+
+    '{window} click': function (el, ev) {
+        var target = $(ev.target);
+        if (!target.closest('.popover').length && !target.closest('.js-emoticon-invocation-link').length) {
+            this.emoticonLink.popover('hide');
         }
     },
 

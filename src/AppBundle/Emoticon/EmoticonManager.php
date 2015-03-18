@@ -33,7 +33,7 @@ class EmoticonManager extends ContainerAware
         return preg_replace_callback(array_keys($quotedMap), function ($matches) use ($quotedMap, $map) {
             /** @var Emoticon $emoticon */
             $emoticon = $map[$matches[0]];
-            return '<img src="/images/emoticons/' . $emoticon->getIcon() . '" alt="' . htmlspecialchars($matches[0], ENT_COMPAT, 'UTF-8') . '" />';
+            return '<img src="/images/emoticons/' . $emoticon->getIcon() . '" alt="" />';
         }, $string);
     }
 

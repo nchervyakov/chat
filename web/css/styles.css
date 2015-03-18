@@ -209,3 +209,12 @@ body {
 .pale {
     opacity: 0.5;
 }
+
+.emoticons {
+    width: 738px;
+}
+
+.emoticon-popover {
+    width: 768px;
+    max-width: 768px;
+}
