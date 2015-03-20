@@ -23,7 +23,8 @@
                             <div class="thumbnail">
                                 <a href="{{ path('user_show', {"user_id": model.id}) }}">
                                     <div class="img-wrapper">
-                                        <img src="{{ vich_uploader_asset(model.thumbnail, 'file', 'AppBundle\\Entity\\UserPhoto')|imagine_filter('search_user_photo') }}" alt="{{ model.fullName }}">
+                                        <img src="{% if model.hasThumbnail %}{{ vich_uploader_asset(model.thumbnail, 'file', 'AppBundle\\Entity\\UserPhoto') | imagine_filter('search_user_photo') }}{% endif %}"
+                                             alt="{{ model.fullName }}">
                                     </div>
                                     <div class="caption">
                                         <h3>{{- model.fullName -}}<small>, {{ model.age }}</small></h3>
