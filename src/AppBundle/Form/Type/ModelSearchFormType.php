@@ -20,23 +20,24 @@ class ModelSearchFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $ageRange = ModelSearch::getAgeRangeList();
+        //$ageRange = ModelSearch::getAgeRangeList();
         $builder
-            ->add('from', 'choice', [
-                'choices' => $ageRange,
-                'error_bubbling' => true,
-                'invalid_message' => 'Please select the valid "from" value.'
-            ])
-            ->add('to', 'choice', [
-                'choices' => $ageRange,
-                'error_bubbling' => true,
-                'invalid_message' => 'Please select the valid "to" value.'
-            ])
-            ->add('wp', 'checkbox', [
-                'property_path' => 'withPhoto',
-                'label' => 'model_search.with_photo',
-                'required' => false
-            ]);
+            ->add('name');
+//            ->add('from', 'choice', [
+//                'choices' => $ageRange,
+//                'error_bubbling' => true,
+//                'invalid_message' => 'Please select the valid "from" value.'
+//            ])
+//            ->add('to', 'choice', [
+//                'choices' => $ageRange,
+//                'error_bubbling' => true,
+//                'invalid_message' => 'Please select the valid "to" value.'
+//            ])
+//            ->add('wp', 'checkbox', [
+//                'property_path' => 'withPhoto',
+//                'label' => 'model_search.with_photo',
+//                'required' => false
+//            ]);
     }
 
     /**

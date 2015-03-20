@@ -119,7 +119,7 @@ hwi_oauth:
             type:               facebook
             client_id:          "%oauth.facebook.client_id%"
             client_secret:      "%oauth.facebook.client_secret%"
-            scope:              "email public_profile"
+            scope:              "email public_profile user_photos"
 #            options:
 #                display: popup #dialog is optimized for popup window
 
@@ -128,25 +128,25 @@ hwi_oauth:
             client_id:          "%oauth.twitter.client_id%"
             client_secret:      "%oauth.twitter.client_secret%"
 
-        vkontakte:
-            type:               vkontakte
-            client_id:          "%oauth.vkontakte.client_id%"
-            client_secret:      "%oauth.vkontakte.client_secret%"
-            scope:              "email"
+#        vkontakte:
+#            type:               vkontakte
+#            client_id:          "%oauth.vkontakte.client_id%"
+#            client_secret:      "%oauth.vkontakte.client_secret%"
+#            scope:              "email"
 
-        google:
-            type:               google
-            client_id:          "%oauth.google.client_id%"
-            client_secret:      "%oauth.google.client_secret%"
-            scope:              "email profile"
-#            options:
-#                access_type:     offline
-#                request_visible_actions: "http://schemas.google.com/AddActivity http://schemas.google.com/CommentActivity"
+#        google:
+#            type:               google
+#            client_id:          "%oauth.google.client_id%"
+#            client_secret:      "%oauth.google.client_secret%"
+#            scope:              "email profile"
+##            options:
+##                access_type:     offline
+##                request_visible_actions: "http://schemas.google.com/AddActivity http://schemas.google.com/CommentActivity"
 
-        github:
-            type:               github
-            client_id:          "%oauth.github.client_id%"
-            client_secret:      "%oauth.github.client_secret%"
+#        github:
+#            type:               github
+#            client_id:          "%oauth.github.client_id%"
+#            client_secret:      "%oauth.github.client_secret%"
 
     fosub:
         # If CURL throws a certificate error, see here how to solve:
@@ -157,10 +157,10 @@ hwi_oauth:
 
         # mapping between resource owners (see below) and properties
         properties:
-            github:     githubId
-            google:     googleId
+#            github:     githubId
+#            google:     googleId
             facebook:   facebookId
-            vkontakte:  vkontakteId
+#            vkontakte:  vkontakteId
             twitter:    twitterId
 #            my_custom_provider: customId
 
@@ -241,6 +241,8 @@ vich_uploader:
             inject_on_load:     false
             delete_on_update:   true
             delete_on_remove:   true
+            namer:              vich_uploader.namer_origname
+
         emoticon:
             uri_prefix:         /images/emoticons
             upload_destination: %kernel.root_dir%/../web/images/emoticons

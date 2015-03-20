@@ -39,7 +39,8 @@
         "hautelook/alice-bundle": "0.2.*",
         "knplabs/knp-paginator-bundle": "~2.4",
         "vich/uploader-bundle": "0.14.*",
-        "liip/imagine-bundle": "~1.2"
+        "liip/imagine-bundle": "~1.2",
+        "misd/guzzle-bundle": "~1.1"
     },
     "require-dev": {
     },

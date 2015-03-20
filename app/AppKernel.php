@@ -30,6 +30,7 @@ class AppKernel extends Kernel
             new Hautelook\AliceBundle\HautelookAliceBundle(),
             new Vich\UploaderBundle\VichUploaderBundle(),
             new Liip\ImagineBundle\LiipImagineBundle(),
+            new Misd\GuzzleBundle\MisdGuzzleBundle(),
             new AppBundle\AppBundle(),
         );
 

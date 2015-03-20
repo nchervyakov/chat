@@ -25,7 +25,7 @@ AppBundle\Entity\User:
         credentialsExpireAt: null
         firstName:          <firstName($gender)>
         lastName:           <lastName()>
-        dateOfBirth:        <dateTimeBetween('-80 years', '-18 years')>
+        dateOfBirth:        <dateTimeBetween('-35 years', '-18 years')>
         facebookId:         50%? <numerify('###############')>
         vkontakteId:        30%? <randomNumber(7)>
         twitterId:          10%? <randomNumber(8)>

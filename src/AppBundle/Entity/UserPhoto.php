@@ -54,7 +54,7 @@ class UserPhoto
     /**
      * @var User
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User", inversedBy="photos")
-     * @ORM\JoinColumn(name="owner_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="owner_id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $owner;
 

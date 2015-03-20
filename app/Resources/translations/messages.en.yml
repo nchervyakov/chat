@@ -66,6 +66,7 @@ no_stat_available: 'No statistics yet.'
 user:
     page_title: 'User'
     age: 'Age'
+    gender: 'Gender'
 chat_with_model: 'Chat with %model%'
 user_page:
     about: 'About'

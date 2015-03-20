@@ -25,23 +25,45 @@ class UserRepository extends EntityRepository
 
         $qb->select('u')
             ->from('AppBundle:User', 'u')
-            ->where('u.gender LIKE :gender')->setParameter('gender', 'female')
+            ->where('u.gender LIKE :gender')->setParameter('gender', User::GENDER_FEMALE)
             ->orderBy('u.order', 'DESC');
 
-        if ($search->getFrom() !== null) {
-            $fromDate = new \DateTime('-' . $search->getFrom() . ' years');
-            $qb->andWhere('u.dateOfBirth <= :from')->setParameter('from', $fromDate);
-        }
+//        if ($search->getFrom() !== null) {
+//            $fromDate = new \DateTime('-' . $search->getFrom() . ' years');
+//            $qb->andWhere('u.dateOfBirth <= :from')->setParameter('from', $fromDate);
+//        }
+//
+//        if ($search->getTo() !== null) {
+//            $toDate = new \DateTime('-' . $search->getTo() . ' years');
+//            $qb->andWhere('u.dateOfBirth >= :to')->setParameter('to', $toDate);
+//        }
 
-        if ($search->getTo() !== null) {
-            $toDate = new \DateTime('-' . $search->getTo() . ' years');
-            $qb->andWhere('u.dateOfBirth >= :to')->setParameter('to', $toDate);
-        }
+//        if ($search->isWithPhoto()) {
+//            $qb->innerJoin('u.thumbnail', 't')
+//                ->andWhere('t.fileName != :thumbnail')
+//                ->setParameter('thumbnail', '');
+//        }
 
-        if ($search->isWithPhoto()) {
-            $qb->innerJoin('u.thumbnail', 't')
-                ->andWhere('t.fileName != :thumbnail')
-                ->setParameter('thumbnail', '');
+        if ($search->getName()) {
+            $parts = preg_split('/\s+/', $search->getName(), -1, PREG_SPLIT_NO_EMPTY);
+            $part1 = array_shift($parts);
+            $part2 = implode(' ', $parts);
+
+            if ($part1) {
+                if ($part2) {
+                    $qb->andWhere(
+                        $qb->expr()->orX(
+                            $qb->expr()->andX('u.firstName LIKE :part1', 'u.lastName LIKE :part2'),
+                            $qb->expr()->andX('u.firstName LIKE :part2', 'u.lastName LIKE :part1')
+                        ))
+                        ->setParameter('part1', $part1.'%')
+                        ->setParameter('part2', $part2.'%');
+
+                } else {
+                    $qb->andWhere($qb->expr()->orX('u.firstName LIKE :part1', 'u.lastName LIKE :part1'))
+                        ->setParameter('part1', $part1.'%');
+                }
+            }
         }
 
         return $qb;

@@ -16,7 +16,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="users",
  *      indexes={
  *          @ORM\Index(columns={"date_of_birth"}, name="date_of_birth"),
- *          @ORM\Index(columns={"sort_order"}, name="sort_order")
+ *          @ORM\Index(columns={"sort_order"}, name="sort_order"),
+ *          @ORM\Index(columns={"first_name"}, name="first_name"),
+ *          @ORM\Index(columns={"last_name"}, name="last_name")
  *      }
  * )
  * @ORM\Entity(repositoryClass="AppBundle\Entity\UserRepository")

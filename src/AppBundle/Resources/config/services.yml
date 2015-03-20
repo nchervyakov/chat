@@ -64,6 +64,13 @@ services:
         tags:
             - {name: kernel.event_listener, event: fos_user.profile.edit.success, method: onProfileSuccess}
 
+    app.event.registration_listener:
+        class: AppBundle\Event\Listener\RegistrationListener
+        calls:
+            - [setContainer, ["@service_container"]]
+        tags:
+            - {name: kernel.event_listener, event: registration.success, method: onRegistrationSuccess}
+
     app.twig.extension:
         class: AppBundle\Twig\Extension\AppExtension
         calls:
@@ -75,5 +82,13 @@ services:
         class: AppBundle\Emoticon\EmoticonManager
         calls:
             - [setContainer, ["@service_container"]]
+
+    app.facebook.client:
+        class: %guzzle.client.class%
+        arguments:
+            - "https://graph.facebook.com/"
+        tags:
+            - {name: guzzle.client}
+
 
 

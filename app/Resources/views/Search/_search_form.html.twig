@@ -33,9 +33,10 @@
                         </li>
                     </ul>#}
                     {{ form_start(form, { 'attr': {'class': 'bs-component navbar-form navbar-left', 'role': 'search' } }) }}
-                        {{ form_row(form.from, { 'attr': { 'class': '' }  }) }}
+                        {#{{ form_row(form.from, { 'attr': { 'class': '' }  }) }}
                         {{ form_row(form.to) }}
-                        {{ form_row(form.wp) }}
+                        {{ form_row(form.wp) }}#}
+                        {{ form_row(form.name, {'attr': {'class': 'js-name-field name-field'} }) }}
                         <input type="submit" name="search" value="{{ 'search'|trans }}" class="btn btn-default"/>
                     {{ form_end(form) }}
 

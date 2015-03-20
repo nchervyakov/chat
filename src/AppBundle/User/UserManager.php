@@ -27,6 +27,11 @@ class UserManager extends ContainerAware
         $imagine->getBrowserPath($relativePath, 'user_message_thumb');
     }
 
+    /**
+     * @param User $user
+     * @param $profilePicture
+     * @return null|UserPhoto
+     */
     public function downloadProfilePicture(User $user, $profilePicture)
     {
         try {
@@ -43,11 +48,13 @@ class UserManager extends ContainerAware
                 $targetDir . '/' . $fileName);
 
             if ($imagePath) {
-                $this->addPhotoFromPath($user, $imagePath, $fileName);
+                return $this->addPhotoFromPath($user, $imagePath, $fileName);
             }
 
         } catch (\Exception $e) {
         }
+
+        return null;
     }
 
     public function addPhotoFromPath(User $user, $imagePath, $fileName)

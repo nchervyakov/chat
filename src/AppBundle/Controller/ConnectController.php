@@ -4,9 +4,13 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\User;
 use AppBundle\Entity\UserPhoto;
+use AppBundle\Event\Event\UserRegisteredEvent;
+use AppBundle\Event\Events;
 use Buzz\Browser;
 use HWI\Bundle\OAuthBundle\Security\Core\Exception\AccountNotLinkedException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -49,6 +53,8 @@ class ConnectController extends \HWI\Bundle\OAuthBundle\Controller\ConnectContro
             //throw new \Exception('Cannot register an account.');
         }
 
+        $dispatcher = $this->container->get('event_dispatcher');
+
         $userInformation = $this
             ->getResourceOwnerByName($error->getResourceOwnerName())
             ->getUserInformation($error->getRawToken())
@@ -76,9 +82,8 @@ class ConnectController extends \HWI\Bundle\OAuthBundle\Controller\ConnectContro
                 $redirectUrl = $this->generate('stat_index');
             }
 
-            if ($userInformation->getProfilePicture()) {
-                $this->container->get('app.user_manager')->downloadProfilePicture($user, $userInformation->getProfilePicture());
-            }
+            $event = new UserRegisteredEvent($user, $userInformation);
+            $dispatcher->dispatch(Events::REGISTRATION_SUCCESS, $event);
 
             $this->container->get('doctrine')->getManager()->flush();
 

@@ -42,6 +42,11 @@ class ModelSearch
     private $withPhoto = false;
 
     /**
+     * @var string
+     */
+    private $name;
+
+    /**
      * @return int
      */
     public function getFrom()
@@ -117,5 +122,21 @@ class ModelSearch
     public function setWithPhoto($withPhoto)
     {
         $this->withPhoto = (boolean) $withPhoto;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
     }
 }

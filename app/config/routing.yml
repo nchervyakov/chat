@@ -20,17 +20,17 @@ hwi_oauth_register:
 facebook_login:
     pattern: /login/check-facebook
 
-vkontakte_login:
-    pattern: /login/check-vkontakte
+#vkontakte_login:
+#    pattern: /login/check-vkontakte
 
 twitter_login:
     pattern: /login/check-twitter
 
-google_login:
-    pattern: /login/check-google
-
-github_login:
-    pattern: /login/check-github
+#google_login:
+#    pattern: /login/check-google
+#
+#github_login:
+#    pattern: /login/check-github
 
 #custom_login:
 #    pattern: /login/check-custom

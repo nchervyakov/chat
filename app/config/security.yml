@@ -42,10 +42,10 @@ security:
             oauth:
                 resource_owners:
                     facebook:           "/login/check-facebook"
-                    vkontakte:          "/login/check-vkontakte"
+#                    vkontakte:          "/login/check-vkontakte"
                     twitter:            "/login/check-twitter"
-                    google:             "/login/check-google"
-                    github:             "/login/check-github"
+#                    google:             "/login/check-google"
+#                    github:             "/login/check-github"
 #                    my_custom_provider: "/login/check-custom"
 
                 login_path:        /login
