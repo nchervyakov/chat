@@ -25,11 +25,13 @@ class ModelRequestType extends AbstractType
             ->add('email')
             ->add('facebookURL', null, [
                 'label' => 'model_request.facebook_url',
-                'required' => false
+                'required' => false,
+                'empty_data' => ''
             ])
             ->add('instagramURL', null, [
                 'label' => 'model_request.instagram_url',
-                'required' => false
+                'required' => false,
+                'empty_data' => ''
             ])
             ->add('message')
         ;
