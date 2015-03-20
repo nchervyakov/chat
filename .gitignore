@@ -11,3 +11,7 @@ app/config/parameters.yml
 web/uploads/photo/*
 web/media/cache/*
 !web/media/cache/.gitkeep
+/src/Acme
+/web/css/compiled
+/web/js/compiled
+*.php~
