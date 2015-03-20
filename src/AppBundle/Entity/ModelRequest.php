@@ -51,15 +51,15 @@ class ModelRequest
 
     /**
      * @var string
-     * @ORM\Column(name="facebook_url", type="string", length=255, options={"default": ""})
+     * @ORM\Column(name="facebook_url", type="string", length=255, nullable=true)
      */
-    private $facebookURL = '';
+    private $facebookURL;
 
     /**
      * @var string
-     * @ORM\Column(name="instagram_url", type="string", length=255, options={"default": ""})
+     * @ORM\Column(name="instagram_url", type="string", length=255, nullable=true)
      */
-    private $instagramURL = '';
+    private $instagramURL;
 
     /**
      * @var string
