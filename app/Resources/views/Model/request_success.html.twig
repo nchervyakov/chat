@@ -1,0 +1,10 @@
+{% extends '::layout.html.twig' %}
+
+{% block title 'model_request.success.title'|trans %}
+{% block page_title_text 'model_request.success.title'|trans %}
+
+{% block page %}
+    <p>{{ modelRequest.firstName }} {{ modelRequest.lastName }}, you have successfully sent the request to our manager.</p>
+    <p>We will reply shortly. Thanks!</p>
+{% endblock %}
+

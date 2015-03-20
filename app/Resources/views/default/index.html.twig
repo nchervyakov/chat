@@ -3,9 +3,20 @@
 {% block page %}
     <br/><br/><br/><br/>
     {% if not is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-        <div class="text-center">
-            <p>To be able to chat please log in via one of your social network accounts.</p><br/>
-            {% include ':Connect:login_block.html.twig' %}
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="well text-center">
+                    <h4>{{ 'index.client_intro' | trans | raw }}</h4><br/>
+                    {% include ':Connect:login_block.html.twig' %}
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="well text-center">
+                    <h4>{{ 'index.model_intro'|trans }}</h4><br/><br/>
+                    <p><a href="{{ path('model_request_registration') }}" class="btn btn-primary btn-lg">{{ 'index.send_request'|trans }}</a></p>
+                </div>
+            </div>
         </div>
+
     {% endif %}
 {% endblock %}

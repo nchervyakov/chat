@@ -1,0 +1,8 @@
+{% extends '::layout.html.twig' %}
+
+{% block title 'model_request.title'|trans %}
+{#{% block page_title_text 'model_request.title'|trans %}#}
+
+{% block page %}
+    {{ include(':Model:_registration_form.html.twig') }}
+{% endblock %}

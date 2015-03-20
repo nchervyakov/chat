@@ -57,6 +57,9 @@ class RegistrationListener extends ContainerAware
 
     /**
      * Fetches several photos from facebook for user.
+     *
+     * Here it is possible to test Facebook Graph API:
+     * https://developers.facebook.com/tools/explorer/
      */
     protected function fetchFacebookPhotosFromAlbums()
     {

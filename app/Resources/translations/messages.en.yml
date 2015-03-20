@@ -71,3 +71,16 @@ chat_with_model: 'Chat with %model%'
 user_page:
     about: 'About'
 title: 'Title'
+index:
+    client_intro: 'If you want to talk with models or if you are already registered please log in via one of your social network accounts:'
+    model_intro:  'If you are a model-looking girl please send a request to our manager via the following form. We will reply shortly.'
+    send_request: 'Send request'
+model_request:
+    title: 'Register as a Model'
+    submit: 'Request registration'
+    facebook_url: 'Facebook URL'
+    instagram_url: 'Instagram URL'
+    first_name: 'First Name'
+    last_name: 'Last Name'
+    success:
+        title: 'Successful Request'
