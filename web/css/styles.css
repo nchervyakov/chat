@@ -222,3 +222,15 @@ body {
 .search-bar .name-field {
     width: 300px;
 }
+
+.alert-sonata_user_error {
+    background-color: #f2dede;
+    border-color: #eed3d7;
+    color: #b94a48;
+}
+.alert-sonata_user_error hr {
+    border-top-color: #e6c1c7;
+}
+.alert-sonata_user_error .alert-link {
+    color: #953b39;
+}

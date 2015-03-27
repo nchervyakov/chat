@@ -42,8 +42,8 @@ class RegistrationFormType extends BaseType
                 'multiple' => false,
                 'expanded' => true
             ])
-            ->add('firstName')
-            ->add('lastName')
+            ->add('firstname')
+            ->add('lastname')
             ->add('dateOfBirth', 'birthday')
             ->remove('plainPassword')
             ->remove('username')

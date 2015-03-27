@@ -10,8 +10,8 @@
 namespace AppBundle\Entity;
 
 
-use FOS\UserBundle\Model\Group as BaseGroup;
 use Doctrine\ORM\Mapping as ORM;
+use Sonata\UserBundle\Model\BaseGroup;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -46,8 +46,9 @@ class Group extends BaseGroup
      */
     private $dateUpdated;
 
-    function __construct()
+    function __construct($name, $roles = array())
     {
+        parent::__construct($name, $roles);
         $this->setDateAdded(new \DateTime());
     }
 

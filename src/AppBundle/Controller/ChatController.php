@@ -19,7 +19,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
  *
  * @package AppBundle\Controller
  * @Route("/chat")
- * @Security("has_role('ROLE_USER')")
+ * @Security("has_role('ROLE_MODEL') or has_role('ROLE_CLIENT')")
  */
 class ChatController extends Controller
 {

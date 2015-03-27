@@ -6,8 +6,8 @@
              alt="{{ user.fullName }}" class="user-photo"/><br/><br/>
     {% endif %}
     <p>{{ 'profile.show.email'|trans }}: {{ user.email }}</p>
-    <p>{{ 'profile.show.firstName'|trans }}: {{ user.firstName }}</p>
-    <p>{{ 'profile.show.lastName'|trans }}: {{ user.lastName }}</p>
+    <p>{{ 'profile.show.firstName'|trans }}: {{ user.firstname }}</p>
+    <p>{{ 'profile.show.lastName'|trans }}: {{ user.lastname }}</p>
     <p><a href="{{ path('fos_user_profile_edit') }}" class="btn btn-primary">{{ 'profile.edit_link'|trans }}</a>
     {% if is_granted('ROLE_MODEL') -%}
         <a href="{{ path('profile_photos') }}" class="btn btn-primary">{{ 'profile.photos_link'|trans }}</a>

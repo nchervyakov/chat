@@ -38,8 +38,8 @@ class ProfileFormType extends BaseType
         parent::buildForm($builder, $options);
 
         $builder
-            ->add('firstName')
-            ->add('lastName')
+            ->add('firstname')
+            ->add('lastname')
             ->remove('username')
             ->remove('current_password')
             ->add('thumbnail', 'user_photo', [

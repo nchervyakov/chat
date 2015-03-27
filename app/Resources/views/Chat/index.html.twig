@@ -2,13 +2,19 @@
 
 {% block title -%}
     {% if companion is defined and companion is not null %}
-        {{ 'chat_with_companion'|trans({'%companion%': companion.firstName}) }}
+        {{ 'chat_with_companion'|trans({'%companion%': companion.firstname}) }}
     {% else %}
         {{ 'chat_page.title'|trans }}
     {% endif %}
 {%- endblock %}
 
-{% block page_title_text 'chat_page.title'|trans %}
+{% block page_title_text %}
+    {% if companion is defined and companion is not null %}
+        {{ 'chat_with_companion'|trans({'%companion%': companion.firstname}) }}
+    {% else %}
+        {{ 'chat_page.title'|trans }}
+    {% endif %}
+{%  endblock %}
 
 {% block javascripts %}
     {{ parent() }}
@@ -21,7 +27,7 @@
     <div class="row">
         <div class="col-lg-3">
             <div class="well bs-component chat-friends">
-                <h3>{{ 'your_friends'|trans }}</h3>
+                <h3>{{ 'chat_page.title'|trans }}</h3>
                 {% if companions %}
                     <ul class="friend-list">
                     {% for companion in companions %}
@@ -47,7 +53,7 @@
             {% if companion is defined and companion is not null %}
                 <div class="panel panel-primary chat-widget" data-companion-id="{{ companion.id }}">
                     <div class="panel-heading">
-                        <span class="glyphicon glyphicon-comment"></span> {{ 'chat_with_companion'|trans({'%companion%': companion.firstName}) }}
+                        <span class="glyphicon glyphicon-comment"></span> {{ 'chat_with_companion'|trans({'%companion%': companion.firstname}) }}
                         {#<div class="btn-group pull-right">
                             <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
                                 <span class="glyphicon glyphicon-chevron-down"></span>

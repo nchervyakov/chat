@@ -2,9 +2,12 @@ imports:
     - { resource: parameters.yml }
     - { resource: security.yml }
     - { resource: services.yml }
+    - { resource: sonata_core.yml }
+    - { resource: @AppBundle/Resources/config/admin.yml }
 
 parameters:
     hwi_oauth.registration.form.handler.fosub_bridge.class: AppBundle\Form\FOSUBRegistrationFormHandler
+    sitename: 'Chat with Models'
 
 framework:
     #esi:             ~
@@ -73,6 +76,8 @@ doctrine:
         #   3. Uncomment next line:
         #     path:     "%database_path%"
 
+        types:
+            json: Sonata\Doctrine\Types\JsonType
     orm:
         auto_generate_proxy_classes: "%kernel.debug%"
         auto_mapping: true
@@ -174,20 +179,24 @@ hwi_oauth:
 fos_user:
     db_driver: orm
     firewall_name: secured_area
+
     user_class: AppBundle\Entity\User
     group:
         group_class: AppBundle\Entity\Group
+        group_manager: sonata.user.orm.group_manager
     registration:
         form:
             type: user_registration
             validation_groups: [ AppRegistration, Default ]
         confirmation:
-            enabled:    false
+            enabled: false
             #template:   'AppBundle:Registration:email.html.twig'
     profile:
         form:
             type: user_profile
             validation_groups: [ AppProfile, Default ]
+    service:
+        user_manager: sonata.user.orm.user_manager
 
 fos_js_routing:
     routes_to_expose:
@@ -301,3 +310,27 @@ liip_imagine:
             quality: 75
             filters:
                 thumbnail: { size: [348, 348], mode: outbond }
+
+
+sonata_block:
+    default_contexts: [cms]
+    blocks:
+        # Enable the SonataAdminBundle block
+        sonata.admin.block.admin_list:
+            contexts:   [admin]
+        # Your other blocks
+
+        sonata.user.block.menu:    # used to display the menu in profile pages
+        sonata.user.block.account: # used to display menu option (login option)
+        sonata.block.service.text: # used to if you plan to use Sonata user routes
+
+sonata_admin:
+    title: "%sitename%"
+
+sonata_user:
+    security_acl: true
+    manager_type: orm # can be orm or mongodb
+    class:
+        user: AppBundle\Entity\User
+        group: AppBundle\Entity\Group
+

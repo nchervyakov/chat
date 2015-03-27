@@ -1,0 +1,16 @@
+{% trans_default_domain 'FOSUserBundle' %}
+
+<div class="fos_user_user_show user-profile-block">
+    {% if user.thumbnail is not null %}
+        <img src="{{ vich_uploader_asset(user.thumbnail, 'file', 'AppBundle\\Entity\\UserPhoto') | imagine_filter('user_photo_thumb') }}"
+             alt="{{ user.fullName }}" class="user-photo"/><br/><br/>
+    {% endif %}
+    <p>{{ 'profile.show.email'|trans }}: {{ user.email }}</p>
+    <p>{{ 'profile.show.firstName'|trans }}: {{ user.firstname }}</p>
+    <p>{{ 'profile.show.lastName'|trans }}: {{ user.lastname }}</p>
+    <p><a href="{{ path('fos_user_profile_edit') }}" class="btn btn-primary">{{ 'profile.edit_link'|trans }}</a>
+    {% if is_granted('ROLE_MODEL') -%}
+        <a href="{{ path('profile_photos') }}" class="btn btn-primary">{{ 'profile.photos_link'|trans }}</a>
+    {%- endif %}
+    </p>
+</div>

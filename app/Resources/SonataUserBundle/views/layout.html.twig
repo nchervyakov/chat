@@ -1,0 +1,13 @@
+{% extends "::layout.html.twig" %}
+
+{% block flash %}
+    {{ parent() }}
+    {% include 'SonataCoreBundle:FlashMessage:render.html.twig' %}
+{% endblock %}
+
+{% block page %}
+    {{ parent() }}
+
+    {% block fos_user_content %}
+    {% endblock fos_user_content %}
+{% endblock %}

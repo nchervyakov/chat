@@ -47,11 +47,13 @@ class MenuBuilder extends ContainerAware
         $checker = $this->container->get('security.authorization_checker');
 
         if ($checker->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
-            $menu->addChild('chat', [
-                'route' => 'chat',
-                'label' => $translator->trans('chat'),
-                'attributes' => ['title' => $translator->trans('chat')]
-            ]);
+            if ($checker->isGranted('ROLE_MODEL') || $checker->isGranted('ROLE_CLIENT')) {
+                $menu->addChild('chat', [
+                    'route' => 'chat',
+                    'label' => $translator->trans('chat_page.title'),
+                    'attributes' => ['title' => $translator->trans('chat')]
+                ]);
+            }
 
             if ($checker->isGranted('ROLE_MODEL')) {
                 $menu->addChild('menu.main.stat', [
@@ -60,7 +62,7 @@ class MenuBuilder extends ContainerAware
                     'attributes' => ['title' => $translator->trans('menu.main.stat')]
                 ]);
 
-            } else {
+            } else if ($checker->isGranted('ROLE_CLIENT')) {
                 $menu->addChild('menu.main.search', [
                     'route' => 'search_index',
                     'label' => $translator->trans('menu.main.search'),

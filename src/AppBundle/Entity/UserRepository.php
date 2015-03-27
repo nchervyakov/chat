@@ -17,9 +17,10 @@ class UserRepository extends EntityRepository
     /**
      * Populates model search query builder based on ModelSearch instance.
      * @param ModelSearch $search
+     * @param int $onlineMinutes
      * @return \Doctrine\ORM\QueryBuilder
      */
-    public function prepareQueryBuilderForModelSearch(ModelSearch $search)
+    public function prepareQueryBuilderForModelSearch(ModelSearch $search, $onlineMinutes = 0)
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
 
@@ -53,14 +54,14 @@ class UserRepository extends EntityRepository
                 if ($part2) {
                     $qb->andWhere(
                         $qb->expr()->orX(
-                            $qb->expr()->andX('u.firstName LIKE :part1', 'u.lastName LIKE :part2'),
-                            $qb->expr()->andX('u.firstName LIKE :part2', 'u.lastName LIKE :part1')
+                            $qb->expr()->andX('u.firstname LIKE :part1', 'u.lastname LIKE :part2'),
+                            $qb->expr()->andX('u.firstname LIKE :part2', 'u.lastname LIKE :part1')
                         ))
                         ->setParameter('part1', $part1.'%')
                         ->setParameter('part2', $part2.'%');
 
                 } else {
-                    $qb->andWhere($qb->expr()->orX('u.firstName LIKE :part1', 'u.lastName LIKE :part1'))
+                    $qb->andWhere($qb->expr()->orX('u.firstname LIKE :part1', 'u.lastname LIKE :part1'))
                         ->setParameter('part1', $part1.'%');
                 }
             }

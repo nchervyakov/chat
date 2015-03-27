@@ -1,7 +1,7 @@
 {% extends '::layout.html.twig' %}
 
 {% block title 'search'|trans %}
-{% block page_title_text %}{{ 'search'|trans }}{% endblock %}
+{% block page_title_text %}{{ 'models_available_for_chat'|trans }}{% endblock %}
 
 {% block page %}
     {{ parent() }}
@@ -33,7 +33,7 @@
 
                                 <div class="text-center">
                                     <a href="{{ path('chat_show', {"companion_id": model.id}) }}" class="btn btn-primary"
-                                        >{{ 'chat_with_model'|trans({"%model%": model.firstName}) }}</a>
+                                        >{{ 'chat_with_model'|trans({"%model%": model.firstname}) }}</a>
                                 </div>
                             </div>
                         </div>

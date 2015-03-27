@@ -6,18 +6,18 @@ AppBundle\Entity\User:
         emailCanonical:     @self->username
         enabled:            1
         salt:               'iz55lk2rvzcokcskgo48co8kw4004o0'
-        password:           ''
+        password:           '123456'
         lastLogin:          <dt('2015-03-06 13:14:43')>
         locked:             0
         expired:            0
         expiresAt:          null
         confirmationToken:  null
         passwordRequestedAt: null
-        roles:              ["ROLE_ADMIN"]
+        roles:              ["ROLE_SUPER_ADMIN"]
         credentialsExpired: 0
         credentialsExpireAt: null
-        firstName:          ''
-        lastName:           ''
+        firstname:          ''
+        lastname:           ''
         dateOfBirth:        <dt('2005-03-01')>
         facebookId:         null
         vkontakteId:        null
@@ -26,7 +26,7 @@ AppBundle\Entity\User:
         githubId:           null
         dateAdded:          <dt('2015-03-01 09:15:29')>
         dateUpdated:        <dt('2015-02-01 04:01:27')>
-        gender:             null
+        gender:             'u'
         order:              1
 
     nick:
@@ -46,8 +46,8 @@ AppBundle\Entity\User:
         roles:              ["ROLE_CLIENT"]
         credentialsExpired: 0
         credentialsExpireAt: null
-        firstName:          'Nikolay'
-        lastName:           'Chervyakov'
+        firstname:          'Nikolay'
+        lastname:           'Chervyakov'
         dateOfBirth:        <dt('1983-01-02')>
         facebookId:         null
         vkontakteId:        null
@@ -56,7 +56,7 @@ AppBundle\Entity\User:
         githubId:           null
         dateAdded:          <dt('2015-03-06 09:13:29')>
         dateUpdated:        <dt('2015-03-06 13:18:27')>
-        gender:             'male'
+        gender:             'm'
         order:              2
 #        thumbnail:          <imageEx('web/uploads/photo', 348, 348, null, false)>
 
@@ -77,8 +77,8 @@ AppBundle\Entity\User:
         roles:              ["ROLE_MODEL"]
         credentialsExpired: 0
         credentialsExpireAt: null
-        firstName:          'Maria'
-        lastName:           'Ivanova'
+        firstname:          'Maria'
+        lastname:           'Ivanova'
         dateOfBirth:        <dt('1992-06-12')>
         facebookId:         '797550090338709'
         vkontakteId:        null
@@ -87,6 +87,6 @@ AppBundle\Entity\User:
         githubId:           null
         dateAdded:          <dt('2015-01-16 19:18:29')>
         dateUpdated:        <dt('2015-01-21 16:35:27')>
-        gender:             'female'
+        gender:             'f'
         order:              3
 #        thumbnail:          <imageEx('web/uploads/photo', 348, 348, null, false)>

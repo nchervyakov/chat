@@ -19,12 +19,12 @@ AppBundle\Entity\User:
         expiresAt:          null
         confirmationToken:  null
         passwordRequestedAt: null
-        gender:             <randomElement(['male', 'female'])>
+        gender:             <randomElement(['m', 'f'])>
         roles:              <userRolesByGender($gender)>
         credentialsExpired: 0
         credentialsExpireAt: null
-        firstName:          <firstName($gender)>
-        lastName:           <lastName()>
+        firstname:          <firstName(expandGender($gender))>
+        lastname:           <lastName()>
         dateOfBirth:        <dateTimeBetween('-35 years', '-18 years')>
         facebookId:         50%? <numerify('###############')>
         vkontakteId:        30%? <randomNumber(7)>

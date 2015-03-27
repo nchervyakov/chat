@@ -71,6 +71,16 @@ class FixtureLoader extends DataFixtureLoader
         return [$roles[$gender]];
     }
 
+    public function expandGender($gender)
+    {
+        if ($gender == User::GENDER_MALE) {
+            return 'male';
+        } else if ($gender == User::GENDER_FEMALE) {
+            return 'female';
+        }
+        return $gender;
+    }
+
     public function rootDir($path = '')
     {
         return implode('/', [realpath(__DIR__.'/../../../../'), $path]);

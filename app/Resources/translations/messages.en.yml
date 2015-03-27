@@ -44,7 +44,7 @@ model_search:
         incorrect_age_interval: '"From" field must be greater or equal to "To" field.'
     with_photo: 'With Photo'
 chat_page:
-    title: 'Chat'
+    title: 'My Chats'
     no_companions: "You don't have anybody in your list."
     no_messages_yet: 'You do not have any messages yet.'
     ctrl_plus_enter_send_message: 'Press Ctrl + Enter to send a message.'
@@ -84,3 +84,4 @@ model_request:
     last_name: 'Last Name'
     success:
         title: 'Successful Request'
+models_available_for_chat: 'Models Available for Chat'
