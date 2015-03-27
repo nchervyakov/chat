@@ -1,0 +1,6 @@
+{%- if messages is defined -%}
+    {{ conversation.totalTimeInterval|date_interval }}
+    {%- if is_granted('ROLE_MODEL') %}
+        = ${{ conversation.modelEarnings|number_format(2) }}
+    {%- endif -%}
+{%- endif -%}

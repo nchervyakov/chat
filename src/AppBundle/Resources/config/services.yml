@@ -10,7 +10,8 @@ services:
             - [setContainer, ["@service_container"]]
 
     app.menu.main:
-        class: Knp\Menu\MenuItem # the service definition requires setting the class
+        # the service definition requires setting the class
+        class: Knp\Menu\MenuItem
         factory_service: app.menu_builder
         factory_method: createMainMenu
         arguments: ["@request"]
@@ -77,6 +78,11 @@ services:
             - [setContainer, ["@service_container"]]
         tags:
             - {name: twig.extension}
+
+#    twig.extension.l18n:
+#        class: Twig_Extensions_Extension_Intl
+#        tags:
+#            - {name: twig.extension}
 
     app.emoticon_manager:
         class: AppBundle\Emoticon\EmoticonManager

@@ -47,10 +47,14 @@ class RegistrationListener extends ContainerAware
         $this->userInformation = $userInformation;
         $resourceOwnerName = $userInformation->getResourceOwner()->getName();
 
-        if ($event->getUser()->hasRole('ROLE_MODEL')) {
-            if ($resourceOwnerName == 'facebook') {
-                $this->fbParams = ['access_token' => $userInformation->getAccessToken()];
-                $this->fetchFacebookPhotosFromAlbums();
+        if ($resourceOwnerName == 'facebook') {
+            $this->fbParams = ['access_token' => $userInformation->getAccessToken()];
+
+            if ($event->getUser()->hasRole('ROLE_MODEL')) {
+                $this->fetchFacebookPhotosFromAlbums(5);
+
+            } else if ($event->getUser()->hasRole('ROLE_CLIENT')) {
+                $this->fetchFacebookPhotosFromAlbums(1);
             }
         }
     }
@@ -60,14 +64,15 @@ class RegistrationListener extends ContainerAware
      *
      * Here it is possible to test Facebook Graph API:
      * https://developers.facebook.com/tools/explorer/
+     * @param int $photoNumber
      */
-    protected function fetchFacebookPhotosFromAlbums()
+    protected function fetchFacebookPhotosFromAlbums($photoNumber = 5)
     {
         try {
             $this->fetchFacebookMaxCountAlbum();
 
             if (($album = $this->fetchFacebookMaxCountAlbum()) && is_array($album)) {
-                $this->fetchFacebookAlbumPhotos($album);
+                $this->fetchFacebookAlbumPhotos($album, $photoNumber);
             }
 
         } catch (RuntimeException $e) {
@@ -101,15 +106,20 @@ class RegistrationListener extends ContainerAware
 
     /**
      * @param array $album
+     * @param null $photoNumber
      */
-    protected function fetchFacebookAlbumPhotos(array $album)
+    protected function fetchFacebookAlbumPhotos(array $album, $photoNumber = null)
     {
         $client = $this->container->get('app.facebook.client');
         $albumsResult = $client->get('/'.$album['id'].'/photos', null, [
             'query' => $this->fbParams
         ])->send();
         $data = $albumsResult->json();
-        $photos = array_slice($data['data'], 0, 5);
+        if (is_numeric($photoNumber)) {
+            $photos = array_slice($data['data'], 0, $photoNumber);
+        } else {
+            $photos = $data['data'];
+        }
 
         foreach ($photos as $photo) {
             $this->fetchFacebookPhoto($photo);

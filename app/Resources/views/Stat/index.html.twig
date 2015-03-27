@@ -1,6 +1,6 @@
 {% extends '::layout.html.twig' %}
 
-{% block page_title_text 'stat'|trans %}
+{% block page_title_text 'your_admin_section'|trans %}
 
 {% block page %}
     {{ parent() }}
@@ -8,14 +8,14 @@
     <div class="row">
         <div class="col-lg-12">
             {% if pagination|length > 0 %}
-                <table class="table">
+                <table class="table stat-table">
                     <thead>
                         <tr>
-                            <th>{{ 'client'|trans }}</th>
-                            <th>{{ 'stat_page.not_paid_time'|trans }}</th>
-                            <th>{{ 'stat_page.paid_time'|trans }}</th>
-                            <th>{{ 'stat_page.total_time'|trans }}</th>
-                            <th class="text-right">{{ 'stat_page.earned_money'|trans ~ " ($)" }}</th>
+                            <th>{{ 'chatted_with'|trans }}</th>
+                            {#<th>{{ 'stat_page.not_paid_time'|trans }}</th>#}
+                            {#<th>{{ 'stat_page.paid_time'|trans }}</th>#}
+                            <th class="text-right">{{ 'stat_page.total_time'|trans }}</th>
+                            {#<th class="text-right">{{ 'stat_page.earned_money'|trans ~ " ($)" }}</th>#}
                             <th class="text-right">{{ 'stat_page.got_money'|trans ~ " ($)" }}</th>
 
                         </tr>
@@ -24,14 +24,21 @@
                         {% for conversation in pagination %}
                             <tr>
                                 <td><a href="{{ path('chat_show', {"companion_id": conversation.client.id}) }}">{{ conversation.client.fullName }}</a></td>
-                                <td>{{ conversation.notPaidTimeInterval|date('%H:%I:%S') }}</td>
-                                <td>{{ conversation.paidTimeInterval|date('%H:%I:%S') }}</td>
-                                <td>{{ conversation.totalTimeInterval|date('%H:%I:%S') }}</td>
+                                {#<td>{{ conversation.notPaidTimeInterval|date('%H:%I:%S') }}</td>#}
+                                {#<td>{{ conversation.paidTimeInterval|date('%H:%I:%S') }}</td>#}
+                                <td class="text-right">{{ conversation.totalTimeInterval|date_interval }}</td>
+                                {#<td class="text-right">{{ conversation.modelEarnings|number_format(2) }}</td>#}
                                 <td class="text-right">{{ conversation.modelEarnings|number_format(2) }}</td>
-                                <td class="text-right">{{ conversation.paidModelEarnings|number_format(2) }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <td></td>
+                            <td class="text-right">{{ total_seconds|date_interval }}</td>
+                            <td class="text-right">{{ total_earnings|number_format(2) }}</td>
+                        </tr>
+                    </tfoot>
                 </table>
 
                 <div class="row">

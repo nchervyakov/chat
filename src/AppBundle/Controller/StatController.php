@@ -25,7 +25,7 @@ class StatController extends Controller
     public function indexAction(Request $request)
     {
         $page = $request->query->getInt('page', 1);
-        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $user = $this->getUser();
 
         $userRepo = $this->getDoctrine()->getRepository('AppBundle:User');
         $conversationsQB = $userRepo->createUserConversationsQueryBuilder($user);
@@ -37,9 +37,13 @@ class StatController extends Controller
         foreach ($pagination as $conversation) {
             $convService->estimateConversation($conversation);
         }
+        $this->getDoctrine()->getManager()->flush();
+        $stats = $convService->getModelStats($user);
 
         return $this->render('Stat/index.html.twig', [
-            'pagination' => $pagination
+            'pagination' => $pagination,
+            'total_earnings' => $stats['total_earnings'],
+            'total_seconds' => $stats['total_seconds']
         ]);
     }
 }

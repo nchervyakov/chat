@@ -6,7 +6,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints as DoctrineConstraints;
-use Symfony\Component\Validator\Constraints\CardScheme;
 
 /**
  * Conversation
@@ -58,6 +57,24 @@ class Conversation
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\ConversationInterval", mappedBy="conversation", cascade={"remove"}, orphanRemoval=true)
      */
     protected $intervals;
+
+    /**
+     * @var integer
+     * @ORM\Column(name="seconds", type="integer", options={"default": 0})
+     */
+    private $seconds = 0;
+
+    /**
+     * @var float
+     * @ORM\Column(name="price", type="decimal", scale=2, options={"default": 0.0})
+     */
+    private $price = 0.0;
+
+    /**
+     * @var float
+     * @ORM\Column(name="model_earnings", type="decimal", scale=2, options={"default": 0.0})
+     */
+    private $modelEarnings = 0.0;
 
     /**
      * @var \DateTime
@@ -404,7 +421,7 @@ class Conversation
     /**
      * @return float
      */
-    public function getModelEarnings()
+    public function getCalculatedModelEarnings()
     {
         $earnings = 0.0;
 
@@ -429,5 +446,60 @@ class Conversation
         }
 
         return $earnings;
+    }
+
+    /**
+     * Set seconds
+     *
+     * @param integer $seconds
+     * @return Conversation
+     */
+    public function setSeconds($seconds)
+    {
+        $this->seconds = $seconds;
+
+        return $this;
+    }
+
+    /**
+     * Get seconds
+     *
+     * @return integer 
+     */
+    public function getSeconds()
+    {
+        return $this->seconds;
+    }
+
+    /**
+     * Set price
+     *
+     * @param string $price
+     * @return Conversation
+     */
+    public function setPrice($price)
+    {
+        $this->price = $price;
+
+        return $this;
+    }
+
+    /**
+     * @param float $modelEarnings
+     * @return Conversation
+     */
+    public function setModelEarnings($modelEarnings)
+    {
+        $this->modelEarnings = $modelEarnings;
+
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getModelEarnings()
+    {
+        return $this->modelEarnings;
     }
 }

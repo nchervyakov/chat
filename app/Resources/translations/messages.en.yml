@@ -85,3 +85,6 @@ model_request:
     success:
         title: 'Successful Request'
 models_available_for_chat: 'Models Available for Chat'
+chatted_with: 'Chatted with'
+model_admin_section: 'Admin'
+your_admin_section: 'Your admin section'

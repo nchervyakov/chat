@@ -9,6 +9,12 @@ services:
 #            - ~
 #        calls:
 #            - [ setTranslationDomain, [AcmeDemoBundle]]
+    app.admin.conversation:
+        class: AppBundle\Admin\ConversationAdmin
+        arguments: [~, AppBundle\Entity\Conversation, ~]
+        tags:
+            - {name: sonata.admin, manager_type: orm, group: Chat, label: Conversations}
+
     app.admin.model_request:
         class: AppBundle\Admin\ModelRequestAdmin
         arguments: [~, AppBundle\Entity\ModelRequest, AppBundle:ModelRequestAdmin]

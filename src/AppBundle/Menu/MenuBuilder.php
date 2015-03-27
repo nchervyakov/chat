@@ -58,7 +58,7 @@ class MenuBuilder extends ContainerAware
             if ($checker->isGranted('ROLE_MODEL')) {
                 $menu->addChild('menu.main.stat', [
                     'route' => 'stat_index',
-                    'label' => $translator->trans('menu.main.stat'),
+                    'label' => $translator->trans('model_admin_section'),
                     'attributes' => ['title' => $translator->trans('menu.main.stat')]
                 ]);
 

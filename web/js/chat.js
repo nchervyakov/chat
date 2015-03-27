@@ -15,6 +15,7 @@ can.Control('ChatWidget', {
         this.form = this.element.find('.js-message-form');
         this.inputElement = this.form.find('.js-message-input');
         this.submitButton = this.form.find('.js-submit-button');
+        this.statsBlock = this.element.find('.js-chat-stats');
         this.companionId = this.element.data('companion-id');
         this.list = this.element.find('.chat');
         this.emoticons =  this.element.find('.js-emoticons');
@@ -57,6 +58,9 @@ can.Control('ChatWidget', {
             if (res.message) {
                 widget.addNewMessages(res.message);
                 widget.latestMessageId = res.id;
+            }
+            if (res.stat_html) {
+                widget.statsBlock.html(res.stat_html);
             }
         });
     },
@@ -127,6 +131,9 @@ can.Control('ChatWidget', {
             if (res.messages && res.latestMessageId > widget.latestMessageId) {
                 widget.addNewMessages(res.messages);
                 widget.latestMessageId = res.latestMessageId;
+            }
+            if (res.stat_html) {
+                widget.statsBlock.html(res.stat_html);
             }
         });
     },

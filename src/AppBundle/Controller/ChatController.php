@@ -31,7 +31,7 @@ class ChatController extends Controller
      */
     public function indexAction()
     {
-        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $user = $this->getUser();
         $params = ['user' => $user];
 
         $userRepo = $this->getDoctrine()->getRepository('AppBundle:User');
@@ -52,7 +52,7 @@ class ChatController extends Controller
             throw new AccessDeniedHttpException();
         }
 
-        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $user = $this->getUser();
         $params = [
             'user' => $user,
             'companion' => $companion,
@@ -86,7 +86,7 @@ class ChatController extends Controller
             throw new AccessDeniedHttpException();
         }
 
-        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $user = $this->getUser();
         $conversation = $this->getDoctrine()->getRepository('AppBundle:Conversation')
             ->getOrCreateByUsers($user, $companion);
 
@@ -104,10 +104,17 @@ class ChatController extends Controller
         $em->flush();
 
         if ($request->isXmlHttpRequest()) {
-            return new JsonResponse([
+            $responseData = [
                 'message' => $this->renderView(':Chat:_message.html.twig', ['message' => $message]),
+                'total_time' => $conversation->getSeconds(),
+                'stat_html' => $this->renderView(':Chat:_chat_stats.html.twig', [
+                    'conversation' => $conversation,
+                    'messages' => true
+                ]),
                 'id' => $message->getId()
-            ]);
+            ];
+
+            return new JsonResponse($responseData);
 
         } else {
             return $this->redirectToRoute('chat', ['companion_id' => $companion->getId()]);
@@ -127,7 +134,7 @@ class ChatController extends Controller
             throw new AccessDeniedHttpException();
         }
 
-        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $user = $this->getUser();
         $conversationRepo = $this->getDoctrine()->getRepository('AppBundle:Conversation');
         $conversation = $conversationRepo->getByUsers($user, $companion);
 
@@ -147,7 +154,11 @@ class ChatController extends Controller
 
         return new JsonResponse([
             'messages' => $this->renderView(':Chat:_messages.html.twig', ['messages' => $latestMessages]),
-            'latestMessageId' => $latestMessageId
+            'latestMessageId' => $latestMessageId,
+            'stat_html' => $this->renderView(':Chat:_chat_stats.html.twig', [
+                'conversation' => $conversation,
+                'messages' => $latestMessages
+            ]),
         ]);
     }
 }

@@ -234,3 +234,7 @@ body {
 .alert-sonata_user_error .alert-link {
     color: #953b39;
 }
+
+.stat-table tfoot {
+    font-weight: bold;
+}
