@@ -3408,12 +3408,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sonata-project/SonataAdminBundle.git",
-                "reference": "dceaa263adfb865c6f8815c5b2995013a785c681"
+                "reference": "c8169ded308ffe82ad6af22b388f7b01e94e9325"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sonata-project/SonataAdminBundle/zipball/dceaa263adfb865c6f8815c5b2995013a785c681",
-                "reference": "dceaa263adfb865c6f8815c5b2995013a785c681",
+                "url": "https://api.github.com/repos/sonata-project/SonataAdminBundle/zipball/c8169ded308ffe82ad6af22b388f7b01e94e9325",
+                "reference": "c8169ded308ffe82ad6af22b388f7b01e94e9325",
                 "shasum": ""
             },
             "require": {
@@ -3484,7 +3484,7 @@
                 "bootstrap",
                 "sonata"
             ],
-            "time": "2015-03-30 09:26:11"
+            "time": "2015-03-31 09:20:19"
         },
         {
             "name": "sonata-project/block-bundle",
@@ -4020,12 +4020,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nchervyakov/SonataUserBundle.git",
-                "reference": "e9b1e62b918264da502b8bb92ce0190116bc256b"
+                "reference": "981af9be4f705d9b97f9f96d2a71989b43f400fb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nchervyakov/SonataUserBundle/zipball/e9b1e62b918264da502b8bb92ce0190116bc256b",
-                "reference": "e9b1e62b918264da502b8bb92ce0190116bc256b",
+                "url": "https://api.github.com/repos/nchervyakov/SonataUserBundle/zipball/981af9be4f705d9b97f9f96d2a71989b43f400fb",
+                "reference": "981af9be4f705d9b97f9f96d2a71989b43f400fb",
                 "shasum": ""
             },
             "require": {
@@ -4087,7 +4087,7 @@
             "support": {
                 "source": "https://github.com/nchervyakov/SonataUserBundle/tree/master"
             },
-            "time": "2015-03-27 09:28:29"
+            "time": "2015-04-01 04:13:07"
         },
         {
             "name": "swiftmailer/swiftmailer",
