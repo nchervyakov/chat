@@ -93,4 +93,4 @@ link_action_create_model: 'Create Model'
 link_action_create_client: 'Create Client'
 link_action_send_model_notification: 'Send Notification To Model'
 model_notification:
-    email_title: 'Invitation to'
+    email_title: 'Invitation to %website%'
