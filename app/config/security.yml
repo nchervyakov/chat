@@ -80,6 +80,9 @@ security:
 
                 oauth_user_provider:
                     service: hwi_oauth.user.provider.fosub_bridge
+
+#                success_handler: "@app.oauth.handler"
+
             remember_me:
                 key:        "%secret%"
                 lifetime:   31536000

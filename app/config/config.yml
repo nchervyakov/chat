@@ -7,6 +7,9 @@ imports:
 
 parameters:
     hwi_oauth.registration.form.handler.fosub_bridge.class: AppBundle\Form\FOSUBRegistrationFormHandler
+    hwi_oauth.authentication.listener.oauth.class: AppBundle\Security\Http\Firewall\OAuthListener
+    hwi_oauth.user.provider.fosub_bridge.class: AppBundle\Security\Core\User\FOSUBUserProvider
+    hwi_oauth.authentication.provider.oauth.class: AppBundle\Security\Core\Authentication\Provider\OAuthProvider
     sitename: 'Chat with Models'
 
 framework:
@@ -39,9 +42,11 @@ twig:
         sitename: "Chat with Models"
         developer_name: "Nikolay Chervyakov"
         developer_email: "nick.chervyakov@gmail.com"
-#    form:
+    form:
 #        #resources: ['bootstrap_3_layout.html.twig']
-#        resources: ['bootstrap_3_horizontal_layout.html.twig']
+        resources:
+#            - 'bootstrap_3_horizontal_layout.html.twig'
+            - 'SonataCoreBundle:Form:datepicker.html.twig'
     form_themes:
         # other form themes
         - 'VichUploaderBundle:Form:fields.html.twig'
@@ -329,6 +334,8 @@ sonata_block:
 
 sonata_admin:
     title: "%sitename%"
+    options:
+        form_type: standard
 
 sonata_user:
     security_acl: true
@@ -336,4 +343,8 @@ sonata_user:
     class:
         user: AppBundle\Entity\User
         group: AppBundle\Entity\Group
+    admin:
+        user:
+            class: AppBundle\Admin\UserAdmin
+            controller: AppBundle:UserAdmin
 

@@ -38,3 +38,6 @@ parameters:
     payment.minute_rate:            2
     payment.model_share:            0.7
 
+    website_robot_email: robot@kukik.co
+    website: http://kukik.co
+

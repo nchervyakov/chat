@@ -1,0 +1,7 @@
+{% if object.status == 'new' %}
+    <a href="{{ admin.generateObjectUrl('createModelByRequest', object) }}" class="btn btn-sm btn-default edit_link" title="{{ 'action_create_by_model_request'|trans }}">
+        <i class="glyphicon glyphicon-registration-mark"></i>
+        {{ 'action_create_by_model_request'|trans }}
+    </a>
+{% endif %}
+

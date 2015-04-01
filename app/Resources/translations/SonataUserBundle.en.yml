@@ -1,0 +1,21 @@
+link_action_create_model: 'Create Model'
+show:
+    label_facebook_id: 'Facebook ID'
+    label_twitter_id: 'Twitter ID'
+    label_instagram_id: 'Instagram ID'
+form:
+    label_facebook_id: 'Facebook ID'
+    label_twitter_id: 'Twitter ID'
+    label_instagram_id: 'Instagram ID'
+
+    label_activated: Activated
+    label_activation_token: 'Activation Token'
+
+model_notification:
+    flash_successfully_sent: 'The notification has been successfully sent to the model.'
+
+filter:
+    label_activated: Activated
+
+list:
+    label_activated: Activated

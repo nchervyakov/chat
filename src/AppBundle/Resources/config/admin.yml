@@ -19,7 +19,7 @@ services:
         class: AppBundle\Admin\ModelRequestAdmin
         arguments: [~, AppBundle\Entity\ModelRequest, AppBundle:ModelRequestAdmin]
         tags:
-            - {name: sonata.admin, manager_type: orm, group: Chat, label: ModelRequests}
+            - {name: sonata.admin, manager_type: orm, group: Chat, label: 'Model Requests'}
 
     app.admin.emoticon:
         class: AppBundle\Admin\EmoticonAdmin

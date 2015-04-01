@@ -62,6 +62,13 @@ class FixtureLoader extends DataFixtureLoader
         return base_convert(sha1(mt_rand()), 16, 36);
     }
 
+    public function firstNameByGender($gender)
+    {
+        $loader = $this->container->get('hautelook_alice.loader.yaml');
+        $name = $loader->fake('firstName','en', $this->expandGender($gender));
+        return $name;
+    }
+
     public function userRolesByGender($gender)
     {
         $roles = [
@@ -69,6 +76,19 @@ class FixtureLoader extends DataFixtureLoader
             User::GENDER_FEMALE => User::ROLE_MODEL
         ];
         return [$roles[$gender]];
+    }
+
+    public function userGroupByGender($gender)
+    {
+        $loader = $this->container->get('hautelook_alice.loader.yaml');
+        if ($gender == User::GENDER_MALE) {
+            return $loader->getReference('Clients');
+
+        } else if ($gender == User::GENDER_FEMALE) {
+            return $loader->getReference('Models');
+        }
+
+        return null;
     }
 
     public function expandGender($gender)
@@ -129,16 +149,19 @@ class FixtureLoader extends DataFixtureLoader
         return $fullPath ? $filepath : $filename;
     }
 
-    public function uploadPhoto(User $owner = null, $dir = 'web/uploads', $width = 640, $height = 480, $category = null, $fullPath = true)
+    public function uploadPhoto($dir = 'web/uploads', $width = 640, $height = 480, $category = null, $fullPath = true)
     {
         $imagePath = $this->imageEx($dir, $width, $height, $category, $fullPath);
 
         if ($imagePath) {
+            $targetImagePath = preg_replace('/^(.*)(\.jpe?g)$/i', '$1_tmp$2', $imagePath);
+            copy($dir.'/'.$imagePath, $dir.'/'.$targetImagePath);
             $userPhoto = new UserPhoto();
-            $uploadedFile = new UploadedFile($dir . '/' . $imagePath, $imagePath, null, null, null, true);
+            //var_dump($dir . '/' . $imagePath);exit;
+            $uploadedFile = new UploadedFile($dir . '/' . $targetImagePath, $targetImagePath, null, null, null, true);
             $userPhoto->setFile($uploadedFile);
             $this->container->get('vich_uploader.upload_handler')->upload($userPhoto, 'file');
-            $this->container->get('app.user_manager')->pregeneratePhotoThumbs($userPhoto);
+            //$this->container->get('app.user_manager')->pregeneratePhotoThumbs($userPhoto);
             return $userPhoto->getFileName();
         }
 

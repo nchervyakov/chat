@@ -21,6 +21,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class ModelRequest 
 {
+    const STATUS_NEW = 'new';
+    const STATUS_CREATED_MODEL = 'created_model';
+    const STATUS_REJECTED = 'rejected';
+
     /**
      * @var integer
      * @ORM\Column(name="id", type="integer")
@@ -82,9 +86,30 @@ class ModelRequest
      */
     private $dateUpdated;
 
+    /**
+     * @var User|null
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\User", mappedBy="modelRequest")
+     */
+    private $model;
+
+    /**
+     * @var string
+     * @ORM\Column(name="status", type="string", length=32, options={"default": "new"})
+     */
+    private $status = self::STATUS_NEW;
+
     function __construct()
     {
         $this->setDateAdded(new \DateTime());
+    }
+
+    public static function getStatusLabels()
+    {
+        return [
+            self::STATUS_NEW => 'New',
+            self::STATUS_CREATED_MODEL => 'Created Model',
+            self::STATUS_REJECTED => 'Rejected'
+        ];
     }
 
     /**
@@ -279,5 +304,56 @@ class ModelRequest
     public function getLastName()
     {
         return $this->lastName;
+    }
+
+    /**
+     * Set status
+     *
+     * @param string $status
+     * @return ModelRequest
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * Get status
+     *
+     * @return string 
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * Set model
+     *
+     * @param User $model
+     * @return ModelRequest
+     */
+    public function setModel(User $model = null)
+    {
+        $this->model = $model;
+
+        return $this;
+    }
+
+    /**
+     * Get model
+     *
+     * @return User
+     */
+    public function getModel()
+    {
+        return $this->model;
+    }
+
+    function __toString()
+    {
+        return ''.$this->getId();
     }
 }

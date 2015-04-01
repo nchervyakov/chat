@@ -1,0 +1,11 @@
+{% extends ':Email:email_base.html.twig' %}
+
+{% block content_html %}
+    <p>Hi, {{ user.fullName }}!</p>
+    <p>We invite you to join us. Please click the following link and authorize via Facebook.
+        <a href="{{ url('model_request_activate_via_social_network', {'activationToken': user.activationToken}) }}">
+            {{ url('model_request_activate_via_social_network', {'activationToken': user.activationToken}) }}
+        </a>
+    </p>
+    <p>Best regards <span class="br"><a href="{{ website }}">{{ website }}</a> team.</span></p>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends 'SonataAdminBundle:CRUD:edit.html.twig' %}
+
+{% block actions %}
+    {{ parent() }}
+    {% spaceless %}
+        <li>{{ include(':Core:create_user_type_button.html.twig', {'userType': 'model'}) }}</li>
+        <li>{{ include(':Core:create_user_type_button.html.twig', {'userType': 'client'}) }}</li>
+        <li>{{ include(':Core:send_model_notification_button.html.twig') }}</li>
+    {% endspaceless %}
+{% endblock %}

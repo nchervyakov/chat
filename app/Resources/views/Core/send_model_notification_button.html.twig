@@ -1,0 +1,18 @@
+{% if admin.id(object) and not object.activated %}
+    {% if admin.subClasses is empty %}
+        <a class="sonata-action-element" href="{{ admin.generateObjectUrl('sendModelNotification', object) }}">
+            <i class="fa fa-plus-circle"></i>
+            {{ 'link_action_send_model_notification'|trans }}</a>
+    {% else %}
+        <li class="divider" role="presentation"></li>
+        {% for subclass in admin.subclasses|keys %}
+            <li>
+                <a href="{{ admin.generateObjectUrl('sendModelNotification', object, {'subclass': subclass}) }}">
+                    <i class="fa fa-plus-circle"></i>
+                    {{ 'link_action_send_model_notification'|trans }} {{ subclass|trans({}, admin.translationdomain) }}
+                </a>
+            </li>
+        {% endfor %}
+        <li class="divider" role="presentation"></li>
+    {% endif %}
+{% endif %}

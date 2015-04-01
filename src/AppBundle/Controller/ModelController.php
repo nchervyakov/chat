@@ -15,6 +15,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -73,6 +74,29 @@ class ModelController extends Controller
 
         return $this->render(':Model:request_success.html.twig', [
             'modelRequest' => $modelRequest
+        ]);
+    }
+
+    /**
+     * @Route("/activate-via-social-network/{activationToken}", name="model_request_activate_via_social_network")
+     * @param string $activationToken
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function activateViaFacebookAction($activationToken)
+    {
+        $activationToken = trim($activationToken);
+        $model = $this->getDoctrine()->getRepository('AppBundle:User')->findOneBy(['activationToken' => $activationToken]);
+        if (!$model || !$model->isEnabled()) {
+            //throw new NotFoundHttpException();
+        }
+
+//        if ($model->isActivated()) {
+//            throw new HttpException("The model is already activated.");
+//        }
+
+        return $this->redirectToRoute('oauth_service_redirect', [
+            'activation_token' => $activationToken,
+            'service' => 'facebook'
         ]);
     }
 

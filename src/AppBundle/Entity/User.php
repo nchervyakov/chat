@@ -90,6 +90,12 @@ class User extends BaseUser
     protected $githubId;
 
     /**
+     * @var string
+     * @ORM\Column(name="instagram_id", type="string", nullable=true, length=64)
+     */
+    protected $instagramId;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="date_added", type="datetime", nullable=true)
@@ -121,6 +127,37 @@ class User extends BaseUser
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\UserPhoto", mappedBy="owner", cascade={"merge", "persist", "remove"})
      */
     private $photos;
+
+    /**
+     * @var string
+     * @ORM\Column(name="facebook_url", type="string", nullable=true, length=255)
+     */
+    private $facebookURL;
+
+    /**
+     * @var string
+     * @ORM\Column(name="instagram_url", type="string", nullable=true, length=255)
+     */
+    private $instagramURL;
+
+    /**
+     * @var ModelRequest|null
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\ModelRequest", inversedBy="model")
+     * @ORM\JoinColumn(name="model_request_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     */
+    private $modelRequest;
+
+    /**
+     * @var bool
+     * @ORM\Column(name="activated", type="boolean", options={"default": "1"})
+     */
+    private $activated = true;
+
+    /**
+     * @var string
+     * @ORM\Column(name="activation_token", type="string", length=64, nullable=true)
+     */
+    private $activationToken;
 
     /**
      * Constructor
@@ -471,5 +508,117 @@ class User extends BaseUser
     {
         return (boolean) ($this->thumbnail
             && ($this->thumbnail->getFile() && $this->thumbnail->getFile()->isValid() || $this->thumbnail->getFileName()));
+    }
+
+    /**
+     * @return string
+     */
+    public function getFacebookURL()
+    {
+        return $this->facebookURL;
+    }
+
+    /**
+     * @param string $facebookURL
+     */
+    public function setFacebookURL($facebookURL)
+    {
+        $this->facebookURL = $facebookURL;
+    }
+
+    /**
+     * @return string
+     */
+    public function getInstagramURL()
+    {
+        return $this->instagramURL;
+    }
+
+    /**
+     * @param string $instagramURL
+     */
+    public function setInstagramURL($instagramURL)
+    {
+        $this->instagramURL = $instagramURL;
+    }
+
+    /**
+     * Set modelRequest
+     *
+     * @param ModelRequest $modelRequest
+     * @return User
+     */
+    public function setModelRequest(ModelRequest $modelRequest = null)
+    {
+        $this->modelRequest = $modelRequest;
+
+        return $this;
+    }
+
+    /**
+     * Get modelRequest
+     *
+     * @return ModelRequest
+     */
+    public function getModelRequest()
+    {
+        return $this->modelRequest;
+    }
+
+    /**
+     * @return string
+     */
+    public function getInstagramId()
+    {
+        return $this->instagramId;
+    }
+
+    /**
+     * @param string $instagramId
+     * @return User
+     */
+    public function setInstagramId($instagramId)
+    {
+        $this->instagramId = $instagramId;
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isActivated()
+    {
+        return $this->activated;
+    }
+
+    /**
+     * @param boolean $activated
+     * @return $this
+     */
+    public function setActivated($activated)
+    {
+        $this->activated = $activated;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getActivationToken()
+    {
+        return $this->activationToken;
+    }
+
+    /**
+     * @param string $activationToken
+     * @return $this
+     */
+    public function setActivationToken($activationToken)
+    {
+        $this->activationToken = $activationToken;
+
+        return $this;
     }
 }

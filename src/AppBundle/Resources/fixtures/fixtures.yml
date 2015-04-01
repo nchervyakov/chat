@@ -1,12 +1,25 @@
+AppBundle\Entity\Group:
+    Models:
+        __construct: [Models, ["ROLE_MODEL"]]
+        dateAdded:          <dt('2015-03-27 10:24:49')>
+
+    Clients:
+        __construct: [Clients, ["ROLE_CLIENT"]]
+        dateAdded:          <dt('2015-03-27 10:24:49')>
+
+    Admins:
+        __construct: [Admins, ["ROLE_ADMIN"]]
+        dateAdded:          <dt('2015-03-27 10:24:49')>
+
 AppBundle\Entity\User:
     admin:
-        username:           'admin@symchat.com'
+        username:           'admin'
         usernameCanonical:  @self->username
-        email:              @self->username
-        emailCanonical:     @self->username
+        email:              'admin@kukik.co'
+        emailCanonical:     @self->email
         enabled:            1
         salt:               'iz55lk2rvzcokcskgo48co8kw4004o0'
-        password:           '123456'
+        plainPassword:           '123456'
         lastLogin:          <dt('2015-03-06 13:14:43')>
         locked:             0
         expired:            0
@@ -28,6 +41,8 @@ AppBundle\Entity\User:
         dateUpdated:        <dt('2015-02-01 04:01:27')>
         gender:             'u'
         order:              1
+        activated:          1
+        addGroup:           [@Admins]
 
     nick:
         username:           'nick.chervyakov@gmail.com'
@@ -58,6 +73,8 @@ AppBundle\Entity\User:
         dateUpdated:        <dt('2015-03-06 13:18:27')>
         gender:             'm'
         order:              2
+        activated:          1
+        addGroup:           [@Clients]
 #        thumbnail:          <imageEx('web/uploads/photo', 348, 348, null, false)>
 
     maria:
@@ -89,4 +106,6 @@ AppBundle\Entity\User:
         dateUpdated:        <dt('2015-01-21 16:35:27')>
         gender:             'f'
         order:              3
+        activated:          1
+        addGroup:           [@Models]
 #        thumbnail:          <imageEx('web/uploads/photo', 348, 348, null, false)>

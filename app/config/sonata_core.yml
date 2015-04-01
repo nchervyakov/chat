@@ -1,2 +1,2 @@
 sonata_core:
-    form_type: horizontal
+    form_type: standard

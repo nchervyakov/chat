@@ -46,7 +46,7 @@ class Emoticon
 
     /**
      * @var int
-     * @ORM\Column(name="sort_order", type="integer")
+     * @ORM\Column(name="sort_order", type="integer", nullable=true)
      */
     private $sortOrder;
 

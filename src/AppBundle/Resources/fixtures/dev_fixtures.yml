@@ -2,7 +2,7 @@ AppBundle\Entity\UserPhoto:
     photo{1..200}:
         owner:              @user<current()>
         title:              <text(40)>
-        fileName:           <uploadPhoto(null, 'web/uploads/photo', 640, 480, null, false)>
+        fileName:           <uploadPhoto('web/uploads/photo', 640, 480, null, false)>
 
 AppBundle\Entity\User:
     user{1..200}:
@@ -23,7 +23,7 @@ AppBundle\Entity\User:
         roles:              <userRolesByGender($gender)>
         credentialsExpired: 0
         credentialsExpireAt: null
-        firstname:          <firstName(expandGender($gender))>
+        firstname:          <firstNameByGender($gender)>
         lastname:           <lastName()>
         dateOfBirth:        <dateTimeBetween('-35 years', '-18 years')>
         facebookId:         50%? <numerify('###############')>
@@ -34,5 +34,7 @@ AppBundle\Entity\User:
         dateAdded:          <dateTimeBetween('-3 years', 'now')>
         dateUpdated:        <dateTimeBetween($dateAdded, 'now')>
         order:              <current()>
+        activated:          1
+        addGroup:           [<userGroupByGender($gender)>]
         addPhoto:           [@photo<current()>]
 #        thumbnail:          50%? <imageEx('web/uploads/photo', 348, 348, null, false)>

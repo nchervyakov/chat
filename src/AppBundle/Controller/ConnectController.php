@@ -3,17 +3,14 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\User;
-use AppBundle\Entity\UserPhoto;
 use AppBundle\Event\Event\UserRegisteredEvent;
 use AppBundle\Event\Events;
-use Buzz\Browser;
 use HWI\Bundle\OAuthBundle\Security\Core\Exception\AccountNotLinkedException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
@@ -61,11 +58,12 @@ class ConnectController extends \HWI\Bundle\OAuthBundle\Controller\ConnectContro
         ;
 
         // enable compatibility with FOSUserBundle 1.3.x and 2.x
-        if (interface_exists('FOS\UserBundle\Form\Factory\FactoryInterface')) {
-            $form = $this->container->get('hwi_oauth.registration.form.factory')->createForm();
-        } else {
-            $form = $this->container->get('hwi_oauth.registration.form');
-        }
+//        if (interface_exists('FOS\UserBundle\Form\Factory\FactoryInterface')) {
+        /** @var Form $form */
+        $form = $this->container->get('hwi_oauth.registration.form.factory')->createForm();
+//        } else {
+//            $form = $this->container->get('hwi_oauth.registration.form');
+//        }
 
         $formHandler = $this->container->get('hwi_oauth.registration.form.handler');
         if ($formHandler->process($request, $form, $userInformation)) {
@@ -73,14 +71,19 @@ class ConnectController extends \HWI\Bundle\OAuthBundle\Controller\ConnectContro
             /** @var User $user */
             $user = $form->getData();
 
-            if ($user->getGender() == User::GENDER_MALE) {
-                $user->addRole(User::ROLE_CLIENT);
-                $redirectUrl = $this->generate('search_index');
+            //if ($user->getGender() == User::GENDER_MALE) {
 
-            } else {
-                $user->addRole(User::ROLE_MODEL);
-                $redirectUrl = $this->generate('stat_index');
+            $clientsGroup = $this->container->get('doctrine')->getRepository('AppBundle:Group')->findOneBy(['name' => 'Clients']);
+            if ($clientsGroup) {
+                $user->addGroup($clientsGroup);
             }
+            //$user->addRole(User::ROLE_CLIENT);
+            $redirectUrl = $this->generate('search_index');
+
+//            } else {
+//                $user->addRole(User::ROLE_MODEL);
+//                $redirectUrl = $this->generate('stat_index');
+//            }
 
             $event = new UserRegisteredEvent($user, $userInformation);
             $dispatcher->dispatch(Events::REGISTRATION_SUCCESS, $event);
@@ -109,5 +112,52 @@ class ConnectController extends \HWI\Bundle\OAuthBundle\Controller\ConnectContro
             'form' => $form->createView(),
             'userInformation' => $userInformation,
         ));
+    }
+
+    /**
+     * @param Request $request
+     * @param string $service
+     * @return RedirectResponse
+     * @Route("/login/{service}", name="oauth_service_redirect")
+     */
+    public function redirectToServiceAction(Request $request, $service)
+    {
+        //return parent::redirectToServiceAction($request, $service);
+        $authorizationUrl = $this->container->get('hwi_oauth.security.oauth_utils')->getAuthorizationUrl($request, $service);
+
+        if ($service == 'facebook' && $activationToken = $request->query->get('activation_token')) {
+            $model = $this->container->get('doctrine')->getRepository('AppBundle:User')->findOneBy(['activationToken' => $activationToken]);
+            if (!$model) {
+                throw new NotFoundHttpException();
+            }
+
+            if ($model->isActivated()) {
+                throw new HttpException("The model is already activated.");
+            }
+
+            $state = http_build_query(['state' => json_encode(['activation_token' => $activationToken])]);
+            $authorizationUrl .= '&'.$state;
+        }
+         //var_dump($authorizationUrl);exit;
+        // Check for a return path and store it before redirect
+        if ($request->hasSession()) {
+            // initialize the session for preventing SessionUnavailableException
+            $session = $request->getSession();
+            $session->start();
+
+            $providerKey = $this->container->getParameter('hwi_oauth.firewall_name');
+            $sessionKey = '_security.' . $providerKey . '.target_path';
+
+            $param = $this->container->getParameter('hwi_oauth.target_path_parameter');
+            if (!empty($param) && $targetUrl = $request->get($param, null, true)) {
+                $session->set($sessionKey, $targetUrl);
+            }
+
+            if ($this->container->getParameter('hwi_oauth.use_referer') && !$session->has($sessionKey) && ($targetUrl = $request->headers->get('Referer')) && $targetUrl !== $authorizationUrl) {
+                $session->set($sessionKey, $targetUrl);
+            }
+        }
+
+        return new RedirectResponse($authorizationUrl);
     }
 }

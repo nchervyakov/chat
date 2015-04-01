@@ -55,6 +55,7 @@ services:
 
     form.user_photo:
         class: AppBundle\Form\Type\UserPhotoType
+        scope: prototype
         tags:
             - {name: form.type, alias: user_photo}
 
@@ -71,6 +72,13 @@ services:
             - [setContainer, ["@service_container"]]
         tags:
             - {name: kernel.event_listener, event: registration.success, method: onRegistrationSuccess}
+
+    app.event.login_listener:
+        class: AppBundle\Event\Listener\LoginListener
+        calls:
+            - [setContainer, ["@service_container"]]
+        tags:
+            - {name: kernel.event_listener, event: security.interactive_login, method: onSuccessLogin}
 
     app.twig.extension:
         class: AppBundle\Twig\Extension\AppExtension
@@ -95,6 +103,18 @@ services:
             - "https://graph.facebook.com/"
         tags:
             - {name: guzzle.client}
+
+    app.form.type.entity_hidden:
+       class: AppBundle\Form\Type\EntityHiddenType
+       arguments: ["@doctrine.orm.entity_manager"]
+       tags:
+        - { name: form.type, alias: entity_hidden }
+
+
+#    app.oauth.handler:
+#        class: AppBundle\OAuth\OAuthHandler
+#        calls:
+#            - [setContainer, ["@service_container"]]
 
 
 

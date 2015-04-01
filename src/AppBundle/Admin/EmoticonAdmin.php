@@ -58,7 +58,7 @@ class EmoticonAdmin extends Admin
             ->add('aliases')
             ->add('icon')
             ->add('sortOrder')
-            ->add('dateAdded')
+            ->add('dateAdded', 'sonata_type_date_picker')
         ;
     }
 
