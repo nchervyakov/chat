@@ -166,7 +166,7 @@ class UserAdminController extends CRUDController
         $translator = $this->get('translator');
         $message = \Swift_Message::newInstance()
             ->setSubject($translator->trans('model_notification.email_title', [
-                '%website%' => $this->container->getParameter('website_robot_email')
+                '%website%' => $this->container->getParameter('website')
             ]))
             ->setTo($object->getEmail())
             ->setFrom($this->container->getParameter('website_robot_email'))
