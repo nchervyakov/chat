@@ -1,0 +1,5 @@
+{% extends 'SonataAdminBundle:CRUD:list_array.html.twig' %}
+
+{% block field %}
+    <span class="emoticon-alias">{{ value|escape|join('</span>, <span class="emoticon-alias">')|raw }}</span>
+{% endblock %}

@@ -3,6 +3,9 @@ show:
     label_facebook_id: 'Facebook ID'
     label_twitter_id: 'Twitter ID'
     label_instagram_id: 'Instagram ID'
+    label_activated: 'Is Activated'
+    label_model_request: 'Model Request'
+    label_enabled: 'Is Enabled'
 form:
     label_facebook_id: 'Facebook ID'
     label_twitter_id: 'Twitter ID'
@@ -10,6 +13,8 @@ form:
 
     label_activated: Activated
     label_activation_token: 'Activation Token'
+
+    label_model_request: 'Model Request ID (if exists)'
 
 model_notification:
     flash_successfully_sent: 'The notification has been successfully sent to the model.'
@@ -19,3 +24,5 @@ filter:
 
 list:
     label_activated: Activated
+    label_full_name: 'Full Name'
+    label_date_added: 'Date Added'

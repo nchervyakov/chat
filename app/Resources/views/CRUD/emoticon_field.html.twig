@@ -1,0 +1,9 @@
+{% extends 'SonataAdminBundle:CRUD:base_list_field.html.twig' %}
+
+{% block field %}
+    {{ value }}
+
+    {% if value %}
+        <img src="/images/emoticons/{{ value }}" alt="" style="max-height: 64px; max-width: 64px;" />
+    {% endif %}
+{% endblock %}

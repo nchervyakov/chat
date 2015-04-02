@@ -356,4 +356,9 @@ class ModelRequest
     {
         return ''.$this->getId();
     }
+
+    public function getDescription()
+    {
+        return trim($this->firstName . ' ' . $this->lastName . ' (id: ' . $this->id . ', email: ' . $this->email . ')');
+    }
 }

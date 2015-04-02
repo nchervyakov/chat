@@ -1,0 +1,18 @@
+{% if admin.id(object) and object.status == constant('AppBundle\\Entity\\ModelRequest::STATUS_NEW') and object.model is null %}
+    {% if admin.subClasses is empty %}
+        <a class="sonata-action-element" href="{{ admin.generateObjectUrl('createModelByRequest', object) }}">
+            <i class="fa fa-plus-circle"></i>
+            {{ 'link_action_create_model_by_request'|trans }}</a>
+    {% else %}
+        <li class="divider" role="presentation"></li>
+        {% for subclass in admin.subclasses|keys %}
+            <li>
+                <a href="{{ admin.generateObjectUrl('createModelByRequest', object, {'subclass': subclass}) }}">
+                    <i class="fa fa-plus-circle"></i>
+                    {{ 'link_action_create_model_by_request'|trans }} {{ subclass|trans({}, admin.translationdomain) }}
+                </a>
+            </li>
+        {% endfor %}
+        <li class="divider" role="presentation"></li>
+    {% endif %}
+{% endif %}

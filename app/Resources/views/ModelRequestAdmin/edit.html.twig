@@ -3,9 +3,7 @@
 {% block actions %}
     {{ parent() }}
     {% spaceless %}
-        <li>{{ include(':Core:create_user_type_button.html.twig', {'userType': 'model'}) }}</li>
-        <li>{{ include(':Core:create_user_type_button.html.twig', {'userType': 'client'}) }}</li>
-        <li>{{ include(':Core:send_model_notification_button.html.twig') }}</li>
+        <li>{{ include(':ModelRequestAdmin:register_model_button.html.twig') }}</li>
     {% endspaceless %}
 {% endblock %}
 
@@ -40,8 +38,8 @@
                     <a class="btn btn-info" href="{{ admin.generateObjectUrl('acl', object) }}"><i class="fa fa-users"></i> {{ 'link_edit_acl'|trans({}, 'SonataAdminBundle') }}</a>
                 {% endif %}
 
-                {% if admin.hasroute('sendModelNotification') and admin.id(object) and not object.activated %}
-                    <a class="btn btn-success" href="{{ admin.generateObjectUrl('sendModelNotification', object) }}"><i class="fa fa-mail-forward"></i> {{ 'link_action_send_model_notification'|trans() }}</a>
+                {% if admin.hasroute('createModelByRequest') and object.status == constant('AppBundle\\Entity\\ModelRequest::STATUS_NEW') and object.model is null %}
+                    <a class="btn btn-success" href="{{ admin.generateObjectUrl('createModelByRequest', object) }}"><i class="fa fa-arrow-down"></i> {{ 'link_register_model'|trans({}, 'SonataAdminBundle') }}</a>
                 {% endif %}
             {% else %}
                 {% if admin.hasroute('edit') and admin.isGranted('EDIT') %}

@@ -7,6 +7,7 @@ use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Show\ShowMapper;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 
 class EmoticonAdmin extends Admin
 {
@@ -20,9 +21,7 @@ class EmoticonAdmin extends Admin
             ->add('symbol')
             ->add('aliases')
             ->add('icon')
-            ->add('sortOrder')
             ->add('dateAdded')
-            ->add('dateUpdated')
         ;
     }
 
@@ -32,10 +31,14 @@ class EmoticonAdmin extends Admin
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->add('id')
-            ->add('symbol')
-            ->add('aliases')
-            ->add('icon')
+            ->addIdentifier('id')
+            ->addIdentifier('symbol')
+            ->add('aliases', null, [
+                'template' => ':CRUD:list_array_with_delimeters.html.twig'
+            ])
+            ->add('icon', null, [
+                'template' => ':CRUD:emoticon_field.html.twig'
+            ])
             ->add('sortOrder')
             ->add('dateAdded')
             ->add('_action', 'actions', array(
@@ -54,11 +57,28 @@ class EmoticonAdmin extends Admin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('symbol')
-            ->add('aliases')
-            ->add('icon')
-            ->add('sortOrder')
-            ->add('dateAdded', 'sonata_type_date_picker')
+            ->with('Emoticon', ['class' => 'col-lg-6 col-md-12'])
+                ->add('symbol')
+                ->add('aliases', 'sonata_type_native_collection', [
+                    'allow_add' => true,
+                    'allow_delete' => true,
+                    'required' => false,
+                    'options' => [
+                        'required' => false
+                    ]
+                ])
+                ->add('iconFile', 'vich_image', [
+                    'required' => false,
+                    'label' => false,
+                    'error_bubbling' => true,
+                    'download_link' => false,
+                    'allow_delete' => false
+                ])
+                ->add('sortOrder')
+                ->add('dateAdded', 'sonata_type_date_picker', [
+                    'format' => DateType::HTML5_FORMAT
+                ])
+            ->end()
         ;
     }
 

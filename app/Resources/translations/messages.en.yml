@@ -94,3 +94,7 @@ link_action_create_client: 'Create Client'
 link_action_send_model_notification: 'Send Notification To Model'
 model_notification:
     email_title: 'Invitation to %website%'
+link_action_create_model_by_request: 'Register Model'
+gender:
+    male: Male
+    female: Female

@@ -3,6 +3,9 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Emoticon
@@ -14,6 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
  * )
  * @ORM\Entity(repositoryClass="AppBundle\Entity\EmoticonRepository")
  * @ORM\HasLifecycleCallbacks()
+ * @Vich\Uploadable()
  */
 class Emoticon
 {
@@ -29,6 +33,7 @@ class Emoticon
     /**
      * @var string
      * @ORM\Column(name="symbol", type="string", length=32)
+     * @Assert\NotBlank()
      */
     private $symbol;
 
@@ -39,8 +44,15 @@ class Emoticon
     private $aliases = [];
 
     /**
+     * @var UploadedFile
+     * @Vich\UploadableField(mapping="emoticon", fileNameProperty="icon")
+     */
+    private $iconFile;
+
+    /**
      * @var string
      * @ORM\Column(name="icon", type="string", length=255)
+     * @Assert\NotBlank(message="Emoticon file is required")
      */
     private $icon;
 
@@ -220,5 +232,26 @@ class Emoticon
     public function getSortOrder()
     {
         return $this->sortOrder;
+    }
+
+    /**
+     * @return UploadedFile
+     */
+    public function getIconFile()
+    {
+        return $this->iconFile;
+    }
+
+    /**
+     * @param UploadedFile $iconFile
+     */
+    public function setIconFile($iconFile)
+    {
+        $this->iconFile = $iconFile;
+    }
+
+    public function getAliasesAsString()
+    {
+        return implode(', ', $this->aliases);
     }
 }

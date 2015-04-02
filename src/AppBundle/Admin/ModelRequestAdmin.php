@@ -9,6 +9,7 @@ use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Route\RouteCollection;
 use Sonata\AdminBundle\Show\ShowMapper;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 
 class ModelRequestAdmin extends Admin
 {
@@ -22,6 +23,7 @@ class ModelRequestAdmin extends Admin
             ->add('firstName')
             ->add('lastName')
             ->add('email')
+            ->add('status')
             ->add('dateAdded')
         ;
     }
@@ -66,7 +68,7 @@ class ModelRequestAdmin extends Admin
     {
         $formMapper
            // ->tab('Model Request')
-                ->with('Request', array('class' => 'col-md-6'))->end();
+                ->with('Request', array('class' => 'col-lg-6 col-md-12'))->end();
 //                ->with('Social', array('class' => 'col-md-6'))->end()
            // ->end();
 
@@ -80,11 +82,27 @@ class ModelRequestAdmin extends Admin
                     ->add('firstName')
                     ->add('lastName')
                     ->add('email')
-                    ->add('facebookURL', null, ['label' => 'Facebook URL'])
-                    ->add('instagramURL', null, ['label' => 'Instagram URL'])
+                    ->add('facebookURL', 'url', [
+                        'label' => 'Facebook URL',
+                        'required' => false
+                    ])
+                    ->add('instagramURL', 'url', [
+                        'label' => 'Instagram URL',
+                        'required' => false
+                    ])
                     ->add('message')
-                    ->add('dateAdded')
-                    ->add('dateUpdated')
+                    ->add('model', 'sonata_type_model_reference', [
+                        'model_manager' => $this->getModelManager(),
+                        'read_only' => false,
+                        'required' => false
+                    ])
+                    ->add('dateAdded', 'sonata_type_date_picker', [
+                        'format' => DateType::HTML5_FORMAT
+                    ])
+                    ->add('dateUpdated', 'sonata_type_date_picker', [
+                        'format' => DateType::HTML5_FORMAT,
+                        'required' => false
+                    ])
                 ->end()
             //->end()
         ;

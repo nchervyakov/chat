@@ -336,6 +336,8 @@ sonata_admin:
     title: "%sitename%"
     options:
         form_type: standard
+    templates:
+        layout: ::admin_standard_layout.html.twig
 
 sonata_user:
     security_acl: true
