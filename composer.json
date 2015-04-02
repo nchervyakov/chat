@@ -48,7 +48,8 @@
         "liip/imagine-bundle": "~1.2",
         "misd/guzzle-bundle": "~1.1",
         "sonata-project/datagrid-bundle": "~2.2@dev",
-        "sonata-project/user-bundle": "dev-master"
+        "sonata-project/user-bundle": "dev-master",
+        "lexik/maintenance-bundle": "dev-master"
     },
     "require-dev": {
     },
