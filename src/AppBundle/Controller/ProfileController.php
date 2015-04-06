@@ -5,11 +5,14 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\User;
 use AppBundle\Entity\UserPhoto;
 use AppBundle\Form\Type\UserPhotoType;
+use Doctrine\DBAL\Connection;
+use Doctrine\ORM\EntityManager;
 use FOS\UserBundle\Model\UserInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
@@ -109,9 +112,26 @@ class ProfileController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            /** @var EntityManager $em */
             $em = $this->getDoctrine()->getManager();
-            $em->remove($user);
-            $em->flush();
+
+            /** @var Connection $conn */
+            $conn = $this->getDoctrine()->getConnection();
+
+            try {
+                $conn->beginTransaction();
+                $em->createQuery("DELETE FROM AppBundle:Conversation c WHERE c.model = :user OR c.client = :user")
+                    ->execute(['user' => $user]);
+                $em->remove($user);
+                $em->flush();
+
+                $conn->commit();
+
+            } catch (\Exception $e) {
+                $conn->rollBack();
+                throw $e;
+                throw new HttpException(400, "Error while deleting user.");
+            }
 
             $this->get('session')->invalidate();
             $this->get('security.context')->setToken(null);

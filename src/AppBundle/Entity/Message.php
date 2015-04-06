@@ -40,7 +40,7 @@ abstract class Message
     /**
      * @var ConversationInterval
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\ConversationInterval", inversedBy="messages")
-     * @ORM\JoinColumn(name="interval_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="interval_id", referencedColumnName="id", onDelete="CASCADE")
      * @Serialize\MaxDepth(0)
      */
     private $interval;
