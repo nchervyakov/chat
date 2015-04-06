@@ -95,12 +95,26 @@ class OAuthListener extends \HWI\Bundle\OAuthBundle\Security\Http\Firewall\OAuth
 
         $token = new OAuthToken($accessToken);
         $token->setResourceOwnerName($resourceOwner->getName());
+        $registrationType = null;
 
         if ($state = $request->get('state')) {
             $state = json_decode($state, true);
-            if (is_array($state) && $state['activation_token']) {
-                $token->setAttribute('activation_token', $state['activation_token']);
+            if (is_array($state)) {
+                if ($state['activation_token']) {
+                    $token->setAttribute('activation_token', $state['activation_token']);
+                }
+
+                if ($state['type']) {
+                    $token->setAttribute('type', $state['type']);
+                    $registrationType = $state['type'];
+                }
             }
+        }
+
+        if ($registrationType) {
+            $request->getSession()->set('auth.registration_type', $registrationType);
+        } else {
+            $request->getSession()->remove('auth.registration_type');
         }
 
         return $this->authenticationManager->authenticate($token);

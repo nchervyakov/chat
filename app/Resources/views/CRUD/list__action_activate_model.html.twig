@@ -1,0 +1,7 @@
+{% if admin.id(object) is not null and object.needToActivateByAdmin %}
+    <a href="{{ admin.generateObjectUrl('activate', object) }}" class="btn btn-sm btn-default edit_link" title="{{ 'action_activate_model'|trans }}">
+        <i class="glyphicon glyphicon-registration-mark"></i>
+        {{ 'action_activate_model'|trans }}
+    </a>
+{% endif %}
+

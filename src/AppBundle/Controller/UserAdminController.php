@@ -14,6 +14,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\User;
 use Sonata\AdminBundle\Controller\CRUDController;
 use Sonata\AdminBundle\Exception\ModelManagerException;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -36,24 +37,33 @@ class UserAdminController extends CRUDController
         /** @var User $object */
         $object = $this->admin->getNewInstance();
 
-        if (($modelRequestId = $request->query->get('model_request_id')) && is_numeric($modelRequestId)) {
-            $modelRequest = $this->getDoctrine()->getRepository('AppBundle:ModelRequest')->find($modelRequestId);
+//        if (($modelRequestId = $request->query->get('model_request_id')) && is_numeric($modelRequestId)) {
+//            $modelRequest = $this->getDoctrine()->getRepository('AppBundle:ModelRequest')->find($modelRequestId);
+//
+//            if (!$modelRequest) {
+//                throw new  NotFoundHttpException("Model request with id=$modelRequestId is missing.");
+//            }
+//
+//            $object->setFirstname($modelRequest->getFirstName());
+//            $object->setLastname($modelRequest->getLastName());
+//            $object->setEmail($modelRequest->getEmail());
+//            $object->setUsername($modelRequest->getEmail());
+//            $object->setFacebookURL($modelRequest->getFacebookURL());
+//            $object->setInstagramURL($modelRequest->getInstagramURL());
+//            //$object->setModelRequest($modelRequest);
+//            $this->adjustModel($object);
+//
+//        } else
 
-            if (!$modelRequest) {
-                throw new  NotFoundHttpException("Model request with id=$modelRequestId is missing.");
-            }
-
-            $object->setFirstname($modelRequest->getFirstName());
-            $object->setLastname($modelRequest->getLastName());
-            $object->setEmail($modelRequest->getEmail());
-            $object->setUsername($modelRequest->getEmail());
-            $object->setFacebookURL($modelRequest->getFacebookURL());
-            $object->setInstagramURL($modelRequest->getInstagramURL());
-            $object->setModelRequest($modelRequest);
+        if ($request->query->get('type') === 'model') {
             $this->adjustModel($object);
 
-        } else if ($request->query->get('type') === 'model') {
-            $this->adjustModel($object);
+        } else if ($request->query->get('type') === 'client') {
+            $this->adjustClient($object);
+        }
+
+        if (in_array($request->query->get('type'), ['model', 'client'])) {
+            $object->setEnabled(true);
         }
 
         $this->admin->setSubject($object);
@@ -75,7 +85,12 @@ class UserAdminController extends CRUDController
                 }
 
                 try {
+                    $object->setActivated(true);
                     $object = $this->admin->create($object);
+
+                    if ($object->hasRole('ROLE_MODEL')) {
+                        $this->get('app.notificator')->notifyModelToActivateHerself($object);
+                    }
 
                     if ($this->isXmlHttpRequest($request)) {
                         return $this->renderJson(array(
@@ -158,28 +173,7 @@ class UserAdminController extends CRUDController
 
         $this->admin->setSubject($object);
 
-        if (!$object->getActivationToken()) {
-            $object->setActivationToken(sha1($object->getId().'_'.time()));
-            $this->getDoctrine()->getManager()->flush();
-        }
-
-        $translator = $this->get('translator');
-        $message = \Swift_Message::newInstance()
-            ->setSubject($translator->trans('model_notification.email_title', [
-                '%website%' => $this->container->getParameter('website')
-            ]))
-            ->setTo($object->getEmail())
-            ->setFrom($this->container->getParameter('website_robot_email'))
-            ->setBody(
-                $this->renderView(':User:email_model_notification.html.twig', [
-                    'user' => $object,
-                    'website' => $this->container->getParameter('website')
-                ]),
-                'text/html',
-                'utf-8'
-            );
-
-        $this->get('mailer')->send($message);
+        $this->get('app.notificator')->notifyModelToActivateHerself($object);
 
         $this->addFlash(
             'sonata_flash_success',
@@ -191,6 +185,41 @@ class UserAdminController extends CRUDController
         return $this->redirectTo($object);
     }
 
+    public function activateAction(Request $request)
+    {
+        $id = $request->get($this->admin->getIdParameter());
+        /** @var User $model */
+        $model = $this->admin->getObject($id);
+
+        if (!$model) {
+            throw new NotFoundHttpException(sprintf('unable to find the object with id : %s', $id));
+        }
+
+        if (false === $this->admin->isGranted('EDIT', $model)) {
+            throw new AccessDeniedException();
+        }
+
+        if ($model->isActivated()) {
+            throw new AccessDeniedHttpException("Model is already activated.");
+        }
+
+        $this->admin->setSubject($model);
+
+        $model->setActivated(true);
+        $this->getDoctrine()->getManager()->flush();
+
+        $this->get('app.notificator')->notifyModelSheIsActivatedByAdmin($model);
+
+        $this->addFlash(
+            'sonata_flash_success',
+            $this->admin->trans(
+                'model_notification.flash_successfully_activated', [], 'SonataUserBundle'
+            )
+        );
+
+        return new RedirectResponse($request->server->get('HTTP_REFERER'));
+    }
+
     /**
      * Sets up model's roles and groups
      *
@@ -200,8 +229,7 @@ class UserAdminController extends CRUDController
     protected function adjustModel(User $model)
     {
         $model->setGender(User::GENDER_FEMALE);
-        $model->addRole('ROLE_MODEL');
-        $model->setActivated(false);
+        $model->setActivated(true);
 
         $modelGroup = $this->getDoctrine()->getRepository('AppBundle:Group')->findOneBy(['name' => 'Models']);
         if ($modelGroup) {
@@ -209,5 +237,22 @@ class UserAdminController extends CRUDController
         }
 
         return $model;
+    }
+
+    /**
+     * @param User $client
+     * @return User
+     */
+    protected function adjustClient(User $client)
+    {
+        $client->setGender(User::GENDER_MALE);
+        $client->setActivated(true);
+
+        $clientsGroup = $this->getDoctrine()->getRepository('AppBundle:Group')->findOneBy(['name' => 'Clients']);
+        if ($clientsGroup) {
+            $client->addGroup($clientsGroup);
+        }
+
+        return $client;
     }
 }

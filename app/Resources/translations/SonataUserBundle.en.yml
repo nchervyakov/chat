@@ -16,8 +16,12 @@ form:
 
     label_model_request: 'Model Request ID (if exists)'
 
+    label_facebook_u_r_l: 'Facebook URL'
+    label_instagram_u_r_l: 'Instagram URL'
+
 model_notification:
     flash_successfully_sent: 'The notification has been successfully sent to the model.'
+    flash_successfully_activated: 'The model is successfully activated and can log in. The activation notification is sent to her.'
 
 filter:
     label_activated: Activated
@@ -26,3 +30,5 @@ list:
     label_activated: Activated
     label_full_name: 'Full Name'
     label_date_added: 'Date Added'
+    label__actions: Actions
+    label__action: Actions

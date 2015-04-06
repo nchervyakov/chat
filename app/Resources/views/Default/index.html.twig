@@ -13,7 +13,8 @@
             <div class="col-lg-6">
                 <div class="well text-center">
                     <h4>{{ 'index.model_intro'|trans }}</h4><br/> <br/>
-                    <p><a href="{{ path('model_request_registration') }}" class="btn btn-primary btn-lg">{{ 'index.send_request'|trans }}</a></p>
+                    <p><a href="{{ path('hwi_oauth_service_redirect', {'service': 'facebook', 'type': 'model_registration'}) }}"
+                          class="btn btn-primary btn-lg">{{ 'index.register_as_a_model_vie_fb'|trans }}</a></p>
                 </div>
             </div>
         </div>

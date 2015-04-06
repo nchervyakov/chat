@@ -11,12 +11,14 @@
 namespace AppBundle\Security\Core\Authentication\Provider;
 
 
+use AppBundle\Entity\User;
 use AppBundle\Security\Core\User\FOSUBUserProvider;
 use HWI\Bundle\OAuthBundle\Security\Core\Authentication\Token\OAuthToken;
 use HWI\Bundle\OAuthBundle\Security\Core\Exception\OAuthAwareExceptionInterface;
 use HWI\Bundle\OAuthBundle\Security\Core\User\OAuthAwareUserProviderInterface;
 use HWI\Bundle\OAuthBundle\Security\Http\ResourceOwnerMap;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\AuthenticationServiceException;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\User\UserCheckerInterface;
@@ -24,6 +26,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class OAuthProvider extends \HWI\Bundle\OAuthBundle\Security\Core\Authentication\Provider\OAuthProvider
 {
+    /**
+     * @var bool
+     */
+    private $hideUserNotFoundExceptions = false;
+
     /**
      * @var ResourceOwnerMap
      */
@@ -65,7 +72,7 @@ class OAuthProvider extends \HWI\Bundle\OAuthBundle\Security\Core\Authentication
     public function authenticate(TokenInterface $token)
     {
         if (!$this->supports($token)) {
-            return;
+            return null;
         }
 
         /* @var OAuthToken $token */
@@ -73,6 +80,7 @@ class OAuthProvider extends \HWI\Bundle\OAuthBundle\Security\Core\Authentication
 
         $userResponse = $resourceOwner->getUserInformation($token->getRawToken());
         try {
+            /** @var User $user */
             $user = $this->userProvider->loadUserByOAuthUserResponseOrToken($userResponse, $token);
 
         } catch (OAuthAwareExceptionInterface $e) {
@@ -84,6 +92,10 @@ class OAuthProvider extends \HWI\Bundle\OAuthBundle\Security\Core\Authentication
 
         if (!$user instanceof UserInterface) {
             throw new AuthenticationServiceException('loadUserByOAuthUserResponse() must return a UserInterface.');
+        }
+
+        if (!$user->isActivated()) {
+            throw new AuthenticationException('You are not yet activated by admin. Wi will inform you when you are activated.');
         }
 
         try {

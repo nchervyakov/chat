@@ -34,6 +34,8 @@ profile:
         add_photo: 'Add photo'
         add: 'Add'
         successfully_added_photo: 'Your photo was successfully added.'
+    delete_button: 'Delete Profile'
+    delete_confirm_button: 'Yes, delete my profile!'
 login:
     title: 'Log In'
 stat: 'Statistics'
@@ -75,6 +77,7 @@ index:
     client_intro: 'If you want to talk with models or if you are already registered please log in via one of your social network accounts:'
     model_intro:  'If you are a model-looking girl please send a request to our manager via the following form. We will reply shortly.'
     send_request: 'Send request'
+    register_as_a_model_vie_fb: 'Register as a Model via Facebook'
 model_request:
     title: 'Register as a Model'
     submit: 'Request registration'
@@ -94,7 +97,10 @@ link_action_create_client: 'Create Client'
 link_action_send_model_notification: 'Send Notification To Model'
 model_notification:
     email_title: 'Invitation to %website%'
+    activated_by_admin_title: 'You are now activated'
 link_action_create_model_by_request: 'Register Model'
 gender:
     male: Male
     female: Female
+action_activate_model: 'Activate'
+link_action_activate_model: 'Activate'

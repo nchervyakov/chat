@@ -5,12 +5,13 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\User;
 use AppBundle\Entity\UserPhoto;
 use AppBundle\Form\Type\UserPhotoType;
+use FOS\UserBundle\Model\UserInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Class ProfileController
@@ -22,10 +23,27 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class ProfileController extends Controller
 {
     /**
-     * @Route("/photos", name="profile_photos")
+     * @Route("/")
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function showAction()
+    {
+        $user = $this->getUser();
+        if (!is_object($user) || !$user instanceof UserInterface) {
+            throw new AccessDeniedException('This user does not have access to this section.');
+        }
+
+        return $this->render('FOSUserBundle:Profile:show.html.twig', array(
+            'user' => $user,
+            'deleteForm' => $this->createDeleteProfileForm()->createView()
+        ));
+    }
+
+    /**
+     * @Route("/photos", name="profile_photos")
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function showPhotosAction()
     {
         if (!$this->get('security.authorization_checker')->isGranted('ROLE_MODEL')) {
             throw new NotFoundHttpException();
@@ -79,6 +97,34 @@ class ProfileController extends Controller
         ]);
     }
 
+    /**
+     * @Route("/delete", name="profile_delete")
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
+    public function deleteAction(Request $request)
+    {
+        $user = $this->getUser();
+        $form = $this->createDeleteProfileForm();
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($user);
+            $em->flush();
+
+            $this->get('session')->invalidate();
+            $this->get('security.context')->setToken(null);
+
+            return $this->redirectToRoute('homepage');
+        }
+
+        return $this->render(':Profile:confirm_delete.html.twig', [
+            'form' => $form->createView(),
+            'user' => $this->getUser()
+        ]);
+    }
+
     protected function createPhotoForm(UserPhoto $photo)
     {
         $form = $this->createForm(new UserPhotoType(), $photo, [
@@ -87,6 +133,21 @@ class ProfileController extends Controller
         ]);
 
         $form->add('add', 'submit', ['label' => 'profile.photos.add']);
+
+        return $form;
+    }
+
+    protected function createDeleteProfileForm()
+    {
+        $form = $this->createFormBuilder(null, [
+            'method' => 'POST',
+            'action' => $this->generateUrl('profile_delete')
+        ])
+            ->add('submit', 'submit', [
+                'label' => 'profile.delete_confirm_button',
+                'translation_domain' => 'messages'
+            ])
+            ->getForm();
 
         return $form;
     }

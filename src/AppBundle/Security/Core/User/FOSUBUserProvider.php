@@ -12,6 +12,7 @@ namespace AppBundle\Security\Core\User;
 
 
 use AppBundle\Entity\User;
+use HWI\Bundle\OAuthBundle\OAuth\Response\PathUserResponse;
 use HWI\Bundle\OAuthBundle\OAuth\Response\UserResponseInterface;
 use HWI\Bundle\OAuthBundle\Security\Core\Authentication\Token\OAuthToken;
 use HWI\Bundle\OAuthBundle\Security\Core\Exception\AccountNotLinkedException;
@@ -25,6 +26,11 @@ class FOSUBUserProvider extends \HWI\Bundle\OAuthBundle\Security\Core\User\FOSUB
      */
     protected $container;
 
+    /**
+     * @param UserResponseInterface $response
+     * @param OAuthToken $token
+     * @return User|\FOS\UserBundle\Model\UserInterface|\Symfony\Component\Security\Core\User\UserInterface|PathUserResponse
+     */
     public function loadUserByOAuthUserResponseOrToken(UserResponseInterface $response, OAuthToken $token = null)
     {
         try {
@@ -33,10 +39,9 @@ class FOSUBUserProvider extends \HWI\Bundle\OAuthBundle\Security\Core\User\FOSUB
         } catch (AccountNotLinkedException $ex) {
             if ($token->hasAttribute('activation_token') && $token->getAttribute('activation_token')) {
                 /** @var User $user */
-                $user = $this->userManager->findUserBy(['activationToken' => $token->getAttribute('activation_token')]);
-
-                if ($user) {
-                    $user->setFacebookId($response->getUsername());
+                if ($user = $this->userManager->findUserBy(['activationToken' => $token->getAttribute('activation_token')])) {
+                    $responseBody = $response->getResponse();
+                    $user->setFacebookId($responseBody['id']);
                     return $user;
                 }
             }

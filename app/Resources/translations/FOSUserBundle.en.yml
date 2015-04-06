@@ -2,6 +2,7 @@ profile:
     show:
         firstName: 'First Name'
         lastName: 'Last Name'
+        gender: 'Gender'
     edit:
         legend: 'Profile'
         photos: 'Edit photos'

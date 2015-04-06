@@ -1,2 +1,4 @@
 registration:
     legend: 'Registration'
+header:
+    model_registration_success: 'Successfully registered and connected the account ''%username%''! You will be able to access the app when the admin approves your account.'

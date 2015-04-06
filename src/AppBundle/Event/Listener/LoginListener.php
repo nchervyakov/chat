@@ -29,23 +29,29 @@ class LoginListener extends ContainerAware
 
         $state = json_decode($state, true);
 
-        if (!is_array($state) || !$state['activation_token']) {
+        if (!is_array($state)) {
             return;
         }
 
-        $activationToken = $state['activation_token'];
-        /** @var User $model */
-        $model = $this->container->get('doctrine')->getRepository('AppBundle:User')->findOneBy(['activationToken' => $activationToken]);
+        if (($type = $state['type']) && $type == 'model_registration') {
 
-        if (!$model) {
-            $this->logout();
-
-        } else if ($model->isActivated()) {
-            return;
         }
 
-        $this->activateModel($model);
-        $this->container->get('session')->getFlashBag()->add('success', 'Now you are activated!');
+        if ($state['activation_token']) {
+            $activationToken = $state['activation_token'];
+            /** @var User $model */
+            $model = $this->container->get('doctrine')->getRepository('AppBundle:User')->findOneBy(['activationToken' => $activationToken]);
+
+            if (!$model) {
+                $this->logout();
+
+            } else if ($model->isActivated()) {
+                return;
+            }
+
+            $this->activateModel($model);
+            $this->container->get('session')->getFlashBag()->add('success', 'Now you are activated!');
+        }
     }
 
     protected function logout()

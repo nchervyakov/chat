@@ -1,4 +1,4 @@
-{% if admin.id(object) and not object.activated %}
+{% if admin.hasroute('sendModelNotification') and admin.id(object) and not object.activated %}
     {% if admin.subClasses is empty %}
         <a class="sonata-action-element" href="{{ admin.generateObjectUrl('sendModelNotification', object) }}">
             <i class="fa fa-plus-circle"></i>

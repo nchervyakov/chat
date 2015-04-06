@@ -1,17 +1,29 @@
 user_photo:
     pattern: /uploads/photo/{file_name}
 
-hwi_oauth_redirect:
-    resource: "@HWIOAuthBundle/Resources/config/routing/redirect.xml"
-    prefix:   /connect
-
-hwi_oauth_login:
-    resource: "@HWIOAuthBundle/Resources/config/routing/login.xml"
-    prefix:   /login
-
 hwi_oauth_register_custom:
     pattern: /login/registration/{key}
     defaults: {_controller: AppBundle:Connect:registration}
+
+#hwi_oauth_login_custom:
+#    pattern: /login/{service}
+#    defaults: {_controller: AppBundle:Connect:redirectToService}
+
+hwi_oauth_service_redirect:
+    pattern: /connect/{service}
+    defaults: {_controller: AppBundle:Connect:redirectToService}
+
+hwi_oauth_connect:
+    pattern: /login/
+    defaults: {_controller: AppBundle:Connect:connect}
+
+#hwi_oauth_redirect:
+#    resource: "@HWIOAuthBundle/Resources/config/routing/redirect.xml"
+#    prefix:   /connect
+
+#hwi_oauth_login:
+#    resource: "@HWIOAuthBundle/Resources/config/routing/login.xml"
+#    prefix:   /login
 
 hwi_oauth_register:
     resource: "@HWIOAuthBundle/Resources/config/routing/connect.xml"
@@ -41,6 +53,10 @@ sonata_user_security:
 sonata_user_resetting:
     resource: "@SonataUserBundle/Resources/config/routing/sonata_resetting_2.xml"
     prefix: /resetting
+
+user_profile_show:
+    pattern: /profile/
+    defaults: {_controller: AppBundle:Profile:show}
 
 sonata_user_profile:
     resource: "@SonataUserBundle/Resources/config/routing/sonata_profile_2.xml"

@@ -1,0 +1,9 @@
+{% extends ':Email:email_base.html.twig' %}
+
+{% block content_html %}
+    <p>Hi, {{ user.fullName }}!</p>
+    <p>You are now fully activated within our Chat and can log in using the following link: <br/>
+        <a href="{{ url('homepage') }}">{{ url('homepage') }}</a>
+    </p>
+    <p>Best regards <span class="br"><a href="{{ website }}">{{ website }}</a> team.</span></p>
+{% endblock %}

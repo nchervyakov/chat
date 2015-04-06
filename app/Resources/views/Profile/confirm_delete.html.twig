@@ -1,0 +1,11 @@
+{% extends '::layout.html.twig' %}
+
+{% block page %}
+    <p>{{ user.fullName }}, are you sure you want to remove yourself from the system?</p>
+    {{ form_start(form) }}
+        {{ form_errors(form) }}
+        <a href="{{ path('user_profile_show') }}" class="btn btn-link">&larr; Return to Profile</a>
+        {{ form_widget(form.submit, {'attr': {'class': 'btn btn-primary'} }) }}
+        {{ form_rest(form) }}
+    {{ form_end(form) }}
+{% endblock %}

@@ -116,5 +116,17 @@ services:
 #        calls:
 #            - [setContainer, ["@service_container"]]
 
+    app.registration.form.factory:
+        class: AppBundle\Form\Factory\ConfigurableFormFactory
+        arguments:
+            - "@form.factory"
+            - "%fos_user.registration.form.name%"
+            - "%fos_user.registration.form.type%"
+            - "%fos_user.registration.form.validation_groups%"
+
+    app.notificator:
+        class: AppBundle\Notification\Notificator
+        calls:
+            - [setContainer, ["@service_container"]]
 
 

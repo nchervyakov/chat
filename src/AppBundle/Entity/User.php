@@ -61,37 +61,37 @@ class User extends BaseUser
 
     /**
      * @var string
-     * @ORM\Column(name="facebook_id", type="string", nullable=true, length=64)
+     * @ORM\Column(name="facebook_id", type="string", nullable=true, length=64, unique=true)
      */
     protected $facebookId;
 
     /**
      * @var string
-     * @ORM\Column(name="vkontakte_id", type="string", nullable=true, length=64)
+     * @ORM\Column(name="vkontakte_id", type="string", nullable=true, length=64, unique=true)
      */
     protected $vkontakteId;
 
     /**
      * @var string
-     * @ORM\Column(name="twitter_id", type="string", nullable=true, length=64)
+     * @ORM\Column(name="twitter_id", type="string", nullable=true, length=64, unique=true)
      */
     protected $twitterId;
 
     /**
      * @var string
-     * @ORM\Column(name="google_id", type="string", nullable=true, length=64)
+     * @ORM\Column(name="google_id", type="string", nullable=true, length=64, unique=true)
      */
     protected $googleId;
 
     /**
      * @var string
-     * @ORM\Column(name="github_id", type="string", nullable=true, length=64)
+     * @ORM\Column(name="github_id", type="string", nullable=true, length=64, unique=true)
      */
     protected $githubId;
 
     /**
      * @var string
-     * @ORM\Column(name="instagram_id", type="string", nullable=true, length=64)
+     * @ORM\Column(name="instagram_id", type="string", nullable=true, length=64, unique=true)
      */
     protected $instagramId;
 
@@ -158,6 +158,13 @@ class User extends BaseUser
      * @ORM\Column(name="activation_token", type="string", length=64, nullable=true)
      */
     private $activationToken;
+
+    /**
+     * Is the model notified about either she is registered by admin, or about she is activated.
+     * @var bool
+     * @ORM\Column(name="model_notified", type="boolean", options={"default": 0})
+     */
+    private $modelNotified = false;
 
     /**
      * Constructor
@@ -542,28 +549,28 @@ class User extends BaseUser
         $this->instagramURL = $instagramURL;
     }
 
-    /**
-     * Set modelRequest
-     *
-     * @param ModelRequest $modelRequest
-     * @return User
-     */
-    public function setModelRequest(ModelRequest $modelRequest = null)
-    {
-        $this->modelRequest = $modelRequest;
-
-        return $this;
-    }
-
-    /**
-     * Get modelRequest
-     *
-     * @return ModelRequest
-     */
-    public function getModelRequest()
-    {
-        return $this->modelRequest;
-    }
+//    /**
+//     * Set modelRequest
+//     *
+//     * @param ModelRequest $modelRequest
+//     * @return User
+//     */
+//    public function setModelRequest(ModelRequest $modelRequest = null)
+//    {
+//        $this->modelRequest = $modelRequest;
+//
+//        return $this;
+//    }
+//
+//    /**
+//     * Get modelRequest
+//     *
+//     * @return ModelRequest
+//     */
+//    public function getModelRequest()
+//    {
+//        return $this->modelRequest;
+//    }
 
     /**
      * @return string
@@ -620,5 +627,39 @@ class User extends BaseUser
         $this->activationToken = $activationToken;
 
         return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isModelNotified()
+    {
+        return $this->modelNotified;
+    }
+
+    /**
+     * @param boolean $modelNotified
+     */
+    public function setModelNotified($modelNotified)
+    {
+        $this->modelNotified = $modelNotified;
+    }
+
+    /**
+     * @return bool
+     */
+    public function needToActivate()
+    {
+        return (boolean) (!$this->facebookId || !$this->activated);
+    }
+
+    public function needToActivateByAdmin()
+    {
+        return (boolean) ($this->facebookId && !$this->activated);
+    }
+
+    public function needToActivateByModel()
+    {
+        return (boolean) (!$this->facebookId && $this->activated);
     }
 }

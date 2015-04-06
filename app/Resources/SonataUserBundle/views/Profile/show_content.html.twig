@@ -8,9 +8,11 @@
     <p>{{ 'profile.show.email'|trans }}: {{ user.email }}</p>
     <p>{{ 'profile.show.firstName'|trans }}: {{ user.firstname }}</p>
     <p>{{ 'profile.show.lastName'|trans }}: {{ user.lastname }}</p>
+    <p>{{ 'profile.show.gender'|trans }}: {{ user.genderLabel|trans({}, 'messages')|capitalize }}</p>
     <p><a href="{{ path('fos_user_profile_edit') }}" class="btn btn-primary">{{ 'profile.edit_link'|trans }}</a>
     {% if is_granted('ROLE_MODEL') -%}
         <a href="{{ path('profile_photos') }}" class="btn btn-primary">{{ 'profile.photos_link'|trans }}</a>
     {%- endif %}
+        <a href="{{ path('profile_delete') }}" class="btn btn-default">{{ 'profile.delete_button'|trans({}, 'messages') }}</a>
     </p>
 </div>

@@ -32,6 +32,8 @@ class ModelController extends Controller
      */
     public function createAction(Request $request)
     {
+        throw new NotFoundHttpException();
+
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             throw new AccessDeniedHttpException();
         }
@@ -61,6 +63,8 @@ class ModelController extends Controller
      */
     public function requestSuccessAction()
     {
+        throw new NotFoundHttpException();
+
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             throw new AccessDeniedHttpException();
         }
@@ -78,7 +82,7 @@ class ModelController extends Controller
     }
 
     /**
-     * @Route("/activate-via-social-network/{activationToken}", name="model_request_activate_via_social_network")
+     * @Route("/activate-via-facebook/{activationToken}", name="model_request_activate_via_social_network")
      * @param string $activationToken
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
@@ -87,12 +91,12 @@ class ModelController extends Controller
         $activationToken = trim($activationToken);
         $model = $this->getDoctrine()->getRepository('AppBundle:User')->findOneBy(['activationToken' => $activationToken]);
         if (!$model || !$model->isEnabled()) {
-            //throw new NotFoundHttpException();
+            throw new NotFoundHttpException();
         }
 
-//        if ($model->isActivated()) {
-//            throw new HttpException("The model is already activated.");
-//        }
+        if (!$model->needToActivate()) {
+            throw new HttpException("The model is already activated.");
+        }
 
         return $this->redirectToRoute('oauth_service_redirect', [
             'activation_token' => $activationToken,

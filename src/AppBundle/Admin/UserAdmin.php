@@ -11,7 +11,7 @@
 namespace AppBundle\Admin;
 
 
-use AppBundle\Entity\ModelRequest;
+//use AppBundle\Entity\ModelRequest;
 use AppBundle\Entity\User;
 use Knp\Menu\ItemInterface as MenuItemInterface;
 use Sonata\AdminBundle\Admin\AdminInterface;
@@ -89,6 +89,8 @@ class UserAdmin extends BaseUserAdmin
                     ->add('facebookId')
                     ->add('twitterId')
                     ->add('instagramId')
+                    ->add('facebookURL')
+                    ->add('instagramURL')
                 ->end()
 //                ->with('Social')
 //                    ->add('facebookUid', null, array('required' => false))
@@ -130,23 +132,23 @@ class UserAdmin extends BaseUserAdmin
             ;
         }
 
-        if ($this->getSubject() && $this->getSubject()->getId()
-            || $this->request->isXmlHttpRequest()
-        ) {
-            $formMapper
-                ->tab('User')
-                    ->with('General')
-                        ->add('modelRequest', 'sonata_type_model_autocomplete', [
-                            'property' => ['email', 'firstName', 'lastName'],
-                            'required' => false,
-                            'to_string_callback' => function($entity, $property) {
-                                /** @var ModelRequest $entity */
-                                return $entity->getEmail() . ' (' . trim($entity->getFirstName() . ' ' . $entity->getLastName()) . ')';
-                            },
-                        ])
-                    ->end()
-                ->end();
-        }
+//        if ($this->getSubject() && $this->getSubject()->getId()
+//            || $this->request->isXmlHttpRequest()
+//        ) {
+//            $formMapper
+//                ->tab('User')
+//                    ->with('General')
+//                        ->add('modelRequest', 'sonata_type_model_autocomplete', [
+//                            'property' => ['email', 'firstName', 'lastName'],
+//                            'required' => false,
+//                            'to_string_callback' => function($entity, $property) {
+//                                /** @var ModelRequest $entity */
+//                                return $entity->getEmail() . ' (' . trim($entity->getFirstName() . ' ' . $entity->getLastName()) . ')';
+//                            },
+//                        ])
+//                    ->end()
+//                ->end();
+//        }
 
         $formMapper
             ->tab('Security')
@@ -176,7 +178,8 @@ class UserAdmin extends BaseUserAdmin
     {
         parent::configureRoutes($collection);
 
-        $collection->add('sendModelNotification', $this->getRouterIdParameter() . '/send-model-notification');
+        //$collection->add('sendModelNotification', $this->getRouterIdParameter() . '/send-model-notification');
+        $collection->add('activate', $this->getRouterIdParameter() . '/activate');
     }
 
     protected function configureListFields(ListMapper $listMapper)
@@ -192,6 +195,11 @@ class UserAdmin extends BaseUserAdmin
             ->add('activated', null, array('editable' => true))
             ->add('locked', null, array('editable' => true))
             ->add('dateAdded', 'date')
+            ->add('_action', 'actions', [
+                'actions' => [
+                    'activate' => ['template' => ':CRUD:list__action_activate_model.html.twig']
+                ]
+            ]);
         ;
 
         if ($this->isGranted('ROLE_ALLOWED_TO_SWITCH')) {
@@ -240,10 +248,10 @@ class UserAdmin extends BaseUserAdmin
                 $user->setPassword('');
             }
 
-            if ($user->getModelRequest()) {
-                $user->getModelRequest()->setModel($user);
-                $user->getModelRequest()->setStatus(ModelRequest::STATUS_CREATED_MODEL);
-            }
+//            if ($user->getModelRequest()) {
+//                $user->getModelRequest()->setModel($user);
+//                $user->getModelRequest()->setStatus(ModelRequest::STATUS_CREATED_MODEL);
+//            }
         }
         parent::prePersist($user);
     }
@@ -300,14 +308,14 @@ class UserAdmin extends BaseUserAdmin
             ->end()
         ;
 
-        if ($this->getSubject() && $this->getSubject()->hasRole('ROLE_MODEL')) {
-            $showMapper
-                ->with('General')
-                    ->add('modelRequest', null, [
-                        'associated_property' => 'getDescription'
-                    ])
-                ->end();
-        }
+//        if ($this->getSubject() && $this->getSubject()->hasRole('ROLE_MODEL')) {
+//            $showMapper
+//                ->with('General')
+//                    ->add('modelRequest', null, [
+//                        'associated_property' => 'getDescription'
+//                    ])
+//                ->end();
+//        }
     }
 
     protected function configureTabMenu(MenuItemInterface $menu, $action, AdminInterface $childAdmin = null)

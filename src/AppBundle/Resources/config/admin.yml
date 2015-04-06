@@ -15,13 +15,13 @@ services:
         tags:
             - {name: sonata.admin, manager_type: orm, group: Chat, label: Conversations}
 
-    app.admin.model_request:
-        class: AppBundle\Admin\ModelRequestAdmin
-        arguments: [~, AppBundle\Entity\ModelRequest, AppBundle:ModelRequestAdmin]
-        tags:
-            - {name: sonata.admin, manager_type: orm, group: Chat, label: 'Model Requests'}
-        calls:
-            - [setTemplate, [edit, :ModelRequestAdmin:edit.html.twig]]
+#    app.admin.model_request:
+#        class: AppBundle\Admin\ModelRequestAdmin
+#        arguments: [~, AppBundle\Entity\ModelRequest, AppBundle:ModelRequestAdmin]
+#        tags:
+#            - {name: sonata.admin, manager_type: orm, group: Chat, label: 'Model Requests'}
+#        calls:
+#            - [setTemplate, [edit, :ModelRequestAdmin:edit.html.twig]]
 
     app.admin.emoticon:
         class: AppBundle\Admin\EmoticonAdmin

@@ -36,12 +36,16 @@ class RegistrationFormType extends BaseType
     {
         parent::buildForm($builder, $options);
 
+        if ($options['choose_gender']) {
+            $builder
+                ->add('gender', 'choice', [
+                    'choices' => User::getGendersLabels(),
+                    'multiple' => false,
+                    'expanded' => true
+                ]);
+        }
+
         $builder
-            ->add('gender', 'choice', [
-                'choices' => User::getGendersLabels(),
-                'multiple' => false,
-                'expanded' => true
-            ])
             ->add('firstname')
             ->add('lastname')
             ->add('dateOfBirth', 'birthday')
@@ -71,6 +75,7 @@ class RegistrationFormType extends BaseType
         parent::setDefaultOptions($resolver);
         $resolver->setDefaults([
             'csrf_field_name' => '_user_registration_token',
+            'choose_gender' => true,
         ]);
     }
 
