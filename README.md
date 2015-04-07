@@ -1,3 +1,9 @@
+Chat application
+================
+
+[**Инструкция по обновлению и обслуживанию**](app/Resources/docs/maintenance.md).
+
+
 Symfony Standard Edition
 ========================
 
