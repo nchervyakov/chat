@@ -74,7 +74,7 @@ abstract class Message
     /**
      * @var User
      * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumn(name="author_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="author_id", referencedColumnName="id", onDelete="CASCADE")
      * @Serialize\MaxDepth(0)
      */
     private $author;

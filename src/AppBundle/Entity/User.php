@@ -63,37 +63,37 @@ class User extends BaseUser
      * @var string
      * @ORM\Column(name="facebook_id", type="string", nullable=true, length=64, unique=true)
      */
-    protected $facebookId;
+    private $facebookId;
 
     /**
      * @var string
      * @ORM\Column(name="vkontakte_id", type="string", nullable=true, length=64, unique=true)
      */
-    protected $vkontakteId;
+    private $vkontakteId;
 
     /**
      * @var string
      * @ORM\Column(name="twitter_id", type="string", nullable=true, length=64, unique=true)
      */
-    protected $twitterId;
+    private $twitterId;
 
     /**
      * @var string
      * @ORM\Column(name="google_id", type="string", nullable=true, length=64, unique=true)
      */
-    protected $googleId;
+    private $googleId;
 
     /**
      * @var string
      * @ORM\Column(name="github_id", type="string", nullable=true, length=64, unique=true)
      */
-    protected $githubId;
+    private $githubId;
 
     /**
      * @var string
      * @ORM\Column(name="instagram_id", type="string", nullable=true, length=64, unique=true)
      */
-    protected $instagramId;
+    private $instagramId;
 
     /**
      * @var \DateTime

@@ -32,3 +32,4 @@ list:
     label_date_added: 'Date Added'
     label__actions: Actions
     label__action: Actions
+    label_id: ID

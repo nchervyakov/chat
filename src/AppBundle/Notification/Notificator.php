@@ -16,7 +16,7 @@ use Symfony\Component\DependencyInjection\ContainerAware;
 
 class Notificator extends ContainerAware
 {
-    public function notifyModelToActivateHerself(User $user)
+    public function notifyUserToActivateHimself(User $user)
     {
         if (!$user->getActivationToken()) {
             $user->setActivationToken(sha1($user->getId().'_'.time()));

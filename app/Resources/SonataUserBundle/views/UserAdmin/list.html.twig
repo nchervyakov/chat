@@ -2,8 +2,8 @@
 
 {% block actions %}
     {{ parent() }}
-    {% spaceless %}
+    {#{% spaceless %}
         <li>{{ include(':Core:create_user_type_button.html.twig', {'userType': 'model'}) }}</li>
         <li>{{ include(':Core:create_user_type_button.html.twig', {'userType': 'client'}) }}</li>
-    {% endspaceless %}
+    {% endspaceless %}#}
 {% endblock %}

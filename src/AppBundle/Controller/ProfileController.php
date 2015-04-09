@@ -12,7 +12,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
@@ -130,7 +129,7 @@ class ProfileController extends Controller
             } catch (\Exception $e) {
                 $conn->rollBack();
                 throw $e;
-                throw new HttpException(400, "Error while deleting user.");
+                //throw new HttpException(400, "Error while deleting user.");
             }
 
             $this->get('session')->invalidate();

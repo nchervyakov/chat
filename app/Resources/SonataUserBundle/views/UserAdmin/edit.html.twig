@@ -3,8 +3,8 @@
 {% block actions %}
     {{ parent() }}
     {% spaceless %}
-        <li>{{ include(':Core:create_user_type_button.html.twig', {'userType': 'model'}) }}</li>
-        <li>{{ include(':Core:create_user_type_button.html.twig', {'userType': 'client'}) }}</li>
+        {#<li>{{ include(':Core:create_user_type_button.html.twig', {'userType': 'model'}) }}</li>
+        <li>{{ include(':Core:create_user_type_button.html.twig', {'userType': 'client'}) }}</li>#}
         <li>{{ include(':Core:activate_model_button.html.twig') }}</li>
     {% endspaceless %}
 {% endblock %}
@@ -40,9 +40,9 @@
                     <a class="btn btn-info" href="{{ admin.generateObjectUrl('acl', object) }}"><i class="fa fa-users"></i> {{ 'link_edit_acl'|trans({}, 'SonataAdminBundle') }}</a>
                 {% endif %}
 
-                {% if admin.hasroute('activate') and admin.id(object) and object.needToActivateByAdmin %}
+                {#{% if admin.hasroute('activate') and admin.id(object) and object.needToActivateByAdmin %}
                     <a class="btn btn-success" href="{{ admin.generateObjectUrl('activate', object) }}"><i class="fa fa-mail-forward"></i> {{ 'link_action_activate_model'|trans() }}</a>
-                {% endif %}
+                {% endif %}#}
             {% else %}
                 {% if admin.hasroute('edit') and admin.isGranted('EDIT') %}
                     <button class="btn btn-success" type="submit" name="btn_create_and_edit"><i class="fa fa-save"></i> {{ 'btn_create_and_edit_again'|trans({}, 'SonataAdminBundle') }}</button>

@@ -26,7 +26,9 @@ class UserRepository extends EntityRepository
 
         $qb->select('u')
             ->from('AppBundle:User', 'u')
-            ->where('u.gender LIKE :gender')->setParameter('gender', User::GENDER_FEMALE)
+            ->join('u.groups', 'g')
+            ->where('g.name LIKE :models_group')->setParameter('models_group', 'Models')
+            //->where('u.gender LIKE :gender')->setParameter('gender', User::GENDER_FEMALE)
             ->orderBy('u.order', 'DESC');
 
 //        if ($search->getFrom() !== null) {

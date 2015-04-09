@@ -105,22 +105,18 @@ class ConnectController extends \HWI\Bundle\OAuthBundle\Controller\ConnectContro
             $this->container->get('hwi_oauth.account.connector')->connect($form->getData(), $userInformation);
             /** @var User $user */
             $user = $form->getData();
-            $groupRepository = $this->container->get('doctrine')->getRepository('AppBundle:Group');
+            $groupManager = $this->container->get('sonata.user.group_manager');
 
             if ($registrationType == 'model_registration') {
-                $modelsGroup = $groupRepository->findOneBy(['name' => 'Models']);
-                if ($modelsGroup) {
-                    $user->addGroup($modelsGroup);
-                }
+                $modelsGroup = $groupManager->findGroupByName('Models');
+                $user->addGroup($modelsGroup);
                 $user->setActivated(false);
                 $user->setGender(User::GENDER_FEMALE);
                 $redirectUrl = $this->generate('homepage');
 
             } else {
-                $clientsGroup = $groupRepository->findOneBy(['name' => 'Clients']);
-                if ($clientsGroup) {
-                    $user->addGroup($clientsGroup);
-                }
+                $clientsGroup = $groupManager->findGroupByName('Clients');
+                $user->addGroup($clientsGroup);
                 $redirectUrl = $this->generate('search_index');
             }
 

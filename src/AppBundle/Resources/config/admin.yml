@@ -27,4 +27,24 @@ services:
         class: AppBundle\Admin\EmoticonAdmin
         arguments: [~, AppBundle\Entity\Emoticon, SonataAdminBundle:CRUD]
         tags:
-            - {name: sonata.admin, manager_type: orm, group: Chat, label: Emoticon}
+            - {name: sonata.admin, manager_type: orm, group: Chat, label: Emoticons}
+
+    app.admin.models:
+        class: AppBundle\Admin\ModelAdmin
+        arguments: [~, AppBundle\Entity\User, AppBundle:ModelAdmin]
+        tags:
+            - {name: sonata.admin, manager_type: orm, group: Chat, label: Models}
+        calls:
+            - [setTemplate, [list, SonataUserBundle:UserAdmin:list.html.twig]]
+            - [setTemplate, [edit, SonataUserBundle:UserAdmin:edit.html.twig]]
+            - [setTranslationDomain, [SonataUserBundle]]
+
+    app.admin.clients:
+        class: AppBundle\Admin\ClientAdmin
+        arguments: [~, AppBundle\Entity\User, AppBundle:ClientAdmin]
+        tags:
+            - {name: sonata.admin, manager_type: orm, group: Chat, label: Clients}
+        calls:
+            - [setTemplate, [list, SonataUserBundle:UserAdmin:list.html.twig]]
+            - [setTemplate, [edit, SonataUserBundle:UserAdmin:edit.html.twig]]
+            - [setTranslationDomain, [SonataUserBundle]]

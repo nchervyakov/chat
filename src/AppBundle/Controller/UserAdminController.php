@@ -37,24 +37,6 @@ class UserAdminController extends CRUDController
         /** @var User $object */
         $object = $this->admin->getNewInstance();
 
-//        if (($modelRequestId = $request->query->get('model_request_id')) && is_numeric($modelRequestId)) {
-//            $modelRequest = $this->getDoctrine()->getRepository('AppBundle:ModelRequest')->find($modelRequestId);
-//
-//            if (!$modelRequest) {
-//                throw new  NotFoundHttpException("Model request with id=$modelRequestId is missing.");
-//            }
-//
-//            $object->setFirstname($modelRequest->getFirstName());
-//            $object->setLastname($modelRequest->getLastName());
-//            $object->setEmail($modelRequest->getEmail());
-//            $object->setUsername($modelRequest->getEmail());
-//            $object->setFacebookURL($modelRequest->getFacebookURL());
-//            $object->setInstagramURL($modelRequest->getInstagramURL());
-//            //$object->setModelRequest($modelRequest);
-//            $this->adjustModel($object);
-//
-//        } else
-
         if ($request->query->get('type') === 'model') {
             $this->adjustModel($object);
 
@@ -85,11 +67,13 @@ class UserAdminController extends CRUDController
                 }
 
                 try {
-                    $object->setActivated(true);
+                    if ($object->hasRole('ROLE_MODEL') || $object->hasRole('ROLE_CLIENT')) {
+                        $object->setActivated(true);
+                    }
                     $object = $this->admin->create($object);
 
-                    if ($object->hasRole('ROLE_MODEL')) {
-                        $this->get('app.notificator')->notifyModelToActivateHerself($object);
+                    if ($object->hasRole('ROLE_MODEL') || $object->hasRole('ROLE_CLIENT')) {
+                        $this->get('app.notificator')->notifyUserToActivateHimself($object);
                     }
 
                     if ($this->isXmlHttpRequest($request)) {
@@ -173,7 +157,7 @@ class UserAdminController extends CRUDController
 
         $this->admin->setSubject($object);
 
-        $this->get('app.notificator')->notifyModelToActivateHerself($object);
+        $this->get('app.notificator')->notifyUserToActivateHimself($object);
 
         $this->addFlash(
             'sonata_flash_success',
