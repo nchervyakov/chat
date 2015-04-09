@@ -35,6 +35,7 @@ services:
         tags:
             - {name: sonata.admin, manager_type: orm, group: Chat, label: Models}
         calls:
+            - [setUserManager, ["@fos_user.user_manager"]]
             - [setTemplate, [list, SonataUserBundle:UserAdmin:list.html.twig]]
             - [setTemplate, [edit, SonataUserBundle:UserAdmin:edit.html.twig]]
             - [setTranslationDomain, [SonataUserBundle]]
@@ -45,6 +46,7 @@ services:
         tags:
             - {name: sonata.admin, manager_type: orm, group: Chat, label: Clients}
         calls:
+            - [setUserManager, ["@fos_user.user_manager"]]
             - [setTemplate, [list, SonataUserBundle:UserAdmin:list.html.twig]]
             - [setTemplate, [edit, SonataUserBundle:UserAdmin:edit.html.twig]]
             - [setTranslationDomain, [SonataUserBundle]]
