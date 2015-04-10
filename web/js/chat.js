@@ -1,6 +1,9 @@
 /**
- * Created by Nikolay Chervyakov on 10.03.2015.
- */
+* Created with IntelliJ IDEA by Nick Chervyakov.
+* User: Nikolay Chervyakov
+* Date: 10.03.2015
+* Time: 11:02
+*/
 
 /**
  * Controls the chat widget

@@ -17,6 +17,7 @@ menu:
 chat_list_page.title: 'Chat List'
 
 search: 'Search'
+search_other_models: 'search.other_models'
 
 gender:
     male: 'Male'
@@ -52,6 +53,7 @@ chat_page:
     ctrl_plus_enter_send_message: 'Press Ctrl + Enter to send a message.'
 chat: 'Chat'
 total_models_found: 'Total models found: %count%'
+online_models_found: 'Online models found: %count%'
 your_friends: 'Your Friends'
 please_select_companion: 'Please select a companion to chat on the left, or find one on the search page.'
 chat_with_companion: 'Chat with %companion%'
@@ -64,6 +66,7 @@ stat_page:
     paid_time: 'Paid Time'
     earned_money: 'Earned'
     got_money: 'Got'
+    no_models_fount: 'No models are now online.'
 no_stat_available: 'No statistics yet.'
 user:
     page_title: 'User'
@@ -104,3 +107,4 @@ gender:
     female: Female
 action_activate_model: 'Activate'
 link_action_activate_model: 'Activate'
+offline_models_found: 'Other Models: %count%'

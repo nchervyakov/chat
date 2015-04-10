@@ -18,9 +18,10 @@ class UserRepository extends EntityRepository
      * Populates model search query builder based on ModelSearch instance.
      * @param ModelSearch $search
      * @param int $onlineMinutes
+     * param boolean $searchOnline Whether to search online or offline models
      * @return \Doctrine\ORM\QueryBuilder
      */
-    public function prepareQueryBuilderForModelSearch(ModelSearch $search, $onlineMinutes = 0)
+    public function prepareQueryBuilderForModelSearch(ModelSearch $search, $onlineMinutes = null/*, $searchOnline = true*/)
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
 
@@ -67,6 +68,18 @@ class UserRepository extends EntityRepository
                         ->setParameter('part1', $part1.'%');
                 }
             }
+        }
+
+        if (is_numeric($onlineMinutes) && $onlineMinutes >= 0) {
+            $onlineMinutes = (int) $onlineMinutes;
+            $onlineDatetime = new \DateTime('-' . $onlineMinutes . ' minutes');
+
+            if ($search->isOffline()) {
+                $qb->andWhere('u.lastVisitedDate < :online_date OR u.lastVisitedDate IS NULL');
+            } else {
+                $qb->andWhere('u.lastVisitedDate >= :online_date');
+            }
+            $qb->setParameter('online_date', $onlineDatetime);
         }
 
         return $qb;

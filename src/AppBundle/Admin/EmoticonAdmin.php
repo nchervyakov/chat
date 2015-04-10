@@ -2,6 +2,7 @@
 
 namespace AppBundle\Admin;
 
+use AppBundle\Tools\DateTimeServices;
 use Sonata\AdminBundle\Admin\Admin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
@@ -75,8 +76,8 @@ class EmoticonAdmin extends Admin
                     'allow_delete' => false
                 ])
                 ->add('sortOrder')
-                ->add('dateAdded', 'sonata_type_date_picker', [
-                    'format' => DateType::HTML5_FORMAT
+                ->add('dateAdded', 'sonata_type_datetime_picker', [
+                    'format' => DateTimeServices::FORMAT_DATETIME_DOTTED
                 ])
             ->end()
         ;

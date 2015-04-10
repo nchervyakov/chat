@@ -238,3 +238,21 @@ body {
 .stat-table tfoot {
     font-weight: bold;
 }
+
+.search-results .model-item {
+    position: relative;
+}
+
+.user-status {
+    position: absolute;
+    right: 30px;
+    top: 20px;
+    background: #ffffff;
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+}
+
+.user-status-online {
+    background: green;
+}

@@ -1,0 +1,11 @@
+{% if offlineModels is defined and offlineModels and pagination.currentPageNumber == 1 %}
+    <div class="col-lg-12 col-md-12">
+        <h3>{{ 'offline_models_found'|trans({'%count%': pagination.getTotalItemCount}) }}</h3>
+    </div>
+{% endif %}
+
+<div class="search-page col-lg-12 col-md-12">
+    {% for model in pagination %}
+        {{ include(':Search:_model_search_item.html.twig') }}
+    {% endfor %}
+</div>

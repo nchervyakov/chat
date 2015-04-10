@@ -22,7 +22,10 @@ class ModelSearchFormType extends AbstractType
     {
         //$ageRange = ModelSearch::getAgeRangeList();
         $builder
-            ->add('name');
+            ->add('name')
+            ->add('offline', 'hidden', [
+                'required' => false
+            ]);
 //            ->add('from', 'choice', [
 //                'choices' => $ageRange,
 //                'error_bubbling' => true,

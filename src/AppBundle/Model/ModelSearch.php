@@ -47,6 +47,11 @@ class ModelSearch
     private $name;
 
     /**
+     * @var bool
+     */
+    private $offline = false;
+
+    /**
      * @return int
      */
     public function getFrom()
@@ -138,5 +143,21 @@ class ModelSearch
     public function setName($name)
     {
         $this->name = $name;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isOffline()
+    {
+        return $this->offline;
+    }
+
+    /**
+     * @param boolean $offline
+     */
+    public function setOffline($offline)
+    {
+        $this->offline = (boolean) $offline;
     }
 }

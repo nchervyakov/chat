@@ -140,12 +140,12 @@ class User extends BaseUser
      */
     private $instagramURL;
 
-    /**
-     * @var ModelRequest|null
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\ModelRequest", inversedBy="model")
-     * @ORM\JoinColumn(name="model_request_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
-     */
-    private $modelRequest;
+//    /**
+//     * @var ModelRequest|null
+//     * @ORM\OneToOne(targetEntity="AppBundle\Entity\ModelRequest", inversedBy="model")
+//     * @ORM\JoinColumn(name="model_request_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+//     */
+//    private $modelRequest;
 
     /**
      * @var bool
@@ -165,6 +165,18 @@ class User extends BaseUser
      * @ORM\Column(name="model_notified", type="boolean", options={"default": 0})
      */
     private $modelNotified = false;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="last_visited_date", type="datetime", nullable=true)
+     */
+    private $lastVisitedDate;
+
+    /**
+     * @var bool
+     */
+    private $online = null;
 
     /**
      * Constructor
@@ -661,5 +673,49 @@ class User extends BaseUser
     public function needToActivateByModel()
     {
         return (boolean) (!$this->facebookId && $this->activated);
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getLastVisitedDate()
+    {
+        return $this->lastVisitedDate;
+    }
+
+    /**
+     * @param \DateTime $lastVisitedDate
+     */
+    public function setLastVisitedDate($lastVisitedDate)
+    {
+        $this->lastVisitedDate = $lastVisitedDate;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isOnline()
+    {
+        if ($this->online === null) {
+            if ($this->lastVisitedDate === null) {
+                $this->online = false;
+            } else {
+                $diff = time() - (int) $this->lastVisitedDate->format('U');
+                $this->online = $diff <= 15 * 60;
+            }
+        }
+
+        return $this->online;
+    }
+
+    /**
+     * @param boolean $online
+     * @return $this
+     */
+    public function setOnline($online)
+    {
+        $this->online = $online;
+
+        return $this;
     }
 }

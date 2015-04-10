@@ -3,6 +3,7 @@
 namespace AppBundle\Admin;
 
 use AppBundle\Entity\ModelRequest;
+use AppBundle\Tools\DateTimeServices;
 use Sonata\AdminBundle\Admin\Admin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
@@ -96,11 +97,11 @@ class ModelRequestAdmin extends Admin
                         'read_only' => false,
                         'required' => false
                     ])
-                    ->add('dateAdded', 'sonata_type_date_picker', [
-                        'format' => DateType::HTML5_FORMAT
+                    ->add('dateAdded', 'sonata_type_datetime_picker', [
+                        'format' => DateTimeServices::FORMAT_DATETIME_DOTTED
                     ])
-                    ->add('dateUpdated', 'sonata_type_date_picker', [
-                        'format' => DateType::HTML5_FORMAT,
+                    ->add('dateUpdated', 'sonata_type_datetime_picker', [
+                        'format' => DateTimeServices::FORMAT_DATETIME_DOTTED,
                         'required' => false
                     ])
                 ->end()

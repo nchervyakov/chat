@@ -211,6 +211,7 @@ fos_js_routing:
         - chat_show
         - chat_get_new_messages
         - user_show
+        - search_index
 #        - fos_user_registration_register
 
 knp_menu:

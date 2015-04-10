@@ -13,6 +13,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\User;
 use Sonata\AdminBundle\Exception\ModelManagerException;
+use Symfony\Bridge\Twig\Extension\FormExtension;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
@@ -35,6 +36,7 @@ class ModelAdminController extends UserAdminController
         $object->addGroup($modelGroup);
         $object->setEnabled(true);
         $object->setActivated(true);
+        $object->setGender(User::GENDER_MALE);
 
         $this->admin->setSubject($object);
 
@@ -110,7 +112,9 @@ class ModelAdminController extends UserAdminController
         $view = $form->createView();
 
         // set the theme for the current Admin Form
-        $this->get('twig')->getExtension('form')->renderer->setTheme($view, $this->admin->getFormTheme());
+        /** @var FormExtension $formExtension */
+        $formExtension = $this->get('twig')->getExtension('form');
+        $formExtension->renderer->setTheme($view, $this->admin->getFormTheme());
 
         return $this->render($this->admin->getTemplate($templateKey), array(
             'action' => 'create',

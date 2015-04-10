@@ -129,4 +129,12 @@ services:
         calls:
             - [setContainer, ["@service_container"]]
 
+    app.event.request_subscriber:
+        class: AppBundle\Event\Listener\RequestListener
+        arguments:
+            - "@security.token_storage"
+            - "@fos_user.user_manager"
+        tags:
+            - {name: kernel.event_subscriber}
+
 

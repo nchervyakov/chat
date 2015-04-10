@@ -3,49 +3,43 @@
 {% block title 'search'|trans %}
 {% block page_title_text %}{{ 'models_available_for_chat'|trans }}{% endblock %}
 
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('js/search.js') }}"></script>
+{% endblock %}
+
 {% block page %}
     {{ parent() }}
-    {% include ':Search:_search_form.html.twig' %}
+    <div class="search-widget" data-url-base="{{ path(pagination.route, pagination.query|merge({'page': '__PAGE__', 's[offline]': '__OFFLINE__'})) }}">
+        {% include ':Search:_search_form.html.twig' %}
 
-    <div class="row search-results">
-        <div class="col-lg-12">
+        <div class="row search-results">
+            <div class="col-lg-12">
 
-            {% if pagination is defined %}
-                <div class="row">
-                    <div class="col-lg-12 col-md-12">
-                        <h3>{{ 'total_models_found'|trans({'%count%': pagination.getTotalItemCount}) }}</h3>
-                    </div>
-                </div>
-
-                <div class="row">
-                    {% for model in pagination %}
-                        <div class="col-sm-6 col-md-4">
-                            <div class="thumbnail">
-                                <a href="{{ path('user_show', {"user_id": model.id}) }}">
-                                    <div class="img-wrapper">
-                                        <img src="{% if model.hasThumbnail %}{{ vich_uploader_asset(model.thumbnail, 'file', 'AppBundle\\Entity\\UserPhoto') | imagine_filter('search_user_photo') }}{% endif %}"
-                                             alt="{{ model.fullName }}">
-                                    </div>
-                                    <div class="caption">
-                                        <h3>{{- model.fullName -}}<small>, {{ model.age }}</small></h3>
-                                    </div>
-                                </a>
-
-                                <div class="text-center">
-                                    <a href="{{ path('chat_show', {"companion_id": model.id}) }}" class="btn btn-primary"
-                                        >{{ 'chat_with_model'|trans({"%model%": model.firstname}) }}</a>
-                                </div>
-                            </div>
+                {% if pagination is defined %}
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12">
+                            <h3>{{ 'online_models_found'|trans({'%count%': pagination.getTotalItemCount}) }}</h3>
                         </div>
-                    {% endfor %}
-                </div>
+                    </div>
 
-                <div class="row">
-                    <nav class="navigation col-lg-12 col-md-12 text-right">
-                        {{ knp_pagination_render(pagination) }}
-                    </nav>
-                </div>
-            {% endif %}
+                    <div class="row search-pages">
+                        {% if pagination.totalItemCount == 0 %}
+                            <div class="col-lg-12 col-md-12">
+                                <p><i>{{ 'stat_page.no_models_fount'|trans }}</i></p>
+                            </div>
+                        {% else %}
+                            {{ include(':Search:_search_page.html.twig') }}
+                        {% endif %}
+                    </div>
+
+                    {#<div class="row">
+                        <nav class="navigation col-lg-12 col-md-12 text-right">
+                            {{ knp_pagination_render(pagination) }}
+                        </nav>
+                    </div>#}
+                {% endif %}
+            </div>
         </div>
     </div>
 {% endblock %}

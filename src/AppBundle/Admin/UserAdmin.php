@@ -13,6 +13,7 @@ namespace AppBundle\Admin;
 
 //use AppBundle\Entity\ModelRequest;
 use AppBundle\Entity\User;
+use AppBundle\Tools\DateTimeServices;
 use Knp\Menu\ItemInterface as MenuItemInterface;
 use Sonata\AdminBundle\Admin\AdminInterface;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -37,10 +38,10 @@ class UserAdmin extends BaseUserAdmin
         // define group zoning
         $formMapper
             ->tab('User')
-                ->with('Profile', array('class' => 'col-md-6'))->end()
-                ->with('General', array('class' => 'col-md-6'))->end()
-                ->with('Social IDs', array('class' => 'col-md-6'))->end()
-//                ->with('Social', array('class' => 'col-md-6'))->end()
+                ->with('Profile', array('class' => 'col-lg-6 col-md-12'))->end()
+                ->with('General', array('class' => 'col-lg-6 col-md-12'))->end()
+                ->with('Social IDs', array('class' => 'col-lg-6 col-md-12'))->end()
+//                ->with('Social', array('class' => 'col-lg-6 col-md-12'))->end()
             ->end()
             ->tab('Security')
                 ->with('Status', array('class' => 'col-md-4'))->end()
@@ -60,6 +61,9 @@ class UserAdmin extends BaseUserAdmin
                     ->add('plainPassword', 'text', array(
                         'required' => false //(!$this->getSubject() || is_null($this->getSubject()->getId()))
                     ))
+                    ->add('dateAdded', 'sonata_type_datetime_picker', [
+                        'format' => DateTimeServices::FORMAT_DATETIME_DOTTED
+                    ])
                 ->end()
                 ->with('Profile')
                     ->add('dateOfBirth', 'sonata_type_date_picker', array(
@@ -71,7 +75,7 @@ class UserAdmin extends BaseUserAdmin
                         //'dp_enabled_dates' => false,
                         'required' => false,
                         //'datepicker_use_button' => true
-                        'format' => DateType::HTML5_FORMAT
+                        'format' => DateTimeServices::FORMAT_DATE_DOTTED //DateType::HTML5_FORMAT
                     ))
                     ->add('firstname', null, array('required' => false))
                     ->add('lastname', null, array('required' => false))
@@ -130,6 +134,16 @@ class UserAdmin extends BaseUserAdmin
                     ->end()
                 ->end()
             ;
+
+            $formMapper
+                ->tab('Security')
+                    ->with('Keys')
+//                      ->add('token', null, array('required' => false))
+//                      ->add('twoStepVerificationCode', null, array('required' => false))
+                        ->add('activationToken', null, ['required' => false])
+                    ->end()
+                ->end()
+            ;
         }
 
 //        if ($this->getSubject() && $this->getSubject()->getId()
@@ -149,16 +163,6 @@ class UserAdmin extends BaseUserAdmin
 //                    ->end()
 //                ->end();
 //        }
-
-        $formMapper
-            ->tab('Security')
-                ->with('Keys')
-//                    ->add('token', null, array('required' => false))
-//                    ->add('twoStepVerificationCode', null, array('required' => false))
-                      ->add('activationToken', null, ['required' => false])
-                ->end()
-            ->end()
-        ;
     }
 
     protected function configureDatagridFilters(DatagridMapper $filterMapper)

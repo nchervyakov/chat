@@ -2,6 +2,7 @@
 
 namespace AppBundle\Admin;
 
+use AppBundle\Tools\DateTimeServices;
 use Sonata\AdminBundle\Admin\Admin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
@@ -28,7 +29,7 @@ class ConversationAdmin extends Admin
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->add('id')
+            ->addIdentifier('id')
             ->add('client')
             ->add('model')
             ->add('price')
@@ -51,7 +52,14 @@ class ConversationAdmin extends Admin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('dateAdded')
+            ->with('Conversation', ['class' => 'col-lg-6 col-md-12'])->end();
+
+        $formMapper
+            ->with('Conversation')
+                ->add('dateAdded', 'sonata_type_datetime_picker', [
+                    'format' => DateTimeServices::FORMAT_DATETIME_DOTTED
+                ])
+            ->end()
         ;
     }
 
