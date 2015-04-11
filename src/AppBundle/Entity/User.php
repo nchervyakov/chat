@@ -179,6 +179,12 @@ class User extends BaseUser
     private $online = null;
 
     /**
+     * @var float
+     * @ORM\Column(name="coins", type="decimal", precision=10, scale=8, nullable=false, options={"default": 0.0})
+     */
+    private $coins = 0.0;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -717,5 +723,21 @@ class User extends BaseUser
         $this->online = $online;
 
         return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getCoins()
+    {
+        return $this->coins;
+    }
+
+    /**
+     * @param float $coins
+     */
+    public function setCoins($coins)
+    {
+        $this->coins = $coins;
     }
 }

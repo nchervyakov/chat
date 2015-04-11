@@ -48,6 +48,9 @@ class SearchController extends Controller
         $data = ['form' => $form->createView()];
 
         if (!$form->isSubmitted() || $form->isValid()) {
+            if (!$request->isXmlHttpRequest()) {
+                $modelSearchModel->setOffline(false);
+            }
             if ($form->isSubmitted()) {
                 // Save requested search parameters to session
                 $this->get('session')->set('search.model', $modelSearchModel);

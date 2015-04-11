@@ -41,7 +41,7 @@ class ConversationService extends ContainerAware
 
             $interval = $this->getActiveInterval($conversation);
             $interval->addMessage($message);
-            $message->setInterval($interval);
+            $message->setFollowingInterval($interval);
             $interval->setSeconds($interval->calculateIntervalSeconds());
             $this->estimateInterval($interval);
             $this->estimateConversation($conversation);

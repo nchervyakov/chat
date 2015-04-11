@@ -75,7 +75,9 @@ class UserRepository extends EntityRepository
             $onlineDatetime = new \DateTime('-' . $onlineMinutes . ' minutes');
 
             if ($search->isOffline()) {
-                $qb->andWhere('u.lastVisitedDate < :online_date OR u.lastVisitedDate IS NULL');
+                $qb->andWhere(
+                    $qb->expr()->orX('u.lastVisitedDate < :online_date', 'u.lastVisitedDate IS NULL')
+                );
             } else {
                 $qb->andWhere('u.lastVisitedDate >= :online_date');
             }

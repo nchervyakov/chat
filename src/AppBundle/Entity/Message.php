@@ -39,11 +39,19 @@ abstract class Message
 
     /**
      * @var ConversationInterval
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\ConversationInterval", inversedBy="messages")
-     * @ORM\JoinColumn(name="interval_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\ConversationInterval", inversedBy="startMessage")
+     * @ORM\JoinColumn(name="following_interval_id", referencedColumnName="id", onDelete="CASCADE", nullable=true)
      * @Serialize\MaxDepth(0)
      */
-    private $interval;
+    private $followingInterval;
+
+    /**
+     * @var ConversationInterval
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\ConversationInterval", inversedBy="endMessage")
+     * @ORM\JoinColumn(name="previous_interval_id", referencedColumnName="id", onDelete="CASCADE", nullable=true)
+     * @Serialize\MaxDepth(0)
+     */
+    private $previousInterval;
 
     /**
      * @var \DateTime
@@ -193,12 +201,12 @@ abstract class Message
     /**
      * Set interval
      *
-     * @param ConversationInterval $interval
+     * @param ConversationInterval $followingInterval
      * @return Message
      */
-    public function setInterval(ConversationInterval $interval = null)
+    public function setFollowingInterval(ConversationInterval $followingInterval = null)
     {
-        $this->interval = $interval;
+        $this->followingInterval = $followingInterval;
 
         return $this;
     }
@@ -208,9 +216,29 @@ abstract class Message
      *
      * @return ConversationInterval
      */
-    public function getInterval()
+    public function getFollowingInterval()
     {
-        return $this->interval;
+        return $this->followingInterval;
+    }
+
+    /**
+     * @return ConversationInterval
+     */
+    public function getPreviousInterval()
+    {
+        return $this->previousInterval;
+    }
+
+    /**
+     * @param ConversationInterval $previousInterval
+     *
+     * @return ConversationInterval
+     */
+    public function setPreviousInterval($previousInterval)
+    {
+        $this->previousInterval = $previousInterval;
+
+        return $this;
     }
 
     /**

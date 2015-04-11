@@ -86,11 +86,11 @@ class ModelRequest
      */
     private $dateUpdated;
 
-    /**
-     * @var User|null
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\User", mappedBy="modelRequest")
-     */
-    private $model;
+//    /**
+//     * @var User|null
+//     * @ORM\OneToOne(targetEntity="AppBundle\Entity\User", mappedBy="modelRequest")
+//     */
+//    private $model;
 
     /**
      * @var string
@@ -329,28 +329,28 @@ class ModelRequest
         return $this->status;
     }
 
-    /**
-     * Set model
-     *
-     * @param User $model
-     * @return ModelRequest
-     */
-    public function setModel(User $model = null)
-    {
-        $this->model = $model;
-
-        return $this;
-    }
-
-    /**
-     * Get model
-     *
-     * @return User
-     */
-    public function getModel()
-    {
-        return $this->model;
-    }
+//    /**
+//     * Set model
+//     *
+//     * @param User $model
+//     * @return ModelRequest
+//     */
+//    public function setModel(User $model = null)
+//    {
+//        $this->model = $model;
+//
+//        return $this;
+//    }
+//
+//    /**
+//     * Get model
+//     *
+//     * @return User
+//     */
+//    public function getModel()
+//    {
+//        return $this->model;
+//    }
 
     function __toString()
     {

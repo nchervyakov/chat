@@ -2,8 +2,7 @@
 
 namespace AppBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -24,9 +23,9 @@ class ConversationInterval
     /**
      * @var integer
      *
-     * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Column(name="id", type="integer")
      */
     private $id;
 
@@ -44,11 +43,18 @@ class ConversationInterval
     private $status = self::STATUS_ACTIVE;
 
     /**
-     * @var Message[]|Collection<Message>
-     * @ORM\OneToMany(targetEntity="Message", mappedBy="interval", cascade={"remove"}, orphanRemoval=true)
+     * @var Message
+     * @ORM\OneToOne(targetEntity="Message", mappedBy="followingInterval", cascade={"remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"dateAdded" = "ASC"})
      */
-    private $messages;
+    private $startMessage;
+
+    /**
+     * @var Message
+     * @ORM\OneToOne(targetEntity="Message", mappedBy="previousInterval", cascade={"remove"}, orphanRemoval=true)
+     * @ORM\OrderBy({"dateAdded" = "ASC"})
+     */
+    private $endMessage;
 
     /**
      * @var ConversationInterval
@@ -110,7 +116,6 @@ class ConversationInterval
 
     function __construct()
     {
-        $this->messages = new ArrayCollection();
         $this->setDateAdded(new \DateTime());
     }
 
@@ -205,42 +210,57 @@ class ConversationInterval
     }
 
     /**
-     * Add message
+     * Set a start message
      *
      * @param Message $message
      * @return ConversationInterval
      * @throws \ErrorException
      */
-    public function addMessage(Message $message)
+    public function setStartMessage(Message $message = null)
     {
         if ($this->status != self::STATUS_ACTIVE) {
             throw new \ErrorException("Cannot add a message to closed interval");
         }
 
-        $this->messages[] = $message;
-        $this->lastMessageDate = clone $message->getDateAdded();
-
+        $this->startMessage = $message;
+        if (!$this->endMessage) {
+            $this->lastMessageDate = clone $message->getDateAdded();
+        }
         return $this;
-    }
-
-    /**
-     * Remove message
-     *
-     * @param Message $message
-     */
-    public function removeMessage(Message $message)
-    {
-        $this->messages->removeElement($message);
     }
 
     /**
      * Get messages
      *
-     * @return Collection<Message>|Collection|Message[]
+     * @return Message|null
      */
-    public function getMessages()
+    public function getStartMessage()
     {
-        return $this->messages;
+        return $this->startMessage;
+    }
+
+    /**
+     * @return Message|null
+     */
+    public function getEndMessage()
+    {
+        return $this->endMessage;
+    }
+
+    /**
+     * @param Message $message
+     * @return $this
+     * @throws \ErrorException
+     */
+    public function setEndMessage(Message $message = null)
+    {
+        if ($this->status != self::STATUS_ACTIVE) {
+            throw new \ErrorException("Cannot change a closed interval");
+        }
+
+        $this->endMessage = $message;
+        $this->lastMessageDate = clone $message->getDateAdded();
+        return $this;
     }
 
     /**
@@ -286,7 +306,7 @@ class ConversationInterval
     public function calculateIntervalSeconds()
     {
         $seconds = 0; // Interval seconds
-        $lastKey = $this->messages->count() - 1;
+        $lastKey = $this->startMessage->count() - 1;
 
         if ($lastKey < 0) {
             return $seconds;
@@ -295,7 +315,7 @@ class ConversationInterval
         // If previous closed interval exists use its last message date to start calculate current time
         $lastTime = $this->previousInterval ? $this->previousInterval->getLastMessageDate() : null;
 
-        foreach ($this->messages as $key => $message) {
+        foreach ($this->startMessage as $key => $message) {
             $time = (int) $message->getDateAdded()->format('U');
             if ($lastTime === null) {
                 $lastTime = $time;

@@ -97,6 +97,12 @@ class Conversation
      */
     private $lastMessageDate;
 
+    /**
+     * @var bool Whether the conversation was recalculated after changing the interval calculation algorithm (Version20150410151931)
+     * @ORM\Column(name="recalculated", type="boolean", nullable=false, options={"default": 0})
+     */
+    private $recalculated = false;
+
     function __construct()
     {
         $this->messages = new ArrayCollection();
@@ -501,5 +507,21 @@ class Conversation
     public function getModelEarnings()
     {
         return $this->modelEarnings;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isRecalculated()
+    {
+        return $this->recalculated;
+    }
+
+    /**
+     * @param boolean $recalculated
+     */
+    public function setRecalculated($recalculated)
+    {
+        $this->recalculated = (boolean) $recalculated;
     }
 }

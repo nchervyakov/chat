@@ -107,4 +107,4 @@ gender:
     female: Female
 action_activate_model: 'Activate'
 link_action_activate_model: 'Activate'
-offline_models_found: 'Other Models: %count%'
+offline_models_found: 'Other models: %count%'
