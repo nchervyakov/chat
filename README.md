@@ -1,7 +1,8 @@
 Chat application
 ================
 
-[**Инструкция по обновлению и обслуживанию**](app/Resources/docs/maintenance.md).
+* [**Инструкция по обновлению и обслуживанию**](app/Resources/docs/maintenance.md).
+* [**Интервалы сообщений**](app/Resources/docs/message_intervals.md).
 
 
 Symfony Standard Edition
