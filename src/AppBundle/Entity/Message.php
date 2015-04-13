@@ -114,7 +114,7 @@ abstract class Message
     /**
      * @param Conversation $conversation
      */
-    public function setConversation($conversation)
+    public function setConversation($conversation = null)
     {
         $this->conversation = $conversation;
     }

@@ -45,12 +45,12 @@ class Conversation
      */
     protected $model;
 
-    /**
-     * @var Collection|array|Message[]
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Message", mappedBy="conversation", cascade={"remove"}, orphanRemoval=true)
-     * @ORM\OrderBy({"dateAdded" = "ASC"})
-     */
-    protected $messages;
+//    /**
+//     * @var Collection|array|Message[]
+//     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Message", mappedBy="conversation", cascade={"remove"}, orphanRemoval=true)
+//     * @ORM\OrderBy({"dateAdded" = "ASC"})
+//     */
+//    protected $messages;
 
     /**
      * @var ConversationInterval[]|array|Collection
@@ -66,13 +66,13 @@ class Conversation
 
     /**
      * @var float
-     * @ORM\Column(name="price", type="decimal", scale=2, options={"default": 0.0})
+     * @ORM\Column(name="price", type="decimal", precision=10, scale=6, options={"default": 0.0})
      */
     private $price = 0.0;
 
     /**
      * @var float
-     * @ORM\Column(name="model_earnings", type="decimal", scale=2, options={"default": 0.0})
+     * @ORM\Column(name="model_earnings", type="decimal", precision=10, scale=6, options={"default": 0.0})
      */
     private $modelEarnings = 0.0;
 
@@ -99,13 +99,13 @@ class Conversation
 
     /**
      * @var bool Whether the conversation was recalculated after changing the interval calculation algorithm (Version20150410151931)
-     * @ORM\Column(name="recalculated", type="boolean", nullable=false, options={"default": 0})
+     * @ORM\Column(name="recalculated", type="boolean", nullable=false, options={"default": 1})
      */
     private $recalculated = false;
 
     function __construct()
     {
-        $this->messages = new ArrayCollection();
+//        $this->messages = new ArrayCollection();
         $this->intervals = new ArrayCollection();
         $this->setDateAdded(new \DateTime());
     }
@@ -184,21 +184,21 @@ class Conversation
         $this->dateUpdated = $dateUpdated;
     }
 
-    /**
-     * @return array|Collection|Message[]
-     */
-    public function getMessages()
-    {
-        return $this->messages;
-    }
-
-    /**
-     * @param array|Collection|Message[] $messages
-     */
-    public function setMessages($messages)
-    {
-        $this->messages = $messages instanceof Collection ? $messages : new ArrayCollection($messages);
-    }
+//    /**
+//     * @return array|Collection|Message[]
+//     */
+//    public function getMessages()
+//    {
+//        return $this->messages;
+//    }
+//
+//    /**
+//     * @param array|Collection|Message[] $messages
+//     */
+//    public function setMessages($messages)
+//    {
+//        $this->messages = $messages instanceof Collection ? $messages : new ArrayCollection($messages);
+//    }
 
     /**
      * @ORM\PreUpdate()
@@ -211,12 +211,13 @@ class Conversation
     /**
      * Add messages
      *
-     * @param Message $messages
+     * @param Message $message
      * @return Conversation
      */
-    public function addMessage(Message $messages)
+    public function addMessage(Message $message)
     {
-        $this->messages[] = $messages;
+        //$this->messages[] = $messages;
+        $message->setConversation($this);
         $this->lastMessageDate = new \DateTime();
 
         return $this;
@@ -225,11 +226,12 @@ class Conversation
     /**
      * Remove messages
      *
-     * @param Message $messages
+     * @param Message $message
      */
-    public function removeMessage(Message $messages)
+    public function removeMessage(Message $message)
     {
-        $this->messages->removeElement($messages);
+        $message->setConversation(null);
+        //$this->messages->removeElement($messages);
     }
 
     /**

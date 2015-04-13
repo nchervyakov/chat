@@ -32,24 +32,28 @@ class ConversationService extends ContainerAware
      */
     public function addConversationMessage(Conversation $conversation, Message $message)
     {
-        $conn = $this->container->get('doctrine')->getConnection();
+        if (!$conversation->isRecalculated()) {
+            $this->recalculateConversationMessages($conversation);
+        }
+
+        $em = $this->getManager();
+
         try {
-            $conn->beginTransaction();
+            $em->beginTransaction();
 
             $conversation->addMessage($message);
             $message->setConversation($conversation);
 
-            $interval = $this->getActiveInterval($conversation);
-            $interval->addMessage($message);
-            $message->setFollowingInterval($interval);
-            $interval->setSeconds($interval->calculateIntervalSeconds());
-            $this->estimateInterval($interval);
-            $this->estimateConversation($conversation);
+            $prevMessage = $this->getConversationLastMessage($conversation, $message);
 
-            $conn->commit();
+            if ($prevMessage && !$prevMessage->getFollowingInterval()) {
+                $this->createConversationInterval($conversation, $message, $prevMessage);
+            }
+
+            $em->commit();
 
         } catch (\Exception $e) {
-            $conn->rollBack();
+            $em->rollBack();
             throw new \ErrorException("Cannot add new message", 0, 1, __FILE__, __LINE__, $e);
         }
     }
@@ -128,10 +132,7 @@ class ConversationService extends ContainerAware
      */
     public function getModelStats(User $user)
     {
-        /** @var EntityManager $em */
-        $em = $this->container->get('doctrine')->getManager();
-
-        $results = $em->createQuery(
+        $results = $this->getManager()->createQuery(
             'SELECT SUM(c.modelEarnings) price, SUM(c.seconds) seconds '
             .'FROM AppBundle:User u '
             .'INNER JOIN AppBundle:Conversation c WITH c.model = u '
@@ -143,5 +144,113 @@ class ConversationService extends ContainerAware
             'total_earnings' => $results[0]['price'],
             'total_seconds' => $results[0]['seconds'],
         ];
+    }
+
+    /**
+     * @param Conversation $conversation
+     * @return \AppBundle\Entity\Message[]
+     */
+    protected function getNotCalculatedMessages(Conversation $conversation)
+    {
+        /** @var Message[] $result */
+        $result = $this->getManager()->createQuery("SELECT m FROM AppBundle:Message m JOIN m.conversation c "
+            . "WHERE (m.author = c.client OR m.author = c.model) AND c = :conversation "
+            . "ORDER BY m.dateAdded ASC")
+            ->execute(['conversation' => $conversation]);
+
+        return $result;
+    }
+
+    /**
+     * @param string|null $name
+     * @return \Doctrine\Common\Persistence\ObjectManager|EntityManager
+     */
+    protected function getManager($name = null)
+    {
+        return $this->container->get('doctrine')->getManager($name);
+    }
+
+    /**
+     * @param Conversation $conversation
+     * @return bool
+     */
+    protected function recalculateConversationMessages(Conversation $conversation)
+    {
+        if ($conversation->isRecalculated()) {
+            return true;
+        }
+
+        $em = $this->getManager();
+        $messagesToCalc = $this->getNotCalculatedMessages($conversation);
+        $prevMessage = null;
+
+        try {
+            $em->beginTransaction();
+
+            foreach ($messagesToCalc as $message) {
+                if ($prevMessage && !$message->getPreviousInterval()) {
+                    $this->createConversationInterval($conversation, $message, $prevMessage);
+                }
+                $prevMessage = $message;
+            }
+
+            $conversation->setRecalculated(true);
+            $em->flush();
+            $em->commit();
+
+        } catch (\Exception $e) {
+            $em->rollback();
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param Conversation $conversation
+     * @param Message|null $currentMessage
+     * @return Message
+     */
+    protected function getConversationLastMessage(Conversation $conversation, $currentMessage = null)
+    {
+        $em = $this->getManager();
+        $params = ['conversation' => $conversation];
+
+        if ($currentMessage && $currentMessage->getId()) {
+            $messageCondition = ' AND m != :current_message ';
+            $params['current_message'] = $currentMessage;
+
+        } else {
+            $messageCondition = '';
+        }
+
+        /** @var Message[] $result */
+        $result = $em->createQuery("SELECT m FROM AppBundle:Message m JOIN m.conversation c "
+                . "WHERE (m.author = c.client OR m.author = c.model) AND c = :conversation "
+                . $messageCondition
+                . "ORDER BY m.dateAdded DESC")
+            ->setMaxResults(1)
+            ->execute($params);
+
+        return $result[0];
+    }
+
+    /**
+     * @param Conversation $conversation
+     * @param Message $message
+     * @param Message $prevMessage
+     */
+    public function createConversationInterval(Conversation $conversation, Message $message, Message $prevMessage)
+    {
+        $em = $this->getManager();
+        $interval = new ConversationInterval($conversation, $prevMessage, $message);
+        $em->persist($interval);
+
+        $prevMessage->setFollowingInterval($interval);
+        $message->setPreviousInterval($interval);
+
+        $interval->setSeconds($interval->calculateIntervalSeconds());
+        $this->estimateInterval($interval);
+        $this->estimateConversation($conversation);
     }
 }

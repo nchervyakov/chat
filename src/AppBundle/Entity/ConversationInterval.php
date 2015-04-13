@@ -71,25 +71,25 @@ class ConversationInterval
 
     /**
      * @var float
-     * @ORM\Column(name="price", type="decimal", scale=2, options={"default": 0.0})
+     * @ORM\Column(name="price", type="decimal", precision=10, scale=6, options={"default": 0.0})
      */
     private $price;
 
     /**
      * @var float
-     * @ORM\Column(name="minute_rate", type="decimal", scale=2, options={"default": 0.0})
+     * @ORM\Column(name="minute_rate", type="decimal", precision=10, scale=6, options={"default": 0.0})
      */
     private $minuteRate = 0.0;
 
     /**
      * @var float
-     * @ORM\Column(name="model_share", type="decimal", scale=2, options={"default": 0.0})
+     * @ORM\Column(name="model_share", type="decimal", precision=10, scale=6, options={"default": 0.0})
      */
     private $modelShare = 0.0;
 
     /**
      * @var float
-     * @ORM\Column(name="model_earnings", type="decimal", scale=2, options={"default": 0.0})
+     * @ORM\Column(name="model_earnings", type="decimal", precision=10, scale=6, options={"default": 0.0})
      */
     private $modelEarnings = 0.0;
 
@@ -107,15 +107,11 @@ class ConversationInterval
      */
     private $dateUpdated;
 
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="last_message_date", type="datetime", nullable=true)
-     */
-    private $lastMessageDate;
-
-    function __construct()
+    function __construct(Conversation $conversation = null, Message $startMessage = null, Message $endMessage = null)
     {
+        $this->conversation = $conversation;
+        $this->startMessage = $startMessage;
+        $this->endMessage = $endMessage;
         $this->setDateAdded(new \DateTime());
     }
 
@@ -223,9 +219,6 @@ class ConversationInterval
         }
 
         $this->startMessage = $message;
-        if (!$this->endMessage) {
-            $this->lastMessageDate = clone $message->getDateAdded();
-        }
         return $this;
     }
 
@@ -259,7 +252,6 @@ class ConversationInterval
         }
 
         $this->endMessage = $message;
-        $this->lastMessageDate = clone $message->getDateAdded();
         return $this;
     }
 
@@ -292,11 +284,11 @@ class ConversationInterval
      *
      * 0---------
      * |   0---------
-     * |            |   0---------
-     * |            |   |        0---------
-     * |            |   |                 |         0---------
-     * |            |   |                 |         |
-     * ************** + *******************
+     * |   |        |   0---------
+     * |   |        |   |        0---------
+     * |   |        |   |        |        |         0---------
+     * |   |        |   |        |        |         |
+     * |***|********|   |********|********|
      *
      * The last message is not counted because its adding date just serves as a CURRENT interval UPPER boundary,
      * and also as a starting time (LOWER boundary) for the NEXT interval.
@@ -305,57 +297,18 @@ class ConversationInterval
      */
     public function calculateIntervalSeconds()
     {
-        $seconds = 0; // Interval seconds
-        $lastKey = $this->startMessage->count() - 1;
-
-        if ($lastKey < 0) {
-            return $seconds;
-        }
-
         // If previous closed interval exists use its last message date to start calculate current time
-        $lastTime = $this->previousInterval ? $this->previousInterval->getLastMessageDate() : null;
+        $lastTime = (int) $this->startMessage->getDateAdded()->format('U');
+        $time = (int) $this->endMessage->getDateAdded()->format('U');
 
-        foreach ($this->startMessage as $key => $message) {
-            $time = (int) $message->getDateAdded()->format('U');
-            if ($lastTime === null) {
-                $lastTime = $time;
-                continue;
-            }
+        if ($time > $lastTime + self::TIME_WINDOW) {
+            $seconds = self::TIME_WINDOW;
 
-            if ($time > $lastTime + self::TIME_WINDOW) {
-                $seconds += self::TIME_WINDOW;
-
-            } else {
-                $seconds += $time - $lastTime;
-            }
-
-            $lastTime = $time;
+        } else {
+            $seconds = $time - $lastTime;
         }
 
         return $seconds;
-    }
-
-    /**
-     * Set lastMessageDate
-     *
-     * @param \DateTime $lastMessageDate
-     * @return ConversationInterval
-     */
-    public function setLastMessageDate($lastMessageDate)
-    {
-        $this->lastMessageDate = $lastMessageDate;
-
-        return $this;
-    }
-
-    /**
-     * Get lastMessageDate
-     *
-     * @return \DateTime 
-     */
-    public function getLastMessageDate()
-    {
-        return $this->lastMessageDate;
     }
 
     /**
