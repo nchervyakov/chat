@@ -212,6 +212,8 @@ fos_js_routing:
         - chat_get_new_messages
         - user_show
         - search_index
+        - chat_agree_to_pay
+        - coins_add
 #        - fos_user_registration_register
 
 knp_menu:

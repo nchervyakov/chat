@@ -3,12 +3,15 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\TextMessage;
 use AppBundle\Entity\User;
+use AppBundle\Exception\ClientNotAgreedToChatException;
+use AppBundle\Exception\NotEnoughMoneyException;
 use JMS\SecurityExtraBundle\Annotation as DI;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -86,6 +89,7 @@ class ChatController extends Controller
             throw new AccessDeniedHttpException();
         }
 
+        /** @var User $user */
         $user = $this->getUser();
         $conversation = $this->getDoctrine()->getRepository('AppBundle:Conversation')
             ->getOrCreateByUsers($user, $companion);
@@ -99,12 +103,41 @@ class ChatController extends Controller
 
         $message = new TextMessage($content);
         $message->setAuthor($user);
-        $em->persist($message);
-        $this->get('app.conversation')->addConversationMessage($conversation, $message);
-        $em->flush();
+
+        try {
+            $em->persist($message);
+            $this->get('app.conversation')->addConversationMessage($conversation, $message);
+            $em->flush();
+
+        } catch (ClientNotAgreedToChatException $ex) {
+            if ($request->isXmlHttpRequest()) {
+                return new JsonResponse([
+                    'error' => true,
+                    'message' => $this->get('translator')->trans('chatting.need_to_pay', ['%model%' => $companion->getFullName()]),
+                    'need_to_agree_to_pay' => true
+                ]);
+
+            } else {
+                return $this->redirectToRoute('chat', ['companion_id' => $companion->getId()]);
+            }
+
+        } catch (NotEnoughMoneyException $ex) {
+            if ($request->isXmlHttpRequest()) {
+                return new JsonResponse([
+                    'error' => true,
+                    'message' => $this->get('translator')->trans('chatting.not_enough_money'),
+                    'not_enough_money' => true
+                ]);
+
+            } else {
+                return $this->redirectToRoute('chat', ['companion_id' => $companion->getId()]);
+            }
+        }
 
         if ($request->isXmlHttpRequest()) {
             $responseData = [
+                'success' => true,
+                'coins' => number_format($user->getCoins(), 2, '.', ''),
                 'message' => $this->renderView(':Chat:_message.html.twig', ['message' => $message]),
                 'total_time' => $conversation->getSeconds(),
                 'stat_html' => $this->renderView(':Chat:_chat_stats.html.twig', [
@@ -115,6 +148,37 @@ class ChatController extends Controller
             ];
 
             return new JsonResponse($responseData);
+
+        } else {
+            return $this->redirectToRoute('chat', ['companion_id' => $companion->getId()]);
+        }
+    }
+
+    /**
+     * Enables the app to get coins from client for chatting in this chat.
+     *
+     * @Route("/{companion_id}/agree-to-pay", name="chat_agree_to_pay", methods={"POST"})
+     * @ParamConverter("companion", class="AppBundle:User", options={"id": "companion_id"})
+     * @Security("has_role('ROLE_CLIENT')")
+     * @param User $companion
+     * @param Request $request
+     * @return JsonResponse|RedirectResponse
+     */
+    public function agreeToPayAction(User $companion, Request $request)
+    {
+        if (!$this->get('app.request_access_evaluator')->canChatWith($companion)) {
+            throw new AccessDeniedHttpException();
+        }
+
+        $user = $this->getUser();
+        $conversation = $this->getDoctrine()->getRepository('AppBundle:Conversation')
+            ->getOrCreateByUsers($user, $companion);
+
+        $conversation->setClientAgreeToPay(true);
+        $this->getDoctrine()->getManager()->flush();
+
+        if ($request->isXmlHttpRequest()) {
+            return new JsonResponse(['success' => true]);
 
         } else {
             return $this->redirectToRoute('chat', ['companion_id' => $companion->getId()]);
@@ -134,6 +198,7 @@ class ChatController extends Controller
             throw new AccessDeniedHttpException();
         }
 
+        /** @var User $user */
         $user = $this->getUser();
         $conversationRepo = $this->getDoctrine()->getRepository('AppBundle:Conversation');
         $conversation = $conversationRepo->getByUsers($user, $companion);
@@ -155,6 +220,7 @@ class ChatController extends Controller
         return new JsonResponse([
             'messages' => $this->renderView(':Chat:_messages.html.twig', ['messages' => $latestMessages]),
             'latestMessageId' => $latestMessageId,
+            'coins' => number_format($user->getCoins(), 2, '.', ''),
             'stat_html' => $this->renderView(':Chat:_chat_stats.html.twig', [
                 'conversation' => $conversation,
                 'messages' => $latestMessages

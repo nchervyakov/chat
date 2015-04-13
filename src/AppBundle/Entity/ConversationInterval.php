@@ -15,7 +15,6 @@ use Doctrine\ORM\Mapping as ORM;
 class ConversationInterval
 {
     const STATUS_ACTIVE = 'active'; // Messages can be added
-    const STATUS_FIXED = 'fixed';   // Interval is ready to be payed
     const STATUS_PAYED = 'payed';   // Interval is payed
 
     const TIME_WINDOW = 30;         // Number of seconds after the message to be
@@ -195,14 +194,6 @@ class ConversationInterval
     public function setStatus($status)
     {
         $this->status = $status;
-    }
-
-    /**
-     * Set interval status as closed
-     */
-    public function setClosed()
-    {
-        $this->setStatus(self::STATUS_FIXED);
     }
 
     /**

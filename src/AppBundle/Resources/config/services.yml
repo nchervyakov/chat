@@ -137,4 +137,9 @@ services:
         tags:
             - {name: kernel.event_subscriber}
 
+    app.coins:
+        class: AppBundle\Coins\CoinsService
+        calls:
+            - [setContainer, ["@service_container"]]
+
 

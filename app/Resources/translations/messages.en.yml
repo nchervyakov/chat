@@ -14,6 +14,8 @@ menu:
         logout: Logout
         search: Search
         stat: 'Statistics'
+    go_to_account: 'Go to Account'
+    logout_from_the_app: 'Log Out from the Chat'
 chat_list_page.title: 'Chat List'
 
 search: 'Search'
@@ -108,3 +110,9 @@ gender:
 action_activate_model: 'Activate'
 link_action_activate_model: 'Activate'
 offline_models_found: 'Other models: %count%'
+coins:
+    user_coins: 'Coins'
+    how_many_coins_to_add: 'How many coins do you want to add?'
+chatting:
+    need_to_pay: 'To be able to chat with %model% you must agree to pay. Do you agree to pay?'
+    not_enough_money: 'You do not have enough money to '

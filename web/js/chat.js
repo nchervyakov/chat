@@ -44,28 +44,7 @@ can.Control('ChatWidget', {
         if (!$.trim(this.inputElement.val())) {
             return;
         }
-        var widget = this;
-        $.ajax(Routing.generate('chat_add_message', {companion_id: this.companionId}), {
-            type: 'POST',
-            data: {
-                message: $.trim(this.inputElement.val())
-            },
-            timeout: 10000,
-            beforeSend: function () {
-                widget.submitButton.attr('disabled', 'disabled');
-            },
-            complete: function () {
-                widget.submitButton.removeAttr('disabled');
-            }
-        }).success(function (res) {
-            if (res.message) {
-                widget.addNewMessages(res.message);
-                widget.latestMessageId = res.id;
-            }
-            if (res.stat_html) {
-                widget.statsBlock.html(res.stat_html);
-            }
-        });
+        this.sendAddMessageRequest(this.inputElement.val());
     },
 
     '.js-message-input keypress': function (el, ev) {
@@ -103,6 +82,84 @@ can.Control('ChatWidget', {
         }
     },
 
+    '{document} coins.added': function (el, ev, amount) {
+        App.updateHeaderCoins(amount);
+        if (this.inputElement.val()) {
+            this.sendAddMessageRequest(this.inputElement.val());
+        }
+    },
+
+    sendAddMessageRequest: function (message) {
+        if (!$.trim(message)) {
+            return;
+        }
+
+        var widget = this;
+        $.ajax(Routing.generate('chat_add_message', {companion_id: this.companionId}), {
+            type: 'POST',
+            data: {
+                message: $.trim(message)
+            },
+            timeout: 10000,
+            beforeSend: function () {
+                widget.submitButton.attr('disabled', 'disabled');
+            },
+            complete: function () {
+                widget.submitButton.removeAttr('disabled');
+            }
+        }).success(function (res) {
+            if (res.success) {
+                if (res.message) {
+                    widget.addNewMessages(res.message);
+                    widget.latestMessageId = res.id;
+                }
+                if (res.stat_html) {
+                    widget.statsBlock.html(res.stat_html);
+                }
+
+                App.updateHeaderCoins(res.coins);
+
+            } else {
+                if (res.need_to_agree_to_pay) {
+                    widget.showAgreeToPayDialog(res.message);
+                } else if (res.not_enough_money) {
+                    App.showAddCoinsDialog();
+                }
+            }
+        });
+    },
+
+    showAgreeToPayDialog: function (message) {
+        var widget = this,
+            dialog = $('<div id="agreeToPayDialog"></div>').html(message).appendTo('body');
+        dialog.dialog({
+            modal: true,
+            resizable: false,
+            buttons: {
+                "Pay": function () {
+                    widget.sendAgreeToPayRequest();
+                    $(this).dialog('close');
+                },
+                "Cancel": function () {
+                    $(this).dialog('close');
+                }
+            }
+        });
+    },
+
+    sendAgreeToPayRequest: function () {
+        var widget = this;
+        $.ajax(Routing.generate('chat_agree_to_pay', {companion_id: this.companionId}), {
+            type: 'POST',
+            data: {},
+            timeout: 10000
+        }).success(function (res) {
+            if (res.success && widget.inputElement.val()) {
+                widget.sendAddMessageRequest(widget.inputElement.val());
+            }
+        });
+    },
+
     addNewMessages: function (messagesHtml) {
         var list, messageContainer, containerHeight, listHeight;
         list = this.element.find('.chat');
@@ -138,6 +195,8 @@ can.Control('ChatWidget', {
             if (res.stat_html) {
                 widget.statsBlock.html(res.stat_html);
             }
+
+            App.updateHeaderCoins(res.coins);
         });
     },
 

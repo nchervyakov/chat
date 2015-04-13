@@ -14,6 +14,8 @@ use AppBundle\Entity\Conversation;
 use AppBundle\Entity\ConversationInterval;
 use AppBundle\Entity\Message;
 use AppBundle\Entity\User;
+use AppBundle\Exception\ClientNotAgreedToChatException;
+use AppBundle\Exception\NotEnoughMoneyException;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\DependencyInjection\ContainerAware;
 
@@ -28,12 +30,26 @@ class ConversationService extends ContainerAware
      *
      * @param Conversation $conversation
      * @param Message $message
+     * @throws ClientNotAgreedToChatException
      * @throws \ErrorException
      */
     public function addConversationMessage(Conversation $conversation, Message $message)
     {
         if (!$conversation->isRecalculated()) {
             $this->recalculateConversationMessages($conversation);
+        }
+
+        $maxFirstMessages = (int) $this->container->getParameter('chat.first_messages_limit') ?: 2;
+        $conversationMessagesCount = $this->getConversationPersonalMessagesCount($conversation);
+
+        $securityChecker = $this->container->get('security.authorization_checker');
+
+        // If client has many messages, but did not agreed to pay for chat, rise the exception.
+        $shouldPay = $securityChecker->isGranted('ROLE_CLIENT')
+                && $conversationMessagesCount >= $maxFirstMessages ? true : false;
+
+        if ($shouldPay && !$conversation->isClientAgreeToPay()) {
+            throw new ClientNotAgreedToChatException();
         }
 
         $em = $this->getManager();
@@ -47,14 +63,35 @@ class ConversationService extends ContainerAware
             $prevMessage = $this->getConversationLastMessage($conversation, $message);
 
             if ($prevMessage && !$prevMessage->getFollowingInterval()) {
-                $this->createConversationInterval($conversation, $message, $prevMessage);
+                $interval = $this->createConversationInterval($conversation, $message, $prevMessage);
+                $em->flush();
+
+                // If user does not have enough money and need to pay for message - throw an exception.
+                if ($interval) {
+                    $user = $this->getUser();
+
+                    if ($shouldPay) {
+                        if ($interval->getPrice() > (double)$user->getCoins()) {
+                            throw new NotEnoughMoneyException();
+                        }
+
+                        $this->payNotPayedConversationIntervals($conversation);
+
+                    // if model sends a message and client agree to pay and has coins - then take the coins.
+                    } else if ($securityChecker->isGranted('ROLE_MODEL') && $conversation->isClientAgreeToPay()
+                        && (double)$user->getCoins() >= $interval->getPrice()
+                    ) {
+                        $this->payNotPayedConversationIntervals($conversation);
+                    }
+                }
             }
 
+            $em->flush();
             $em->commit();
 
         } catch (\Exception $e) {
             $em->rollBack();
-            throw new \ErrorException("Cannot add new message", 0, 1, __FILE__, __LINE__, $e);
+            throw new $e; //\ErrorException("Cannot add new message", 0, 1, __FILE__, __LINE__, $e);
         }
     }
 
@@ -88,7 +125,9 @@ class ConversationService extends ContainerAware
         $price = 0.0;
         $modelEarnings = 0.0;
         foreach ($conversation->getIntervals() as $interval) {
-            $this->estimateInterval($interval);
+            if ($interval->getStatus() != ConversationInterval::STATUS_PAYED) {
+                $this->estimateInterval($interval);
+            }
             $seconds += $interval->getSeconds();
             $price += $interval->getPrice();
             $modelEarnings += $interval->getModelEarnings();
@@ -239,6 +278,7 @@ class ConversationService extends ContainerAware
      * @param Conversation $conversation
      * @param Message $message
      * @param Message $prevMessage
+     * @return ConversationInterval
      */
     public function createConversationInterval(Conversation $conversation, Message $message, Message $prevMessage)
     {
@@ -252,5 +292,49 @@ class ConversationService extends ContainerAware
         $interval->setSeconds($interval->calculateIntervalSeconds());
         $this->estimateInterval($interval);
         $this->estimateConversation($conversation);
+        return $interval;
+    }
+
+    /**
+     * @param Conversation $conversation
+     * @return int
+     */
+    protected function getConversationPersonalMessagesCount(Conversation $conversation)
+    {
+        $em = $this->getManager();
+        $result = $em->createQuery("SELECT COUNT(m) cnt FROM AppBundle:Message m JOIN m.conversation c "
+            . "WHERE (m.author = c.client OR m.author = c.model) AND c = :conversation")
+            ->setMaxResults(1)
+            ->execute(['conversation' => $conversation]);
+
+        return (int) $result[0]['cnt'];
+    }
+
+    /**
+     * @return mixed|User
+     */
+    protected function getUser()
+    {
+        return $this->container->get('security.token_storage')->getToken()->getUser();
+    }
+
+    /**
+     * @param Conversation $conversation
+     */
+    private function payNotPayedConversationIntervals(Conversation $conversation)
+    {
+        $em = $this->getManager();
+
+        $result = $em->createQuery("SELECT ci FROM AppBundle:ConversationInterval ci "
+                . "WHERE ci.conversation = :conversation AND ci.status != :status")
+            ->execute([
+                'conversation' => $conversation,
+                'status' => ConversationInterval::STATUS_PAYED
+            ]);
+
+        $coinService = $this->container->get('app.coins');
+        foreach ($result as $interval) {
+            $coinService->payConversationInterval($interval);
+        }
     }
 }

@@ -12,6 +12,7 @@
 
     {% stylesheets
         'css/bootstrap.css'
+        'css/jquery-ui/jquery-ui.min.css'
         filter='cssrewrite'
         output='css/compiled/*.css'
     %}
@@ -53,6 +54,7 @@
     {% javascripts
         'js/vendor/bootstrap.min.js'
         'js/vendor/can.custom.min.js'
+        'js/vendor/jquery-ui.min.js'
         'js/vendor/bootstrap.file-input.js'
         'bundles/fosjsrouting/js/router.js'
         output='js/compiled/*.js'
@@ -88,6 +90,10 @@
             {% if app.user is not null %}
                 <div class="collapse navbar-collapse pull-right">
                     <ul class="nav navbar-nav">
+                        {% if is_granted('ROLE_USER') %}
+                            <li><a href="#" class="js-user-coins user-coins">{{ 'coins.user_coins'|trans }}: <span class="js-header-coins">{{ app.user.coins|number_format(2) }}</span></a></li>
+                        {% endif %}
+
                         {% if app.user.thumbnail is not null and app.user.thumbnail.fileName %}
                             <li>
                                 <a href="{{ path("fos_user_profile_show") }}" class="user-photo-link">
@@ -97,9 +103,9 @@
                             </li>
                         {% endif %}
                         <li>
-                            <a href="{{ path("fos_user_profile_show") }}">{{ app.user.fullName }}</a>
+                            <a href="{{ path("fos_user_profile_show") }}" title="{{ 'menu.go_to_account'|trans }}">{{ app.user.fullName }}</a>
                         </li>
-                        <li class="last"><a href="{{ path('fos_user_security_logout') }}">{{ 'Logout'|trans }}</a></li>
+                        <li class="last"><a href="{{ path('fos_user_security_logout') }}" title="{{ 'menu.logout_from_the_app'|trans }}">{{ 'Logout'|trans }}</a></li>
                     </ul>
                 </div>
             {% endif %}
@@ -153,6 +159,14 @@
         <footer class="footer container">
             {% embed ':Default:_footer.html.twig' %}{% endembed %}
         </footer>
+    </div>
+
+    <div class="hidden">
+        {% block hidden_templates %}
+            {% if is_granted('ROLE_USER') %}
+                {{ include(':Coins:_add_coins_dialog.html.twig') }}
+            {% endif %}
+        {% endblock %}
     </div>
 {% endblock %}
 

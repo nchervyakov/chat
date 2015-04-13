@@ -103,6 +103,12 @@ class Conversation
      */
     private $recalculated = false;
 
+    /**
+     * @var bool
+     * @ORM\Column(name="client_agree_to_pay", type="boolean", nullable=false, options={"default": 0})
+     */
+    private $clientAgreeToPay = false;
+
     function __construct()
     {
 //        $this->messages = new ArrayCollection();
@@ -525,5 +531,24 @@ class Conversation
     public function setRecalculated($recalculated)
     {
         $this->recalculated = (boolean) $recalculated;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isClientAgreeToPay()
+    {
+        return $this->clientAgreeToPay;
+    }
+
+    /**
+     * @param boolean $clientAgreeToPay
+     * @return $this
+     */
+    public function setClientAgreeToPay($clientAgreeToPay)
+    {
+        $this->clientAgreeToPay = $clientAgreeToPay;
+
+        return $this;
     }
 }
