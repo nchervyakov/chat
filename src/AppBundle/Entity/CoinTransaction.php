@@ -51,7 +51,7 @@ class CoinTransaction
 
     /**
      * @var float
-     * @ORM\Column(name="coins_amount", type="decimal", precision=10, scale=6, options={"default": 0.0})
+     * @ORM\Column(name="coins_amount", type="decimal", precision=18, scale=8, options={"default": 0.0})
      */
     private $amount = 0.0;
 

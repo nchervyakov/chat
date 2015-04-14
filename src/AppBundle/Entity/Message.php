@@ -31,27 +31,25 @@ abstract class Message
 
     /**
      * @var Conversation
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Conversation", inversedBy="messages")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Conversation")
      * @ORM\JoinColumn(name="conversation_id", referencedColumnName="id", onDelete="CASCADE")
      * @Serialize\MaxDepth(0)
      */
     private $conversation;
 
-    /**
-     * @var ConversationInterval
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\ConversationInterval", inversedBy="startMessage")
-     * @ORM\JoinColumn(name="following_interval_id", referencedColumnName="id", onDelete="CASCADE", nullable=true)
-     * @Serialize\MaxDepth(0)
-     */
-    private $followingInterval;
-
-    /**
-     * @var ConversationInterval
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\ConversationInterval", inversedBy="endMessage")
-     * @ORM\JoinColumn(name="previous_interval_id", referencedColumnName="id", onDelete="CASCADE", nullable=true)
-     * @Serialize\MaxDepth(0)
-     */
-    private $previousInterval;
+//    /**
+//     * @var ConversationInterval
+//     * @ORM\OneToOne(targetEntity="AppBundle\Entity\ConversationInterval", mappedBy="startMessage", fetch="LAZY")
+//     * @Serialize\MaxDepth(0)
+//     */
+//    private $followingInterval;
+//
+//    /**
+//     * @var ConversationInterval
+//     * @ORM\OneToOne(targetEntity="AppBundle\Entity\ConversationInterval", mappedBy="endMessage", fetch="LAZY")
+//     * @Serialize\MaxDepth(0)
+//     */
+//    private $previousInterval;
 
     /**
      * @var \DateTime
@@ -198,48 +196,48 @@ abstract class Message
         $this->setDateUpdated(new \DateTime());
     }
 
-    /**
-     * Set interval
-     *
-     * @param ConversationInterval $followingInterval
-     * @return Message
-     */
-    public function setFollowingInterval(ConversationInterval $followingInterval = null)
-    {
-        $this->followingInterval = $followingInterval;
+//    /**
+//     * Set interval
+//     *
+//     * @param ConversationInterval $followingInterval
+//     * @return Message
+//     */
+//    public function setFollowingInterval(ConversationInterval $followingInterval = null)
+//    {
+//        $this->followingInterval = $followingInterval;
+//
+//        return $this;
+//    }
 
-        return $this;
-    }
+//    /**
+//     * Get interval
+//     *
+//     * @return ConversationInterval
+//     */
+//    public function getFollowingInterval()
+//    {
+//        return $this->followingInterval;
+//    }
+//
+//    /**
+//     * @return ConversationInterval
+//     */
+//    public function getPreviousInterval()
+//    {
+//        return $this->previousInterval;
+//    }
 
-    /**
-     * Get interval
-     *
-     * @return ConversationInterval
-     */
-    public function getFollowingInterval()
-    {
-        return $this->followingInterval;
-    }
-
-    /**
-     * @return ConversationInterval
-     */
-    public function getPreviousInterval()
-    {
-        return $this->previousInterval;
-    }
-
-    /**
-     * @param ConversationInterval $previousInterval
-     *
-     * @return ConversationInterval
-     */
-    public function setPreviousInterval($previousInterval)
-    {
-        $this->previousInterval = $previousInterval;
-
-        return $this;
-    }
+//    /**
+//     * @param ConversationInterval $previousInterval
+//     *
+//     * @return ConversationInterval
+//     */
+//    public function setPreviousInterval($previousInterval)
+//    {
+//        $this->previousInterval = $previousInterval;
+//
+//        return $this;
+//    }
 
     /**
      * Set deletedByUser

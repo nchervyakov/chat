@@ -180,7 +180,7 @@ class User extends BaseUser
 
     /**
      * @var float
-     * @ORM\Column(name="coins", type="decimal", precision=10, scale=8, nullable=false, options={"default": 0.0})
+     * @ORM\Column(name="coins", type="decimal", precision=18, scale=8, nullable=false, options={"default": 0.0})
      */
     private $coins = 0.0;
 

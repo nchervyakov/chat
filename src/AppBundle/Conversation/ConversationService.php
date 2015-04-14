@@ -17,6 +17,7 @@ use AppBundle\Entity\User;
 use AppBundle\Exception\ClientNotAgreedToChatException;
 use AppBundle\Exception\NotEnoughMoneyException;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Query;
 use Symfony\Component\DependencyInjection\ContainerAware;
 
 /**
@@ -31,10 +32,12 @@ class ConversationService extends ContainerAware
      * @param Conversation $conversation
      * @param Message $message
      * @throws ClientNotAgreedToChatException
-     * @throws \ErrorException
+     * @throws \Exception
+     * @trows NotEnoughMoneyException
      */
     public function addConversationMessage(Conversation $conversation, Message $message)
     {
+        // Recalculate old format intervals
         if (!$conversation->isRecalculated()) {
             $this->recalculateConversationMessages($conversation);
         }
@@ -62,7 +65,8 @@ class ConversationService extends ContainerAware
 
             $prevMessage = $this->getConversationLastMessage($conversation, $message);
 
-            if ($prevMessage && !$prevMessage->getFollowingInterval()) {
+            if ($prevMessage/* && !$prevMessage->getFollowingInterval()*/) {
+                $conversation->setStalePaymentInfo(true);
                 $interval = $this->createConversationInterval($conversation, $message, $prevMessage);
                 $em->flush();
 
@@ -81,7 +85,10 @@ class ConversationService extends ContainerAware
                     } else if ($securityChecker->isGranted('ROLE_MODEL') && $conversation->isClientAgreeToPay()
                         && (double)$user->getCoins() >= $interval->getPrice()
                     ) {
-                        $this->payNotPayedConversationIntervals($conversation);
+                        try {
+                            $this->payNotPayedConversationIntervals($conversation);
+                        } catch (NotEnoughMoneyException $ex) {
+                        }
                     }
                 }
             }
@@ -89,53 +96,62 @@ class ConversationService extends ContainerAware
             $em->flush();
             $em->commit();
 
+            $this->estimateConversation($conversation);
+
         } catch (\Exception $e) {
             $em->rollBack();
-            throw new $e; //\ErrorException("Cannot add new message", 0, 1, __FILE__, __LINE__, $e);
+            throw $e; //\ErrorException("Cannot add new message", 0, 1, __FILE__, __LINE__, $e);
         }
     }
 
-    /**
-     * Fetch or create a new active conversation interval.
-     *
-     * @param Conversation $conversation
-     * @return ConversationInterval|mixed|null
-     */
-    public function getActiveInterval(Conversation $conversation)
-    {
-        $interval = $conversation->getActiveInterval();
-        if (!$interval) {
-            $em = $this->container->get('doctrine.orm.entity_manager');
-            $interval = new ConversationInterval();
-            $em->persist($interval);
-            $conversation->addInterval($interval);
-            $interval->setConversation($conversation);
-            $this->estimateInterval($interval);
-        }
-
-        return $interval;
-    }
+//    /**
+//     * Fetch or create a new active conversation interval.
+//     *
+//     * @param Conversation $conversation
+//     * @return ConversationInterval|mixed|null
+//     */
+//    public function getActiveInterval(Conversation $conversation)
+//    {
+//        $interval = $conversation->getActiveInterval();
+//        if (!$interval) {
+//            $em = $this->container->get('doctrine.orm.entity_manager');
+//            $interval = new ConversationInterval();
+//            $em->persist($interval);
+//            $conversation->addInterval($interval);
+//            $interval->setConversation($conversation);
+//            $this->estimateInterval($interval);
+//        }
+//
+//        return $interval;
+//    }
 
     /**
      * @param Conversation $conversation
      */
     public function estimateConversation(Conversation $conversation)
     {
+        if (!$conversation->isStalePaymentInfo()) {
+            return;
+        }
         $seconds = 0;
         $price = 0.0;
         $modelEarnings = 0.0;
-        foreach ($conversation->getIntervals() as $interval) {
+
+        foreach ($this->getConversationIntervals($conversation) as $interval) {
             if ($interval->getStatus() != ConversationInterval::STATUS_PAYED) {
                 $this->estimateInterval($interval);
             }
-            $seconds += $interval->getSeconds();
-            $price += $interval->getPrice();
-            $modelEarnings += $interval->getModelEarnings();
+            $seconds += (int) $interval->getSeconds();
+            $price += (float) $interval->getPrice();
+            $modelEarnings += (float) $interval->getModelEarnings();
         }
 
         $conversation->setPrice($price);
         $conversation->setSeconds($seconds);
         $conversation->setModelEarnings($modelEarnings);
+        $conversation->setStalePaymentInfo(false);
+
+        $this->getManager()->flush();
     }
 
     /**
@@ -187,6 +203,22 @@ class ConversationService extends ContainerAware
 
     /**
      * @param Conversation $conversation
+     * @return ConversationInterval[]
+     */
+    public function getConversationIntervals(Conversation $conversation)
+    {
+        $result = $this->getManager()->createQuery("SELECT ci, sm, em FROM AppBundle:ConversationInterval ci "
+                . "JOIN ci.startMessage sm "
+                . "JOIN ci.endMessage em "
+                . "WHERE ci.conversation = :conversation ORDER BY sm.dateAdded")
+            ->setHint(Query::HINT_INCLUDE_META_COLUMNS, true)
+            ->execute(['conversation' => $conversation]);
+
+        return $result;
+    }
+
+    /**
+     * @param Conversation $conversation
      * @return \AppBundle\Entity\Message[]
      */
     protected function getNotCalculatedMessages(Conversation $conversation)
@@ -227,7 +259,7 @@ class ConversationService extends ContainerAware
             $em->beginTransaction();
 
             foreach ($messagesToCalc as $message) {
-                if ($prevMessage && !$message->getPreviousInterval()) {
+                if ($prevMessage/* && !$message->getPreviousInterval()*/) {
                     $this->createConversationInterval($conversation, $message, $prevMessage);
                 }
                 $prevMessage = $message;
@@ -286,11 +318,14 @@ class ConversationService extends ContainerAware
         $interval = new ConversationInterval($conversation, $prevMessage, $message);
         $em->persist($interval);
 
-        $prevMessage->setFollowingInterval($interval);
-        $message->setPreviousInterval($interval);
+        //$prevMessage->setFollowingInterval($interval);
+        $interval->setStartMessage($prevMessage);
+        //$message->setPreviousInterval($interval);
+        $interval->setEndMessage($message);
 
         $interval->setSeconds($interval->calculateIntervalSeconds());
         $this->estimateInterval($interval);
+        $em->flush();
         $this->estimateConversation($conversation);
         return $interval;
     }
@@ -321,7 +356,7 @@ class ConversationService extends ContainerAware
     /**
      * @param Conversation $conversation
      */
-    private function payNotPayedConversationIntervals(Conversation $conversation)
+    protected function payNotPayedConversationIntervals(Conversation $conversation)
     {
         $em = $this->getManager();
 

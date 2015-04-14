@@ -2,8 +2,6 @@
 
 namespace AppBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints as DoctrineConstraints;
 
@@ -52,11 +50,11 @@ class Conversation
 //     */
 //    protected $messages;
 
-    /**
-     * @var ConversationInterval[]|array|Collection
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\ConversationInterval", mappedBy="conversation", cascade={"remove"}, orphanRemoval=true)
-     */
-    protected $intervals;
+//    /**
+//     * @var ConversationInterval[]|array|Collection
+//     * @ORM\OneToMany(targetEntity="AppBundle\Entity\ConversationInterval", mappedBy="conversation", cascade={"remove"}, orphanRemoval=true)
+//     */
+//    protected $intervals;
 
     /**
      * @var integer
@@ -66,13 +64,13 @@ class Conversation
 
     /**
      * @var float
-     * @ORM\Column(name="price", type="decimal", precision=10, scale=6, options={"default": 0.0})
+     * @ORM\Column(name="price", type="decimal", precision=18, scale=8, options={"default": 0.0})
      */
     private $price = 0.0;
 
     /**
      * @var float
-     * @ORM\Column(name="model_earnings", type="decimal", precision=10, scale=6, options={"default": 0.0})
+     * @ORM\Column(name="model_earnings", type="decimal", precision=18, scale=8, options={"default": 0.0})
      */
     private $modelEarnings = 0.0;
 
@@ -109,10 +107,16 @@ class Conversation
      */
     private $clientAgreeToPay = false;
 
+    /**
+     * @var bool
+     * @ORM\Column(name="stale_payment_info", type="boolean", nullable=false, options={"default": 1})
+     */
+    private $stalePaymentInfo = true;
+
     function __construct()
     {
 //        $this->messages = new ArrayCollection();
-        $this->intervals = new ArrayCollection();
+        //$this->intervals = new ArrayCollection();
         $this->setDateAdded(new \DateTime());
     }
 
@@ -240,31 +244,31 @@ class Conversation
         //$this->messages->removeElement($messages);
     }
 
-    /**
-     * Fetches current active interval or null
-     *
-     * @return ConversationInterval|mixed|null
-     */
-    public function getActiveInterval()
-    {
-        foreach ($this->getIntervals() as $interval) {
-            if ($interval->getStatus() === ConversationInterval::STATUS_ACTIVE) {
-                return $interval;
-            }
-        }
-
-        return null;
-    }
+//    /**
+//     * Fetches current active interval or null
+//     *
+//     * @return ConversationInterval|mixed|null
+//     */
+//    public function getActiveInterval()
+//    {
+//        foreach ($this->getIntervals() as $interval) {
+//            if ($interval->getStatus() === ConversationInterval::STATUS_ACTIVE) {
+//                return $interval;
+//            }
+//        }
+//
+//        return null;
+//    }
 
     /**
      * Add intervals
      *
-     * @param ConversationInterval $intervals
+     * @param ConversationInterval $interval
      * @return Conversation
      */
-    public function addInterval(ConversationInterval $intervals)
+    public function addInterval(ConversationInterval $interval)
     {
-        $this->intervals[] = $intervals;
+        $interval->setConversation($this);
 
         return $this;
     }
@@ -272,22 +276,22 @@ class Conversation
     /**
      * Remove intervals
      *
-     * @param ConversationInterval $intervals
+     * @param ConversationInterval $interval
      */
-    public function removeInterval(ConversationInterval $intervals)
+    public function removeInterval(ConversationInterval $interval)
     {
-        $this->intervals->removeElement($intervals);
+        $interval->setConversation(null);
     }
 
-    /**
-     * Get intervals
-     *
-     * @return \Doctrine\Common\Collections\Collection|ConversationInterval[]
-     */
-    public function getIntervals()
-    {
-        return $this->intervals;
-    }
+//    /**
+//     * Get intervals
+//     *
+//     * @return \Doctrine\Common\Collections\Collection|ConversationInterval[]
+//     */
+//    public function getIntervals()
+//    {
+//        return $this->intervals;
+//    }
 
     /**
      * Set lastMessageDate
@@ -312,155 +316,155 @@ class Conversation
         return $this->lastMessageDate;
     }
 
-    /**
-     * Get total conversation time in seconds.
-     *
-     * @return int
-     */
-    public function getTotalTime()
-    {
-        $time = 0;
-        foreach ($this->getIntervals() as $interval) {
-            $time += $interval->getSeconds();
-        }
+//    /**
+//     * Get total conversation time in seconds.
+//     *
+//     * @return int
+//     */
+//    public function getTotalTime()
+//    {
+//        $time = 0;
+//        foreach ($this->getIntervals() as $interval) {
+//            $time += $interval->getSeconds();
+//        }
+//
+//        return $time;
+//    }
+//
+//    /**
+//     * Get total conversation time as \DateInterval instance.
+//     *
+//     * @return bool|\DateInterval
+//     */
+//    public function getTotalTimeInterval()
+//    {
+//        return $this->convertSecondsToDateInterval($this->getTotalTime());
+//    }
 
-        return $time;
-    }
+//    /**
+//     * Get conversation not paid time in seconds.
+//     *
+//     * @return int
+//     */
+//    public function getNotPaidTime()
+//    {
+//        $time = 0;
+//        foreach ($this->getIntervals() as $interval) {
+//            if ($interval->getStatus() !== ConversationInterval::STATUS_PAYED) {
+//                $time += $interval->getSeconds();
+//            }
+//        }
+//
+//        return $time;
+//    }
 
-    /**
-     * Get total conversation time as \DateInterval instance.
-     *
-     * @return bool|\DateInterval
-     */
-    public function getTotalTimeInterval()
-    {
-        return $this->convertSecondsToDateInterval($this->getTotalTime());
-    }
+//    /**
+//     * Get conversation paid time in seconds.
+//     *
+//     * @return int
+//     */
+//    public function getPaidTime()
+//    {
+//        $time = 0;
+//        foreach ($this->getIntervals() as $interval) {
+//            if ($interval->getStatus() === ConversationInterval::STATUS_PAYED) {
+//                $time += $interval->getSeconds();
+//            }
+//        }
+//
+//        return $time;
+//    }
 
-    /**
-     * Get conversation not paid time in seconds.
-     *
-     * @return int
-     */
-    public function getNotPaidTime()
-    {
-        $time = 0;
-        foreach ($this->getIntervals() as $interval) {
-            if ($interval->getStatus() !== ConversationInterval::STATUS_PAYED) {
-                $time += $interval->getSeconds();
-            }
-        }
+//    /**
+//     * Get conversation not paid time as \DateInterval instance.
+//     *
+//     * @return bool|\DateInterval
+//     */
+//    public function getNotPaidTimeInterval()
+//    {
+//        return $this->convertSecondsToDateInterval($this->getNotPaidTime());
+//    }
+//
+//    /**
+//     * Get conversation payed time as \DateInterval instance.
+//     *
+//     * @return bool|\DateInterval
+//     */
+//    public function getPaidTimeInterval()
+//    {
+//        return $this->convertSecondsToDateInterval($this->getPaidTime());
+//    }
 
-        return $time;
-    }
+//    /**
+//     * @param $time
+//     * @return bool|\DateInterval
+//     */
+//    public function convertSecondsToDateInterval($time)
+//    {
+//        $now = new \DateTime();
+//        $before = new \DateTime('-' . $time . ' seconds');
+//        return $now->diff($before);
+//    }
 
-    /**
-     * Get conversation paid time in seconds.
-     *
-     * @return int
-     */
-    public function getPaidTime()
-    {
-        $time = 0;
-        foreach ($this->getIntervals() as $interval) {
-            if ($interval->getStatus() === ConversationInterval::STATUS_PAYED) {
-                $time += $interval->getSeconds();
-            }
-        }
+//    /**
+//     * @return float
+//     */
+//    public function getPaidPrice()
+//    {
+//        $price = 0.0;
+//
+//        foreach ($this->getIntervals() as $interval) {
+//            if ($interval->getStatus() === ConversationInterval::STATUS_PAYED) {
+//                $price += $interval->getPrice();
+//            }
+//        }
+//
+//        return $price;
+//    }
 
-        return $time;
-    }
+//    /**
+//     * @return float
+//     */
+//    public function getPrice()
+//    {
+//        $price = 0.0;
+//
+//        foreach ($this->getIntervals() as $interval) {
+//           $price += $interval->getPrice();
+//        }
+//
+//        return $price;
+//    }
 
-    /**
-     * Get conversation not paid time as \DateInterval instance.
-     *
-     * @return bool|\DateInterval
-     */
-    public function getNotPaidTimeInterval()
-    {
-        return $this->convertSecondsToDateInterval($this->getNotPaidTime());
-    }
+//    /**
+//     * @return float
+//     */
+//    public function getCalculatedModelEarnings()
+//    {
+//        $earnings = 0.0;
+//
+//        foreach ($this->getIntervals() as $interval) {
+//            $earnings += $interval->getModelEarnings();
+//        }
+//
+//        return $earnings;
+//    }
 
-    /**
-     * Get conversation payed time as \DateInterval instance.
-     *
-     * @return bool|\DateInterval
-     */
-    public function getPaidTimeInterval()
-    {
-        return $this->convertSecondsToDateInterval($this->getPaidTime());
-    }
-
-    /**
-     * @param $time
-     * @return bool|\DateInterval
-     */
-    public function convertSecondsToDateInterval($time)
-    {
-        $now = new \DateTime();
-        $before = new \DateTime('-' . $time . ' seconds');
-        return $now->diff($before);
-    }
-
-    /**
-     * @return float
-     */
-    public function getPaidPrice()
-    {
-        $price = 0.0;
-
-        foreach ($this->getIntervals() as $interval) {
-            if ($interval->getStatus() === ConversationInterval::STATUS_PAYED) {
-                $price += $interval->getPrice();
-            }
-        }
-
-        return $price;
-    }
-
-    /**
-     * @return float
-     */
-    public function getPrice()
-    {
-        $price = 0.0;
-
-        foreach ($this->getIntervals() as $interval) {
-           $price += $interval->getPrice();
-        }
-
-        return $price;
-    }
-
-    /**
-     * @return float
-     */
-    public function getCalculatedModelEarnings()
-    {
-        $earnings = 0.0;
-
-        foreach ($this->getIntervals() as $interval) {
-            $earnings += $interval->getModelEarnings();
-        }
-
-        return $earnings;
-    }
-
-    /**
-     * @return float
-     */
-    public function getPaidModelEarnings()
-    {
-        $earnings = 0.0;
-
-        foreach ($this->getIntervals() as $interval) {
-            if ($interval->getStatus() === ConversationInterval::STATUS_PAYED) {
-                $earnings += $interval->getModelEarnings();
-            }
-        }
-
-        return $earnings;
-    }
+//    /**
+//     * @return float
+//     */
+//    public function getPaidModelEarnings()
+//    {
+//        $earnings = 0.0;
+//
+//        foreach ($this->getIntervals() as $interval) {
+//            if ($interval->getStatus() === ConversationInterval::STATUS_PAYED) {
+//                $earnings += $interval->getModelEarnings();
+//            }
+//        }
+//
+//        return $earnings;
+//    }
 
     /**
      * Set seconds
@@ -548,6 +552,25 @@ class Conversation
     public function setClientAgreeToPay($clientAgreeToPay)
     {
         $this->clientAgreeToPay = $clientAgreeToPay;
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isStalePaymentInfo()
+    {
+        return $this->stalePaymentInfo;
+    }
+
+    /**
+     * @param boolean $stalePaymentInfo
+     * @return $this
+     */
+    public function setStalePaymentInfo($stalePaymentInfo)
+    {
+        $this->stalePaymentInfo = $stalePaymentInfo;
 
         return $this;
     }

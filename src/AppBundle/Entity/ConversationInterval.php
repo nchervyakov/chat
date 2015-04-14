@@ -30,7 +30,7 @@ class ConversationInterval
 
     /**
      * @var Conversation
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Conversation", inversedBy="intervals")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Conversation")
      * @ORM\JoinColumn(name="conversation_id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $conversation;
@@ -43,21 +43,23 @@ class ConversationInterval
 
     /**
      * @var Message
-     * @ORM\OneToOne(targetEntity="Message", mappedBy="followingInterval", cascade={"remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="Message", cascade={"remove"}, fetch="LAZY")
+     * @ORM\JoinColumn(name="start_message", referencedColumnName="id", onDelete="SET NULL", nullable=true)
      * @ORM\OrderBy({"dateAdded" = "ASC"})
      */
     private $startMessage;
 
     /**
      * @var Message
-     * @ORM\OneToOne(targetEntity="Message", mappedBy="previousInterval", cascade={"remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="Message", cascade={"remove"}, fetch="LAZY")
+     * @ORM\JoinColumn(name="end_message", referencedColumnName="id", onDelete="SET NULL", nullable=true)
      * @ORM\OrderBy({"dateAdded" = "ASC"})
      */
     private $endMessage;
 
     /**
      * @var ConversationInterval
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\ConversationInterval")
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\ConversationInterval", fetch="LAZY")
      * @ORM\JoinColumn(name="previous_interval_id", referencedColumnName="id", onDelete="SET NULL")
      */
     private $previousInterval;
@@ -70,19 +72,19 @@ class ConversationInterval
 
     /**
      * @var float
-     * @ORM\Column(name="price", type="decimal", precision=10, scale=6, options={"default": 0.0})
+     * @ORM\Column(name="price", type="decimal", precision=18, scale=8, options={"default": 0.0})
      */
     private $price;
 
     /**
      * @var float
-     * @ORM\Column(name="minute_rate", type="decimal", precision=10, scale=6, options={"default": 0.0})
+     * @ORM\Column(name="minute_rate", type="decimal", precision=10, scale=4, options={"default": 0.0})
      */
     private $minuteRate = 0.0;
 
     /**
      * @var float
-     * @ORM\Column(name="model_share", type="decimal", precision=10, scale=6, options={"default": 0.0})
+     * @ORM\Column(name="model_share", type="decimal", precision=10, scale=4, options={"default": 0.0})
      */
     private $modelShare = 0.0;
 
@@ -167,7 +169,7 @@ class ConversationInterval
     /**
      * @param Conversation $conversation
      */
-    public function setConversation($conversation)
+    public function setConversation($conversation = null)
     {
         $this->conversation = $conversation;
     }
