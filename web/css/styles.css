@@ -256,3 +256,27 @@ body {
 .user-status-online {
     background: green;
 }
+
+.chat-widget .uploadify-form {
+    display: inline-block;
+    margin-left: 15px;
+}
+
+.chat-widget .uploadify-form .uploadify,
+.chat-widget .uploadify-form .uploadify-queue {
+    margin-bottom: 0;
+}
+
+.chat-actions .js-emoticon-invocation-link {
+    vertical-align: 3px;
+}
+
+.chat-actions {
+    margin-bottom: 1em;
+    padding-top: 1em;
+    vertical-align: top;
+}
+
+.chat-widget .image-message {
+    padding-top: 15px;
+}

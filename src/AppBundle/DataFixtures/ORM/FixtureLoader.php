@@ -36,7 +36,7 @@ class FixtureLoader extends DataFixtureLoader
         $kernel = $this->container->get('kernel');
 
         if (in_array($kernel->getEnvironment(), array('dev', 'test'))) {
-            $fixtures[] = __DIR__.'/../../Resources/fixtures/dev_fixtures.yml';
+           // $fixtures[] = __DIR__.'/../../Resources/fixtures/dev_fixtures.yml';
         }
 
         return $fixtures;

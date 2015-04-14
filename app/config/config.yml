@@ -208,6 +208,7 @@ fos_js_routing:
         - homepage
         - chat
         - chat_add_message
+        - chat_add_image_message
         - chat_show
         - chat_get_new_messages
         - user_show
@@ -266,6 +267,14 @@ vich_uploader:
             inject_on_load:     false
             delete_on_update:   true
             delete_on_remove:   true
+
+        image_message:
+            uri_prefix:         /uploads/messages
+            upload_destination: %kernel.root_dir%/../web/uploads/messages
+            inject_on_load:     false
+            delete_on_update:   true
+            delete_on_remove:   true
+            namer:              vich_uploader.namer_origname
 
 #jms_security_extra:
 #    # Whether you want to secure all services (true), or only secure specific

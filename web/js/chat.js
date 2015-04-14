@@ -23,11 +23,22 @@ can.Control('ChatWidget', {
         this.list = this.element.find('.chat');
         this.emoticons =  this.element.find('.js-emoticons');
         this.emoticonLink = this.element.find('[data-toggle=popover]');
+        this.imageMessageInput = this.element.find('#imageMessageInput');
+
         this.emoticonLink.popover({
             container: 'body',
             placement: 'right',
             content: this.emoticons[0],
             html: true
+        });
+
+        this.imageMessageInput.uploadify({
+            swf: '/swf/uploadify.swf',
+            uploader: Routing.generate('chat_add_image_message', {companion_id: this.companionId}),
+            buttonText: 'Send image...',
+            queueID: 'chatUploadifyQueue',
+            onUploadSuccess: this.proxy(this.onUploadImageSuccess),
+            onUploadError: this.proxy(this.onUploadImageError)
         });
 
         var allMessageIds = this.list.children('.js-message').map(function () { return parseInt($(this).data('id'), 10); }).toArray();
@@ -107,26 +118,28 @@ can.Control('ChatWidget', {
             complete: function () {
                 widget.submitButton.removeAttr('disabled');
             }
-        }).success(function (res) {
-            if (res.success) {
-                if (res.message) {
-                    widget.addNewMessages(res.message);
-                    widget.latestMessageId = res.id;
-                }
-                if (res.stat_html) {
-                    widget.statsBlock.html(res.stat_html);
-                }
+        }).success(this.proxy(this.onSuccessfulMessage));
+    },
 
-                App.updateHeaderCoins(res.coins);
-
-            } else {
-                if (res.need_to_agree_to_pay) {
-                    widget.showAgreeToPayDialog(res.message);
-                } else if (res.not_enough_money) {
-                    App.showAddCoinsDialog();
-                }
+    onSuccessfulMessage: function (res) {
+        if (res.success) {
+            if (res.message) {
+                this.addNewMessages(res.message);
+                this.latestMessageId = res.id;
             }
-        });
+            if (res.stat_html) {
+                this.statsBlock.html(res.stat_html);
+            }
+
+            App.updateHeaderCoins(res.coins);
+
+        } else {
+            if (res.need_to_agree_to_pay) {
+                this.showAgreeToPayDialog(res.message);
+            } else if (res.not_enough_money) {
+                App.showAddCoinsDialog();
+            }
+        }
     },
 
     showAgreeToPayDialog: function (message) {
@@ -198,6 +211,17 @@ can.Control('ChatWidget', {
 
             App.updateHeaderCoins(res.coins);
         });
+    },
+
+    onUploadImageSuccess: function(file, data, response) {
+        var res = JSON.parse(data);
+        if (res) {
+            this.onSuccessfulMessage(res);
+        }
+    },
+
+    onUploadImageError: function(file, errorCode, errorMsg, errorString) {
+        alert('The file ' + file.name + ' could not be uploaded: ' + errorString);
     },
 
     destroy: function () {

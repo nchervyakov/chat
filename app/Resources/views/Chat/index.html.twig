@@ -16,9 +16,41 @@
     {% endif %}
 {%  endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/uploadify.css') }}"/>
+{% endblock %}
+
 {% block javascripts %}
     {{ parent() }}
+    <script type="text/javascript" src="{{ asset('js/vendor/jquery.uploadify.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/chat.js') }}"></script>
+{% endblock %}
+
+{% block plugin_css %}
+    {{ parent() }}
+
+    {% stylesheets
+        'css/blueimp-gallery.min.css'
+        'css/bootstrap-image-gallery.min.css'
+        filter='cssrewrite'
+        output='css/compiled/*.css'
+    %}
+        <link rel="stylesheet" href="{{ asset_url }}"/>
+    {% endstylesheets %}
+{% endblock %}
+
+{% block jsplugins %}
+    {{ parent() }}
+
+    {% javascripts
+        'js/vendor/jquery.blueimp-gallery.min.js'
+        'js/vendor/blueimp-gallery-fullscreen.js'
+        'js/vendor/bootstrap-image-gallery.min.js'
+        output='js/compiled/*.js'
+    %}
+        <script type="text/javascript" src="{{ asset_url }}" defer="defer"></script>
+    {% endjavascripts %}
 {% endblock %}
 
 {% block page %}
@@ -67,20 +99,28 @@
                                 {% endif %}
                             </ul>
                         </div>
-                        <form action="{{ path('chat_add_message', { "companion_id": companion.id }) }}" method="post"
-                              id="addMessageForm" class="js-message-form">
-                            <div class="form-group">
-                                <a href="#" onclick="return false;" class="js-emoticon-invocation-link" data-toggle="popover"
-                                        ><img src="{{ asset('images/emoticons/ab.gif') }}" alt=""/></a>
-                                <div class="hidden">
-                                    <div class="emoticons js-emoticons">
-                                        {% for emoticon in emoticons %}
-                                            <a href="#" onclick="return false;" class="js-emoticon emoticon" title="{{ emoticon.symbol }}"
-                                                    ><img src="/images/emoticons/{{ emoticon.icon }}" alt="{{ emoticon.symbol }}" /></a>
-                                        {% endfor %}
-                                    </div>
+
+                        <div class="chat-actions js-chat-actions">
+                            <a href="#" onclick="return false;" class="js-emoticon-invocation-link" data-toggle="popover"
+                                    ><img src="{{ asset('images/emoticons/ab.gif') }}" alt=""/></a>
+                            <div class="hidden">
+                                <div class="emoticons js-emoticons">
+                                    {% for emoticon in emoticons %}
+                                        <a href="#" onclick="return false;" class="js-emoticon emoticon" title="{{ emoticon.symbol }}"
+                                                ><img src="/images/emoticons/{{ emoticon.icon }}" alt="{{ emoticon.symbol }}" /></a>
+                                    {% endfor %}
                                 </div>
                             </div>
+
+                            <form action="#" class="uploadify-form js-uploadify-form">
+                                <input type="file" class="js-image-message image-message" name="image_message" id="imageMessageInput"/>
+                            </form>
+                        </div>
+
+                        <div class="uploadify-queue js-uploadify-queue" id="chatUploadifyQueue"></div>
+
+                        <form action="{{ path('chat_add_message', { "companion_id": companion.id }) }}" method="post"
+                              id="addMessageForm" class="js-message-form">
                             <div class="form-group">
                                 <textarea class="form-control input-sm js-message-input message-input"
                                        placeholder="{{ 'type_your_message'|trans }}"></textarea>
@@ -98,4 +138,8 @@
             {% endif %}
         </div>
     </div>
+{% endblock %}
+
+{% block gallery_template %}
+    {{ include(':Common:gallery_widget.html.twig') }}
 {% endblock %}

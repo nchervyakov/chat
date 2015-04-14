@@ -1,3 +1,14 @@
+{% if hasPreviousMessages is defined and hasPreviousMessages %}
+    <li class="clearfix ">
+        <div class="well well-sm text-center"><a href="#" class="js-previous-messages-link previous-messages-link"
+                    >{{ 'chat_page.load_previous_messages'|trans }}</a></div>
+    </li>
+{% endif %}
+
 {%- for message in messages -%}
-    {{ include(':Chat:_message.html.twig') }}
+    {% if message is instanceof('AppBundle\\Entity\\ImageMessage') %}
+        {{ include(':Chat:_image_message.html.twig') }}
+    {% else %}
+        {{ include(':Chat:_message.html.twig') }}
+    {% endif %}
 {%- endfor -%}

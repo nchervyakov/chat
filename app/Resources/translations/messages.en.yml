@@ -53,6 +53,8 @@ chat_page:
     no_companions: "You don't have anybody in your list."
     no_messages_yet: 'You do not have any messages yet.'
     ctrl_plus_enter_send_message: 'Press Ctrl + Enter to send a message.'
+    send_image: 'Send Image...'
+    load_previous_messages: 'Load previous messages ...'
 chat: 'Chat'
 total_models_found: 'Total models found: %count%'
 online_models_found: 'Online models found: %count%'

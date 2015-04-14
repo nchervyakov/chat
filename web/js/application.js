@@ -34,7 +34,7 @@ can.Control('AddCoinsDialogControl', {
     }
 }, {
     init: function () {
-        console.log(this.element);
+
     },
 
     '.js-add-coins-link click': function (el, ev) {

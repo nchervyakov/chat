@@ -31,6 +31,13 @@ class AppExtension extends \Twig_Extension implements ContainerAwareInterface
         ];
     }
 
+    public function getTests()
+    {
+        return [
+            new \Twig_SimpleTest('instanceof', [$this, 'isInstanceof'])
+        ];
+    }
+
     public function convertEmoticons($string)
     {
         return $this->container->get('app.emoticon_manager')->convertEmoticons($string);
@@ -87,5 +94,14 @@ class AppExtension extends \Twig_Extension implements ContainerAwareInterface
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
+    }
+
+    /**
+     * @param $var
+     * @param $instance
+     * @return bool
+     */
+    public function isInstanceof($var, $instance) {
+        return  $var instanceof $instance;
     }
 }

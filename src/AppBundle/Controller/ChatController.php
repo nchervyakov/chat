@@ -1,15 +1,20 @@
 <?php
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Conversation;
+use AppBundle\Entity\ImageMessage;
+use AppBundle\Entity\Message;
 use AppBundle\Entity\TextMessage;
 use AppBundle\Entity\User;
 use AppBundle\Exception\ClientNotAgreedToChatException;
 use AppBundle\Exception\NotEnoughMoneyException;
+use Doctrine\ORM\EntityManager;
 use JMS\SecurityExtraBundle\Annotation as DI;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -68,6 +73,8 @@ class ChatController extends Controller
             $params['conversation'] = $conversation;
             $params['messages'] = $this->getDoctrine()->getRepository('AppBundle:Message')
                 ->getConversationLatestMessages($conversation, self::MESSAGES_PER_PAGE);
+
+            $params['messages'] = array_reverse($params['messages']);
         }
 
         $userRepo = $this->getDoctrine()->getRepository('AppBundle:User');
@@ -77,6 +84,8 @@ class ChatController extends Controller
     }
 
     /**
+     * Add a text message.
+     *
      * @param User $companion
      * @param Request $request
      * @Route("/{companion_id}/add-message", name="chat_add_message", methods={"POST"})
@@ -99,39 +108,11 @@ class ChatController extends Controller
             throw new BadRequestHttpException("add_message.empty_message");
         }
 
-        $em = $this->getDoctrine()->getManager();
-
         $message = new TextMessage($content);
         $message->setAuthor($user);
 
-        try {
-            $em->persist($message);
-            $this->get('app.conversation')->addConversationMessage($conversation, $message);
-            $em->flush();
-
-        } catch (ClientNotAgreedToChatException $ex) {
-            if ($request->isXmlHttpRequest()) {
-                return new JsonResponse([
-                    'error' => true,
-                    'message' => $this->get('translator')->trans('chatting.need_to_pay', ['%model%' => $companion->getFullName()]),
-                    'need_to_agree_to_pay' => true
-                ]);
-
-            } else {
-                return $this->redirectToRoute('chat', ['companion_id' => $companion->getId()]);
-            }
-
-        } catch (NotEnoughMoneyException $ex) {
-            if ($request->isXmlHttpRequest()) {
-                return new JsonResponse([
-                    'error' => true,
-                    'message' => $this->get('translator')->trans('chatting.not_enough_money'),
-                    'not_enough_money' => true
-                ]);
-
-            } else {
-                return $this->redirectToRoute('chat', ['companion_id' => $companion->getId()]);
-            }
+        if (($resp = $this->saveMessage($conversation, $message, $companion, $request->isXmlHttpRequest())) instanceof Response) {
+            return $resp;
         }
 
         if ($request->isXmlHttpRequest()) {
@@ -152,6 +133,69 @@ class ChatController extends Controller
         } else {
             return $this->redirectToRoute('chat', ['companion_id' => $companion->getId()]);
         }
+    }
+
+    /**
+     * Uploads an image message.
+     *
+     * @param User $companion
+     * @param Request $request
+     * @Route("/{companion_id}/add-image-message", name="chat_add_image_message", methods={"POST"})
+     * @ParamConverter("companion", class="AppBundle:User", options={"id": "companion_id"})
+     * @return Response|JsonResponse
+     */
+    public function addImageMessageAction(User $companion, Request $request)
+    {
+        if (!$this->get('app.request_access_evaluator')->canChatWith($companion)) {
+            throw new AccessDeniedHttpException();
+        }
+
+        /** @var User $user */
+        $user = $this->getUser();
+        $conversation = $this->getDoctrine()->getRepository('AppBundle:Conversation')
+            ->getOrCreateByUsers($user, $companion);
+
+        $message = new ImageMessage();
+        $message->setAuthor($user);
+
+        if ($request->files->count() == 0 || !($request->files->get('Filedata') instanceof UploadedFile)) {
+            throw new BadRequestHttpException("Image is missing");
+        }
+
+        $uploadedFile = null;
+
+        /** @var UploadedFile $file */
+        $file = $request->files->get('Filedata');
+
+        if ($file->isValid() && in_array($file->getClientOriginalExtension(), ['jpg', 'jpeg', 'png', 'gif'])) {
+            $uploadedFile = $file;
+        }
+
+        if ($uploadedFile === null) {
+            throw new BadRequestHttpException("Image is missing");
+        }
+
+        $message->setImageFile($uploadedFile);
+        $this->container->get('vich_uploader.upload_handler')->upload($message, 'imageFile');
+
+        if (($resp = $this->saveMessage($conversation, $message, $companion, true)) instanceof Response) {
+            return $resp;
+        }
+
+        $responseData = [
+            'success' => true,
+            'coins' => number_format($user->getCoins(), 2, '.', ''),
+            'message' => $this->renderView(':Chat:_image_message.html.twig', ['message' => $message]),
+            'total_time' => $conversation->getSeconds(),
+            'stat_html' => $this->renderView(':Chat:_chat_stats.html.twig', [
+                'conversation' => $conversation,
+                'messages' => true
+            ]),
+            'id' => $message->getId()
+        ];
+
+        return new JsonResponse($responseData);
+
     }
 
     /**
@@ -226,5 +270,51 @@ class ChatController extends Controller
                 'messages' => $latestMessages
             ]),
         ]);
+    }
+
+    /**
+     * @param Conversation $conversation
+     * @param Message $message
+     * @param User $companion
+     * @param bool $isAjax
+     * @return bool|JsonResponse|RedirectResponse
+     * @throws \Exception
+     */
+    protected function saveMessage(Conversation $conversation, Message $message, User $companion, $isAjax = true)
+    {
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+
+        try {
+            $em->persist($message);
+            $this->get('app.conversation')->addConversationMessage($conversation, $message);
+            $em->flush();
+
+        } catch (ClientNotAgreedToChatException $ex) {
+            if ($isAjax) {
+                return new JsonResponse([
+                    'error' => true,
+                    'message' => $this->get('translator')->trans('chatting.need_to_pay', ['%model%' => $companion->getFullName()]),
+                    'need_to_agree_to_pay' => true
+                ]);
+
+            } else {
+                return $this->redirectToRoute('chat', ['companion_id' => $companion->getId()]);
+            }
+
+        } catch (NotEnoughMoneyException $ex) {
+            if ($isAjax) {
+                return new JsonResponse([
+                    'error' => true,
+                    'message' => $this->get('translator')->trans('chatting.not_enough_money'),
+                    'not_enough_money' => true
+                ]);
+
+            } else {
+                return $this->redirectToRoute('chat', ['companion_id' => $companion->getId()]);
+            }
+        }
+
+        return true;
     }
 }

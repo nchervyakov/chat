@@ -27,6 +27,8 @@
                             >{{ message.author.fullName }}</a></strong>
             {% endif %}
         </div>
-        <p>{{ message.content|nl2br|emoticons }}</p>
+        {% block message_content %}
+            <p>{{ message.content|nl2br|emoticons }}</p>
+        {% endblock %}
     </div>
 </li>

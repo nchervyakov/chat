@@ -7,8 +7,10 @@ app/cache/prod
 app/logs/*.log
 app/bootstrap.php.cache
 app/config/parameters.yml
-!web/uploads/photo/.gitkeep
 web/uploads/photo/*
+!web/uploads/photo/.gitkeep
+web/uploads/messages/*
+!web/uploads/messages/.gitkeep
 web/media/cache/*
 !web/media/cache/.gitkeep
 /src/Acme

@@ -53,7 +53,7 @@ class MessageRepository extends EntityRepository
     public function createLatestMessagesQuery(Conversation $conversation)
     {
         return $this->getEntityManager()
-            ->createQuery('SELECT m FROM AppBundle:Message m WHERE m.conversation = :conversation ORDER BY m.dateAdded')
+            ->createQuery('SELECT m FROM AppBundle:Message m WHERE m.conversation = :conversation ORDER BY m.dateAdded DESC')
             ->setParameter('conversation', $conversation);
     }
 }

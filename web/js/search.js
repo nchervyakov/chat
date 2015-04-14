@@ -83,7 +83,7 @@ can.Control('SearchWidget', {
             }
 
             widget.page = res.page;
-            console.log(res, widget.isLoadingOffline);
+
             if (widget.isLoadingOffline) {
                 if (res.page >= res.pageCount) {
                     widget.finished = true;
