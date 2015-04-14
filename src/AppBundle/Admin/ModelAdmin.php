@@ -12,6 +12,7 @@ namespace AppBundle\Admin;
 
 
 use Doctrine\ORM\QueryBuilder;
+use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
 use Sonata\AdminBundle\Form\FormMapper;
 
@@ -49,5 +50,17 @@ class ModelAdmin extends UserAdmin
             ->andWhere('g.name LIKE :group_name')
             ->setParameter('group_name', 'Models');
         return $query;
+    }
+
+    protected function configureListFields(ListMapper $listMapper)
+    {
+        parent::configureListFields($listMapper);
+
+        $listMapper
+            ->remove('username')
+            ->remove('email')
+            ->addIdentifier('email');
+
+        $listMapper->reorder(['id', 'email']);
     }
 }
