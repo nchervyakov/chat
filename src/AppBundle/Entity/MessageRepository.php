@@ -13,15 +13,28 @@ use Doctrine\ORM\Query;
  */
 class MessageRepository extends EntityRepository
 {
-    public function getConversationLatestMessages(Conversation $conversation, $num = 10, $page = 1)
+    /**
+     * @param Conversation $conversation
+     * @param int $num
+     * @param null $beforeMessageId
+     * @return Message[]
+     */
+    public function getConversationLatestMessages(Conversation $conversation, $num = 10, $beforeMessageId = null)
     {
-        $offset = ($page - 1) * $num;
-        $offset = $offset < 0 ? 0 : $offset;
+        $qb = $this->createQueryBuilder('m');
+        $qb->where('m.conversation = :conversation')->setParameter('conversation', $conversation)
+            ->orderBy('m.dateAdded', 'DESC')
+            ->setMaxResults($num);
 
-        return $this->createLatestMessagesQuery($conversation)
-            ->setMaxResults($num)
-            ->setFirstResult($offset)
-            ->execute();
+        if (is_numeric($beforeMessageId)) {
+            if ($beforeMessageId <= 0) {
+                throw new \InvalidArgumentException;
+            }
+
+            $qb->andWhere('m.id < :before_message_id')->setParameter('before_message_id', (int)$beforeMessageId);
+        }
+
+        return $qb->getQuery()->execute();
     }
 
     /**

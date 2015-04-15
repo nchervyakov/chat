@@ -71,10 +71,26 @@ class ChatController extends Controller
         $conversation = $this->getDoctrine()->getRepository('AppBundle:Conversation')->getByUsers($user, $companion);
         if ($conversation) {
             $params['conversation'] = $conversation;
-            $params['messages'] = $this->getDoctrine()->getRepository('AppBundle:Message')
+            $messageRepository = $this->getDoctrine()->getRepository('AppBundle:Message');
+
+            $params['messages'] = $messageRepository
                 ->getConversationLatestMessages($conversation, self::MESSAGES_PER_PAGE);
 
             $params['messages'] = array_reverse($params['messages']);
+            $firstInRangeMessageId = null;
+            if (count($params['messages'])) {
+                // check that the chat has previous messages
+                /** @var Message $firstInRangeMessage */
+                $firstInRangeMessage = $params['messages'][0];
+                $firstInRangeMessageId = $firstInRangeMessage->getId();
+                $prevMessages = $messageRepository
+                    ->getConversationLatestMessages($conversation, self::MESSAGES_PER_PAGE, $firstInRangeMessageId);
+
+                if (count($prevMessages)) {
+                    $params['hasPreviousMessages'] = true;
+                    $params['firstInRangeMessageId'] = $firstInRangeMessageId;
+                }
+            }
         }
 
         $userRepo = $this->getDoctrine()->getRepository('AppBundle:User');
@@ -236,7 +252,7 @@ class ChatController extends Controller
      * @param Request $request
      * @return Response|JsonResponse
      */
-    public function getLatestMessages(User $companion, Request $request)
+    public function getLatestMessagesAction(User $companion, Request $request)
     {
         if (!$this->get('app.request_access_evaluator')->canChatWith($companion)) {
             throw new AccessDeniedHttpException();
@@ -271,6 +287,60 @@ class ChatController extends Controller
             ]),
         ]);
     }
+
+    /**
+     * @Route("/{companion_id}/previous-messages", name="chat_get_previous_messages", methods={"GET"})
+     * @ParamConverter("companion", class="AppBundle:User", options={"id": "companion_id"})
+     * @param User $companion
+     * @param Request $request
+     * @return Response|JsonResponse
+     */
+    public function getPreviousMessagesAction(User $companion, Request $request)
+    {
+        if (!$this->get('app.request_access_evaluator')->canChatWith($companion)) {
+            throw new AccessDeniedHttpException();
+        }
+
+        /** @var User $user */
+        $user = $this->getUser();
+        $conversationRepo = $this->getDoctrine()->getRepository('AppBundle:Conversation');
+        $conversation = $conversationRepo->getByUsers($user, $companion);
+
+        $beforeMessageId = $request->query->get('before_message_id');
+        if (!is_numeric($beforeMessageId) || $beforeMessageId <= 0) {
+            throw new BadRequestHttpException("Invalid before message id");
+        }
+
+        $params = [];
+
+        if ($conversation) {
+            $messageRepository = $this->getDoctrine()->getRepository('AppBundle:Message');
+            $params['messages'] = $messageRepository
+                ->getConversationLatestMessages($conversation, self::MESSAGES_PER_PAGE, $beforeMessageId);
+
+            $params['messages'] = array_reverse($params['messages']);
+
+            if (count($params['messages'])) {
+                // check that the chat has previous messages
+                /** @var Message $firstInRangeMessage */
+                $firstInRangeMessage = $params['messages'][0];
+                $firstInRangeMessageId = $firstInRangeMessage->getId();
+                $prevMessages = $messageRepository
+                    ->getConversationLatestMessages($conversation, self::MESSAGES_PER_PAGE, $firstInRangeMessageId);
+
+                if (count($prevMessages)) {
+                    $params['hasPreviousMessages'] = true;
+                    $params['firstInRangeMessageId'] = $firstInRangeMessageId;
+                }
+            }
+        }
+
+        return new JsonResponse([
+            'success' => true,
+            'messages' => $this->renderView(':Chat:_messages.html.twig', $params)
+        ]);
+    }
+
 
     /**
      * @param Conversation $conversation

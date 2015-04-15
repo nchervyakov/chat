@@ -47,7 +47,9 @@ can.Control('ChatWidget', {
         }
         this.latestMessageId = Math.max.apply(null, allMessageIds);
         this.timer = null;
-        this.fetchNewMessages()
+        this.fetchNewMessages();
+
+        this.fetchingPrevMessages = false;
     },
 
     '.js-message-form submit': function (el, ev) {
@@ -98,6 +100,16 @@ can.Control('ChatWidget', {
         if (this.inputElement.val()) {
             this.sendAddMessageRequest(this.inputElement.val());
         }
+    },
+
+    '.js-previous-messages-link click': function (el, ev) {
+        ev.preventDefault();
+        if (this.fetchingPrevMessages) {
+            return;
+        }
+
+        var beforeMessageId = parseInt(el.data('before-message-id'), 10);
+        this.fetchPreviousMessages(beforeMessageId);
     },
 
     sendAddMessageRequest: function (message) {
@@ -210,6 +222,28 @@ can.Control('ChatWidget', {
             }
 
             App.updateHeaderCoins(res.coins);
+        });
+    },
+
+    fetchPreviousMessages: function (beforeMessageId) {
+        var widget = this;
+        this.fetchingPrevMessages = true;
+
+        $.ajax(Routing.generate('chat_get_previous_messages', {companion_id: this.companionId}), {
+            type: 'GET',
+            data: {
+                before_message_id: beforeMessageId
+            },
+            timeout: 5000,
+            complete: function () {
+                widget.fetchingPrevMessages = false;
+            }
+        }).success(function (res) {
+            if (res.messages) {
+                widget.element.find('.js-previous-messages-block').remove();
+                widget.list.prepend(res.messages);
+                console.log(res);
+            }
         });
     },
 

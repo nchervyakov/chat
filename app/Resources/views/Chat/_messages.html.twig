@@ -1,7 +1,7 @@
 {% if hasPreviousMessages is defined and hasPreviousMessages %}
-    <li class="clearfix ">
+    <li class="clearfix js-previous-messages-block">
         <div class="well well-sm text-center"><a href="#" class="js-previous-messages-link previous-messages-link"
-                    >{{ 'chat_page.load_previous_messages'|trans }}</a></div>
+                    data-before-message-id="{{ firstInRangeMessageId }}">{{ 'chat_page.load_previous_messages'|trans }}</a></div>
     </li>
 {% endif %}
 
