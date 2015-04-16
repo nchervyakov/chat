@@ -35,7 +35,7 @@ class UserManager extends ContainerAware
     public function downloadProfilePicture(User $user, $profilePicture)
     {
         try {
-            $targetDir = $this->container->getParameter('kernel.root_dir') . './../web/uploads/photo/profile';
+            $targetDir = $this->container->getParameter('kernel.root_dir') . '/../web/uploads/photo/profile';
             $fileSystem = $this->container->get('filesystem');
             if (!$fileSystem->exists($targetDir) || !is_dir($targetDir)) {
                 $fileSystem->mkdir($targetDir);
