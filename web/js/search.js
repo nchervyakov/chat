@@ -91,7 +91,8 @@ can.Control('SearchWidget', {
                 if (res.page >= res.pageCount) {
                     widget.page = 0;
                     widget.isLoadingOffline = true;
-                    setTimeout(function () { widget.loadPageIfNeeded(); }, 0);
+                    var updateChecker = function () { widget.loadPageIfNeeded(); };
+                    setTimeout(updateChecker, 0);
                 }
             }
 

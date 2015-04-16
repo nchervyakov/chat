@@ -49,12 +49,13 @@ can.Control('ChatWidget', {
             onSWFReady: function () {
             },
             onInit: function () {
-                setTimeout(function () {
+                var uploadifyChecker = function () {
                     var uploadify = widget.imageMessageInput.data('uploadify');
                     if (!uploadify.movieElement) {
                         widget.onUploadifyFallback();
                     }
-                }, 1000);
+                };
+                setTimeout(uploadifyChecker, 1000);
             }
         });
 
@@ -259,7 +260,8 @@ can.Control('ChatWidget', {
             timeout: 30000,
             complete: function () {
                 // Schedule new message fetching
-                widget.timer = setTimeout(widget.proxy(widget.fetchNewMessages), 5000);
+                var fetcher = widget.proxy(widget.fetchNewMessages);
+                widget.timer = setTimeout(fetcher, 5000);
             }
         }).success(function (res) {
             if (res.messages && res.latestMessageId > widget.latestMessageId) {
