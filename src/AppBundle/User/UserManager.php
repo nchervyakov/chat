@@ -52,7 +52,11 @@ class UserManager extends ContainerAware
             }
 
         } catch (\Exception $e) {
-            $this->container->get('logger')->error('Cannot load FB photo "' . $profilePicture . '"', ['exception' => $e]);
+            $this->container->get('logger')->error('Cannot load FB photo "' . $profilePicture . '"', [
+                'exception' => $e,
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
         }
 
         return null;
