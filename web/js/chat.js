@@ -172,7 +172,7 @@ can.Control('ChatWidget', {
             data: {
                 message: $.trim(message)
             },
-            timeout: 10000,
+            timeout: 30000,
             beforeSend: function () {
                 widget.submitButton.attr('disabled', 'disabled');
             },
@@ -226,7 +226,7 @@ can.Control('ChatWidget', {
         $.ajax(Routing.generate('chat_agree_to_pay', {companion_id: this.companionId}), {
             type: 'POST',
             data: {},
-            timeout: 10000
+            timeout: 30000
         }).success(function (res) {
             if (res.success && widget.inputElement.val()) {
                 widget.sendAddMessageRequest(widget.inputElement.val());
@@ -256,7 +256,7 @@ can.Control('ChatWidget', {
             data: {
                 latest_message_id: this.latestMessageId
             },
-            timeout: 5000,
+            timeout: 30000,
             complete: function () {
                 // Schedule new message fetching
                 widget.timer = setTimeout(widget.proxy(widget.fetchNewMessages), 5000);
