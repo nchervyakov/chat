@@ -80,11 +80,15 @@ can.Control('ChatWidget', {
 
     '.js-message-input keypress': function (el, ev) {
         if (ev.key == 'Enter' || ev.keyCode == 13 || ev.keyCode == 10) {
-            if (!ev.shiftKey) {
-                ev.preventDefault();
+            ev.preventDefault();
+
+            if (ev.shiftKey || ev.ctrlKey) {
+                this.inputElement.insertAtCaret("\n");
+
+            } else {
                 el.closest('form').submit();
-                return false;
             }
+            return false;
         }
 
         return true;
