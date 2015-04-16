@@ -22,6 +22,11 @@ body {
     display: inline-block;
     width: 348px;
     height: 348px;
+    max-width: 100%;
+}
+
+.search-results .thumbnail .img-wrapper img {
+    max-width: 100%;
 }
 
 .navbar .user-photo-link {
@@ -221,6 +226,7 @@ body {
 
 .search-bar .name-field {
     width: 300px;
+    max-width: 100%;
 }
 
 .alert-sonata_user_error {
@@ -278,5 +284,5 @@ body {
 }
 
 .chat-widget .image-message {
-    padding-top: 15px;
+
 }

@@ -146,3 +146,8 @@ services:
         class: AppBundle\Uploader\Namer\SluggedOrignameNamer
         arguments: ["@cocur_slugify"]
 
+    app.session_listener:
+        class: AppBundle\Event\Listener\SessionListener
+        arguments: ["@service_container"]
+        tags:
+            - {name: kernel.event_subscriber}

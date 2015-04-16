@@ -156,12 +156,22 @@ class ChatController extends Controller
      *
      * @param User $companion
      * @param Request $request
+     * @Security("true")
      * @Route("/{companion_id}/add-image-message", name="chat_add_image_message", methods={"POST"})
      * @ParamConverter("companion", class="AppBundle:User", options={"id": "companion_id"})
      * @return Response|JsonResponse
      */
     public function addImageMessageAction(User $companion, Request $request)
     {
+//        if (!$request->getSession()->isStarted() && $request->query->get('PHPSESSID')) {
+//            $request->getSession()->setId($request->query->get('PHPSESSID'));
+//            $request->getSession()->start();
+//        }
+       dump($request->getSession());
+        if (!$this->isGranted('ROLE_MODEL') && !$this->isGranted('ROLE_CLIENT')) {
+            throw new AccessDeniedHttpException();
+        }
+
         if (!$this->get('app.request_access_evaluator')->canChatWith($companion)) {
             throw new AccessDeniedHttpException();
         }
@@ -216,7 +226,6 @@ class ChatController extends Controller
         ];
 
         return new JsonResponse($responseData);
-
     }
 
     /**

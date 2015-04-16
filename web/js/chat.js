@@ -24,6 +24,9 @@ can.Control('ChatWidget', {
         this.emoticons =  this.element.find('.js-emoticons');
         this.emoticonLink = this.element.find('[data-toggle=popover]');
         this.imageMessageInput = this.element.find('#imageMessageInput');
+        this.sendImageButton = this.element.find('.js-send-image-btn');
+
+        var widget = this;
 
         this.emoticonLink.popover({
             container: 'body',
@@ -37,8 +40,22 @@ can.Control('ChatWidget', {
             uploader: Routing.generate('chat_add_image_message', {companion_id: this.companionId}),
             buttonText: 'Send image...',
             queueID: 'chatUploadifyQueue',
+            formData: {
+                PHPSESSID: jQuery.cookie('PHPSESSID')
+            },
             onUploadSuccess: this.proxy(this.onUploadImageSuccess),
-            onUploadError: this.proxy(this.onUploadImageError)
+            onUploadError: this.proxy(this.onUploadImageError),
+            onFallback: this.proxy(this.onUploadifyFallback),
+            onSWFReady: function () {
+            },
+            onInit: function () {
+                setTimeout(function () {
+                    var uploadify = widget.imageMessageInput.data('uploadify');
+                    if (!uploadify.movieElement) {
+                        widget.onUploadifyFallback();
+                    }
+                }, 1000);
+            }
         });
 
         var allMessageIds = this.list.children('.js-message').map(function () { return parseInt($(this).data('id'), 10); }).toArray();
@@ -61,9 +78,15 @@ can.Control('ChatWidget', {
     },
 
     '.js-message-input keypress': function (el, ev) {
-        if (ev.ctrlKey && (ev.key == 'Enter' || ev.keyCode == 13 || ev.keyCode == 10)) {
-            el.closest('form').submit();
+        if (ev.key == 'Enter' || ev.keyCode == 13 || ev.keyCode == 10) {
+            if (!ev.shiftKey) {
+                ev.preventDefault();
+                el.closest('form').submit();
+                return false;
+            }
         }
+
+        return true;
     },
 
     '.js-emoticon click': function (el, ev) {
@@ -110,6 +133,32 @@ can.Control('ChatWidget', {
 
         var beforeMessageId = parseInt(el.data('before-message-id'), 10);
         this.fetchPreviousMessages(beforeMessageId);
+    },
+
+    '.js-uploadify-form submit': function (el, ev) {
+        ev.preventDefault();
+
+        if (!el.find('#imageMessageInput').val()) {
+            return;
+        }
+
+        var widget = this;
+        el.ajaxSubmit({
+            success: function (res) {
+                widget.onSuccessfulMessage(res);
+                if (res.success) {
+                    el[0].reset();
+                    el.find('.file-input-name').text('');
+                }
+            }
+        });
+    },
+
+    onUploadifyFallback: function () {
+        this.sendImageButton.removeClass('hidden');
+        this.imageMessageInput.uploadify('destroy');
+        this.imageMessageInput = this.element.find('#imageMessageInput');
+        this.imageMessageInput.bootstrapFileInput();
     },
 
     sendAddMessageRequest: function (message) {
