@@ -142,4 +142,7 @@ services:
         calls:
             - [setContainer, ["@service_container"]]
 
+    vich_uploader.namer_slugify_origname:
+        class: AppBundle\Uploader\Namer\SluggedOrignameNamer
+        arguments: ["@cocur_slugify"]
 

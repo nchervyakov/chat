@@ -260,7 +260,7 @@ vich_uploader:
             inject_on_load:     false
             delete_on_update:   true
             delete_on_remove:   true
-            namer:              vich_uploader.namer_origname
+            namer:              vich_uploader.namer_slugify_origname
 
         emoticon:
             uri_prefix:         /images/emoticons
@@ -275,7 +275,7 @@ vich_uploader:
             inject_on_load:     false
             delete_on_update:   true
             delete_on_remove:   true
-            namer:              vich_uploader.namer_origname
+            namer:              vich_uploader.namer_slugify_origname
 
 #jms_security_extra:
 #    # Whether you want to secure all services (true), or only secure specific

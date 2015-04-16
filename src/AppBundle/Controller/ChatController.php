@@ -183,7 +183,12 @@ class ChatController extends Controller
         /** @var UploadedFile $file */
         $file = $request->files->get('Filedata');
 
-        if ($file->isValid() && in_array($file->getClientOriginalExtension(), ['jpg', 'jpeg', 'png', 'gif'])) {
+        if ($file->isValid()) {
+            $allowedFormats = ['jpg', 'jpeg', 'png', 'gif'];
+
+            if (!in_array(strtolower($file->getClientOriginalExtension()), $allowedFormats)) {
+                throw new BadRequestHttpException("Invalid file format. The following formats are allowed: " . implode(', ', $allowedFormats));
+            }
             $uploadedFile = $file;
         }
 
