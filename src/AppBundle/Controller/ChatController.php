@@ -163,11 +163,6 @@ class ChatController extends Controller
      */
     public function addImageMessageAction(User $companion, Request $request)
     {
-//        if (!$request->getSession()->isStarted() && $request->query->get('PHPSESSID')) {
-//            $request->getSession()->setId($request->query->get('PHPSESSID'));
-//            $request->getSession()->start();
-//        }
-       dump($request->getSession());
         if (!$this->isGranted('ROLE_MODEL') && !$this->isGranted('ROLE_CLIENT')) {
             throw new AccessDeniedHttpException();
         }
