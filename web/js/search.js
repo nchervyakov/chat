@@ -76,7 +76,6 @@ can.Control('SearchWidget', {
             }
         }).success(function (res) {
             widget.removeLoader();
-            widget.isLoading = false;
 
             if (res.html) {
                 widget.pagesContainer.append(res.html);
@@ -92,9 +91,11 @@ can.Control('SearchWidget', {
                 if (res.page >= res.pageCount) {
                     widget.page = 0;
                     widget.isLoadingOffline = true;
-                    widget.loadPageIfNeeded();
+                    setTimeout(function () { widget.loadPageIfNeeded(); }, 0);
                 }
             }
+
+            widget.isLoading = false;
         });
     }
 });
