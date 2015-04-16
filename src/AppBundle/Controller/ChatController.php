@@ -277,15 +277,20 @@ class ChatController extends Controller
             }
         }
 
-        return new JsonResponse([
+        $responseData = [
             'messages' => $this->renderView(':Chat:_messages.html.twig', ['messages' => $latestMessages]),
             'latestMessageId' => $latestMessageId,
             'coins' => number_format($user->getCoins(), 2, '.', ''),
-            'stat_html' => $this->renderView(':Chat:_chat_stats.html.twig', [
+        ];
+
+        if ($conversation) {
+            $responseData['stat_html'] = $this->renderView(':Chat:_chat_stats.html.twig', [
                 'conversation' => $conversation,
                 'messages' => $latestMessages
-            ]),
-        ]);
+            ]);
+        }
+
+        return new JsonResponse($responseData);
     }
 
     /**

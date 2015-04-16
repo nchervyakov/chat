@@ -1,4 +1,4 @@
-{%- if messages is defined -%}
+{%- if messages is defined -%}{% dump(conversation.seconds) %}
     {{ conversation.seconds|date_interval }}
     {%- if is_granted('ROLE_MODEL') %}
         = ${{ conversation.modelEarnings|number_format(2) }}

@@ -52,6 +52,7 @@ class UserManager extends ContainerAware
             }
 
         } catch (\Exception $e) {
+            $this->container->get('logger')->error('Cannot load FB photo "' . $profilePicture . '"', ['exception' => $e]);
         }
 
         return null;
