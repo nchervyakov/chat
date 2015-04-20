@@ -43,7 +43,10 @@ class ChatController extends Controller
         $params = ['user' => $user];
 
         $userRepo = $this->getDoctrine()->getRepository('AppBundle:User');
-        $params['companions'] = $userRepo->findUserCompanions($user);
+        $companions = $userRepo->findUserCompanions($user);
+        $params['companions'] = $companions;
+        $params['companions_conversations'] = $this->getDoctrine()->getManager()->getRepository('AppBundle:Conversation')
+            ->findUserConversationsByCompanions($user, $companions);
 
         return $this->render(':Chat:index.html.twig', $params);
     }
@@ -95,6 +98,8 @@ class ChatController extends Controller
 
         $userRepo = $this->getDoctrine()->getRepository('AppBundle:User');
         $params['companions'] = array_merge($params['companions'], $userRepo->findUserCompanions($user, $companion));
+        $params['companions_conversations'] = $this->getDoctrine()->getManager()->getRepository('AppBundle:Conversation')
+            ->findUserConversationsByCompanions($user, $params['companions']);
 
         return $this->render(':Chat:index.html.twig', $params);
     }
@@ -355,6 +360,35 @@ class ChatController extends Controller
         ]);
     }
 
+    /**
+     * @Route("/{companion_id}/mark-messages-read", name="chat_mark_messages_read", methods={"POST"})
+     * @ParamConverter("companion", class="AppBundle:User", options={"id": "companion_id"})
+     * @param User $companion
+     * @param Request $request
+     * @return JsonResponse|Response
+     */
+    public function markMessagesReadAction(User $companion, Request $request)
+    {
+        if (!$this->get('app.request_access_evaluator')->canChatWith($companion)) {
+            throw new AccessDeniedHttpException();
+        }
+
+        $messageIds = $request->request->get('messageIds');
+
+        if (!is_array($messageIds) || empty($messageIds)) {
+            throw new BadRequestHttpException("Empty Ids");
+        }
+
+        /** @var User $user */
+        $user = $this->getUser();
+        $conversationRepo = $this->getDoctrine()->getRepository('AppBundle:Conversation');
+        $conversation = $conversationRepo->getByUsers($user, $companion);
+
+        $this->get('app.conversation')->markConversationMessagesSeenById($conversation, $user, $messageIds);
+        $this->get('app.conversation')->calculateWhoSeen($conversation);
+
+        return new JsonResponse(['success' => true]);
+    }
 
     /**
      * @param Conversation $conversation

@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use AppBundle\Model\ModelSearch;
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 
@@ -90,18 +91,46 @@ class UserRepository extends EntityRepository
     /**
      * @param User $user
      * @param User $companion
+     * @param bool $withConversations
      * @return User[]
      */
-    public function findUserCompanions(User $user, User $companion = null)
+    public function findUserCompanions(User $user, User $companion = null, $withConversations = false)
     {
+        $qb = $this->createUserFriendsQueryBuilder($user, $companion);
+
+        if ($withConversations) {
+            $qb->addSelect('c');
+        }
+
         /** @var User[] $result */
-        $result = $this->createUserFriendsQueryBuilder($user, $companion)->getQuery()->execute();
+        $result = $qb->getQuery()->execute();
         foreach ($result as $key => $item) {
             if ($item->getId() == $user->getId()) {
                 unset($result[$key]);
                 //break;
             }
         }
+        return $result;
+    }
+
+    /**
+     * @param User $user
+     * @param User $companion
+     * @param bool $withUsers
+     * @return User[]
+     */
+    public function findUserConversations(User $user, User $companion = null, $withUsers = false)
+    {
+        $qb = $this->createUserConversationsQueryBuilder($user, $companion, $withUsers);
+
+        if ($withUsers) {
+            $qb->addSelect('client')
+                ->addSelect('model');
+        }
+
+        /** @var Conversation[] $result */
+        $result = $qb->getQuery()->execute();
+
         return $result;
     }
 
@@ -138,9 +167,10 @@ class UserRepository extends EntityRepository
     /**
      * @param User $user
      * @param User $companion
+     * @param bool $withUsers
      * @return \Doctrine\ORM\QueryBuilder
      */
-    public function createUserConversationsQueryBuilder(User $user, User $companion = null)
+    public function createUserConversationsQueryBuilder(User $user, User $companion = null, $withUsers = false)
     {
         $field = $user->hasRole('ROLE_CLIENT') ? 'c.client' : 'c.model';
 
@@ -151,6 +181,11 @@ class UserRepository extends EntityRepository
             ->orderBy('c.lastMessageDate', 'DESC')
             ->setParameter('user', $user)
         ;
+
+        if ($withUsers) {
+            $qb->join('c.client', 'client');
+            $qb->join('c.model', 'model');
+        }
 
         if ($companion) {
             $qb->andWhere($field . ' != :companion')->setParameter('companion', $companion);

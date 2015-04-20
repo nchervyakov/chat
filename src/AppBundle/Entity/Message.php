@@ -85,6 +85,18 @@ abstract class Message
      */
     private $author;
 
+    /**
+     * @var bool
+     * @ORM\Column(name="is_seen_by_client", type="boolean", options={"default": 0})
+     */
+    private $seenByClient = false;
+
+    /**
+     * @var bool
+     * @ORM\Column(name="is_seen_by_model", type="boolean", options={"default": 0})
+     */
+    private $seenByModel = false;
+
     function __construct($content = null)
     {
         $this->content = $content;
@@ -270,5 +282,98 @@ abstract class Message
     public function getDeletedByUser()
     {
         return $this->deletedByUser;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isSeenByClient()
+    {
+        return $this->seenByClient;
+    }
+
+    /**
+     * @param boolean $seenByClient
+     * @return $this
+     */
+    public function setSeenByClient($seenByClient = true)
+    {
+        $this->seenByClient = $seenByClient;
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isSeenByModel()
+    {
+        return $this->seenByModel;
+    }
+
+    /**
+     * @param boolean $seenByModel
+     * @return $this
+     */
+    public function setSeenByModel($seenByModel = true)
+    {
+        $this->seenByModel = $seenByModel;
+
+        return $this;
+    }
+
+    /**
+     * @param bool $seen
+     * @return $this|void
+     */
+    public function setSeenByAuthor($seen = true)
+    {
+        if (!$this->author) {
+            return $this;
+        }
+
+        $this->setSeenByUser($this->author, $seen);
+        return $this;
+    }
+
+    /**
+     * @param User $user
+     * @param bool $seen
+     * @return $this
+     */
+    public function setSeenByUser(User $user, $seen = true)
+    {
+        if (!$this->conversation) {
+            return $this;
+        }
+
+        if ($user->hasRole('ROLE_CLIENT') && $this->conversation->getClient() === $user) {
+            $this->setSeenByClient($seen);
+
+        } else if ($user->hasRole('ROLE_MODEL') && $this->conversation->getModel() === $user) {
+            $this->setSeenByModel($seen);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param User $user
+     * @return bool
+     */
+    public function isSeenByUser(User $user = null)
+    {
+        if ($user === null || !$this->conversation) {
+            return false;
+        }
+
+        if ($user->hasRole('ROLE_CLIENT') && $this->conversation->getClient() === $user) {
+            return $this->seenByClient;
+
+        } else if ($user->hasRole('ROLE_MODEL') && $this->conversation->getModel() === $user) {
+            return $this->seenByModel;
+        }
+
+        return false;
     }
 }

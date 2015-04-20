@@ -113,6 +113,18 @@ class Conversation
      */
     private $stalePaymentInfo = true;
 
+    /**
+     * @var int
+     * @ORM\Column(name="client_unseen_messages", type="integer", options={"default": 0})
+     */
+    private $clientUnseenMessages = 0;
+
+    /**
+     * @var int
+     * @ORM\Column(name="model_unseen_messages", type="integer", options={"default": 0})
+     */
+    private $modelUnseenMessages = 0;
+
     function __construct()
     {
 //        $this->messages = new ArrayCollection();
@@ -573,5 +585,59 @@ class Conversation
         $this->stalePaymentInfo = $stalePaymentInfo;
 
         return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getClientUnseenMessages()
+    {
+        return $this->clientUnseenMessages;
+    }
+
+    /**
+     * @param int $clientUnseenMessages
+     * @return $this
+     */
+    public function setClientUnseenMessageCount($clientUnseenMessages)
+    {
+        $this->clientUnseenMessages = $clientUnseenMessages;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getModelUnseenMessages()
+    {
+        return $this->modelUnseenMessages;
+    }
+
+    /**
+     * @param int $modelUnseenMessages
+     * @return $this
+     */
+    public function setModelUnseenMessageCount($modelUnseenMessages)
+    {
+        $this->modelUnseenMessages = $modelUnseenMessages;
+
+        return $this;
+    }
+
+    /**
+     * @param User $user
+     * @return int
+     */
+    public function getUserUnseenMessageCount(User $user)
+    {
+        if ($user->hasRole('ROLE_CLIENT') && $this->getClient()->getId() === $user->getId()) {
+            return $this->getClientUnseenMessages();
+
+        } else if ($user->hasRole('ROLE_MODEL') && $this->getModel()->getId() === $user->getId()) {
+            return $this->getModelUnseenMessages();
+        }
+
+        return 0;
     }
 }

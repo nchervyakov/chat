@@ -13,6 +13,7 @@ namespace AppBundle\Conversation;
 use AppBundle\Entity\Conversation;
 use AppBundle\Entity\ConversationInterval;
 use AppBundle\Entity\Message;
+use AppBundle\Entity\MessageRepository;
 use AppBundle\Entity\User;
 use AppBundle\Exception\ClientNotAgreedToChatException;
 use AppBundle\Exception\NotEnoughMoneyException;
@@ -62,6 +63,7 @@ class ConversationService extends ContainerAware
 
             $conversation->addMessage($message);
             $message->setConversation($conversation);
+            $message->setSeenByAuthor();
 
             $prevMessage = $this->getConversationLastMessage($conversation, $message);
 
@@ -96,6 +98,7 @@ class ConversationService extends ContainerAware
             $em->flush();
             $em->commit();
 
+            $this->calculateWhoSeen($conversation);
             $this->estimateConversation($conversation);
 
         } catch (\Exception $e) {
@@ -370,6 +373,58 @@ class ConversationService extends ContainerAware
         $coinService = $this->container->get('app.coins');
         foreach ($result as $interval) {
             $coinService->payConversationInterval($interval);
+        }
+    }
+
+    /**
+     * @param Conversation $conversation
+     * @param bool $flush
+     * @return Conversation
+     */
+    public function calculateWhoSeen(Conversation $conversation, $flush = true)
+    {
+        $em = $this->getManager();
+        $notSeenByClientResult = $em->createQuery("SELECT COUNT(m) s FROM AppBundle:Message m JOIN m.conversation c "
+                . "WHERE c = :conversation AND m.seenByClient = FALSE")
+            ->execute(['conversation' => $conversation], Query::HYDRATE_SCALAR);
+
+        $notSeenByModelResult = $em->createQuery("SELECT COUNT(m) s FROM AppBundle:Message m JOIN m.conversation c "
+                . "WHERE c = :conversation AND m.seenByModel = FALSE")
+            ->execute(['conversation' => $conversation], Query::HYDRATE_SCALAR);
+
+        $notSeenByClient = (int) $notSeenByClientResult[0]['s'];
+        $notSeenByModel = (int) $notSeenByModelResult[0]['s'];
+
+        $conversation->setClientUnseenMessageCount($notSeenByClient);
+        $conversation->setModelUnseenMessageCount($notSeenByModel);
+
+        if ($flush) {
+            $this->getManager()->flush();
+        }
+
+        return $conversation;
+    }
+
+    /**
+     * @param Conversation $conversation
+     * @param User $user
+     * @param array $messageIds
+     * @param bool $seen
+     * @param bool $flush
+     */
+    public function markConversationMessagesSeenById(Conversation $conversation, User $user,
+                                                     array $messageIds, $seen = true, $flush = true)
+    {
+        /** @var MessageRepository $messageRepository */
+        $messageRepository = $this->getManager()->getRepository('AppBundle:Message');
+        $messages = $messageRepository->getConversationMessagesById($conversation, $messageIds);
+
+        foreach ($messages as $message) {
+            $message->setSeenByUser($user, $seen);
+        }
+
+        if ($flush) {
+            $this->getManager()->flush();
         }
     }
 }

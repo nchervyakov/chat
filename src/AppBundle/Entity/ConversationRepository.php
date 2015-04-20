@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -70,5 +71,50 @@ class ConversationRepository extends EntityRepository
     protected function reorderUsersByRoles(User $user1, User $user2)
     {
         return $user1->hasRole('ROLE_CLIENT') ? [$user1, $user2] : [$user2, $user1];
+    }
+
+    /**
+     * @param User $user
+     * @param array|User[] $companions
+     * @return array
+     */
+    public function findUserConversationsByCompanions(User $user, $companions)
+    {
+        $companionIds = [];
+        foreach ($companions as $companion) {
+            $companionIds[] = $companion->getId();
+        }
+
+        if ($user->hasRole('ROLE_CLIENT')) {
+            $field = 'c.client';
+            $oppositeField = 'c.model';
+            $accessor = 'getModel';
+
+        } else {
+            $field = 'c.model';
+            $oppositeField = 'c.client';
+            $accessor = 'getClient';
+        }
+
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('c')
+            ->from('AppBundle\\Entity\\Conversation', 'c')
+            ->join($oppositeField, 'ou')
+            ->where($field . ' = :user')
+            ->andWhere('ou.id IN (:companion_ids)')
+            ->orderBy('c.lastMessageDate', 'DESC')
+            ->setParameter('user', $user)
+            ->setParameter('companion_ids', $companionIds, Connection::PARAM_INT_ARRAY)
+        ;
+
+        /** @var Conversation[] $conversations */
+        $conversations = $qb->getQuery()->execute();
+
+        $result = [];
+        foreach ($conversations as $conversation) {
+            $result[$conversation->$accessor()->getId()] = $conversation;
+        }
+
+        return $result;
     }
 }

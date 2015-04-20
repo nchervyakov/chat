@@ -26,7 +26,7 @@ can.Control('ChatWidget', {
         this.imageMessageInput = this.element.find('#imageMessageInput');
         this.sendImageButton = this.element.find('.js-send-image-btn');
 
-        var widget = this;
+        //var widget = this;
 
         this.emoticonLink.popover({
             container: 'body',
@@ -70,6 +70,9 @@ can.Control('ChatWidget', {
         this.fetchNewMessages();
 
         this.fetchingPrevMessages = false;
+
+        this.scrollChatToBottom();
+        this.markMessagesSeen(5000);
     },
 
     '.js-message-form submit': function (el, ev) {
@@ -78,6 +81,7 @@ can.Control('ChatWidget', {
             return;
         }
         this.sendAddMessageRequest(this.inputElement.val());
+        ion.sound.play("snap");
     },
 
     '.js-message-input keypress': function (el, ev) {
@@ -199,6 +203,8 @@ can.Control('ChatWidget', {
                 this.statsBlock.html(res.stat_html);
             }
 
+            this.inputElement.focus();
+            this.markMessagesSeen(5000);
             App.updateHeaderCoins(res.coins);
 
         } else {
@@ -247,7 +253,7 @@ can.Control('ChatWidget', {
         list.find('.no-messages').remove();
         list.append(messagesHtml);
         this.inputElement.val('');
-        this.inputElement.focus();
+        //this.inputElement.focus();
         this.scrollChatToBottom();
     },
 
@@ -279,11 +285,13 @@ can.Control('ChatWidget', {
             if (res.messages && res.latestMessageId > widget.latestMessageId) {
                 widget.addNewMessages(res.messages);
                 widget.latestMessageId = res.latestMessageId;
+                ion.sound.play("button_tiny");
             }
             if (res.stat_html) {
                 widget.statsBlock.html(res.stat_html);
             }
 
+            widget.markMessagesSeen(5000);
             App.updateHeaderCoins(res.coins);
         });
     },
@@ -310,7 +318,7 @@ can.Control('ChatWidget', {
         });
     },
 
-    onUploadImageSuccess: function(file, data, response) {
+    onUploadImageSuccess: function(file, data/*, response*/) {
         var res = JSON.parse(data);
         if (res) {
             this.onSuccessfulMessage(res);
@@ -319,6 +327,32 @@ can.Control('ChatWidget', {
 
     onUploadImageError: function(file, errorCode, errorMsg, errorString) {
         alert('The file ' + file.name + ' could not be uploaded: ' + errorString);
+    },
+
+    markMessagesSeen: function (milliseconds) {
+        var widget = this,
+            remover, messages, messageIds;
+        milliseconds = milliseconds || 0;
+        messages = widget.element.find('.chat .message.unseen').not('.marking-unseen');
+        messages.addClass('marking-unseen');
+
+        remover = function () {
+            messages.removeClass('unseen');
+            messages.removeClass('marking-unseen');
+
+            messageIds = messages.map(function () { return $(this).data('id'); }).toArray();
+
+            if (messageIds.length) {
+                $.ajax(Routing.generate('chat_mark_messages_read', {companion_id: widget.companionId}), {
+                    type: 'POST',
+                    data: {messageIds: messageIds},
+                    timeout: 30000
+                }).success(function (res) {
+                });
+            }
+        };
+
+        window.setTimeout(remover, milliseconds);
     },
 
     destroy: function () {

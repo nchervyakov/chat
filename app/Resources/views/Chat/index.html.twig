@@ -23,6 +23,8 @@
 
 {% block javascripts %}
     {{ parent() }}
+    <script type="text/javascript" src="{{ asset('js/vendor/ion.sound-3.0.0/ion.sound.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/ion_sound.config.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/vendor/jquery.form.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/vendor/jquery.uploadify.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/chat.js') }}"></script>
@@ -61,24 +63,36 @@
         <div class="col-lg-3">
             <div class="well bs-component chat-friends">
                 <h3>{{ 'chat_page.title'|trans }}</h3>
-                {% if companions %}
-                    <ul class="friend-list">
-                    {% for companion in companions %}
-                        <li class="friend">
-                            <a href="{{ path('chat_show', {"companion_id": companion.id}) }}" class="clearfix">
-                                <span class="photo">
-                                    {% if companion.hasThumbnail %}
-                                        <img src="{{ vich_uploader_asset(companion.thumbnail, 'file', 'AppBundle\\Entity\\UserPhoto')|imagine_filter('user_message_thumb') }}" alt="{{ companion.fullName }}"/>
-                                    {% endif %}
-                                </span>
-                                <span class="description">{{ companion.fullName }}, {{ companion.age }}</span>
-                            </a>
-                        </li>
-                    {% endfor %}
-                    </ul>
-                {% else %}
-                    <p>{{ 'chat_page.no_companions'|trans }}</p>
-                {% endif %}
+                <div class="friends-container">
+                    {% if companions %}
+                        <ul class="friend-list">
+                        {% for companion in companions %}
+                            {% if companions_conversations is defined and companions_conversations[companion.id] is defined %}
+                                {% set companionConversation = companions_conversations[companion.id] %}
+                            {% endif %}
+                            <li class="friend {% if companionConversation is defined and conversation is defined and companionConversation == conversation %}current{% endif %}"
+                                    data-companion-id="{{ companion.id }}">
+                                <a href="{{ path('chat_show', {"companion_id": companion.id}) }}" class="clearfix">
+                                    <span class="photo">
+                                        {% if companion.hasThumbnail %}
+                                            <img src="{{ vich_uploader_asset(companion.thumbnail, 'file', 'AppBundle\\Entity\\UserPhoto')|imagine_filter('user_message_thumb') }}" alt="{{ companion.fullName }}"/>
+                                        {% endif %}
+                                        {% if companionConversation is defined %}
+                                            {% set companionUnreadMessageCount = companionConversation.getUserUnseenMessageCount(app.user) %}
+                                            {% if companionUnreadMessageCount > 0 %}
+                                                <span class="label label-primary unread-messages-label">{{ companionUnreadMessageCount }}</span>
+                                            {% endif %}
+                                        {% endif %}
+                                    </span>
+                                    <span class="description">{{ companion.fullName }}, {{ companion.age }}</span>
+                                </a>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>{{ 'chat_page.no_companions'|trans }}</p>
+                    {% endif %}
+                </div>
             </div>
         </div>
 

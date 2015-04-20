@@ -50,8 +50,8 @@ body {
 
 .chat li
 {
-    margin-bottom: 10px;
-    padding-bottom: 5px;
+    padding: 10px;
+
     border-bottom: 1px dotted #B3A9A9;
 }
 
@@ -114,6 +114,7 @@ body {
     overflow: scroll;
     overflow-y: auto;
     overflow-x: hidden;
+    padding: 5px;
 }
 
 .chat li.no-messages {
@@ -285,4 +286,40 @@ body {
 
 .chat-widget .image-message {
     padding-top: 15px;
+}
+
+@media screen and (max-width: 640px) {
+    .chat-widget .image-message a img {
+        width: 196px;
+        height: 152px;
+    }
+}
+
+.chat-widget .image-message a img {
+    max-width: 100%;
+}
+
+.chat-friends .friends-container {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.chat-widget .message {
+    -webkit-transition-duration: 2s; /* Safari */
+    transition-duration: 2s;
+    transition-property: background-color;
+}
+
+.chat-widget .message.unseen {
+    background-color: #cdf8ca;
+}
+
+.chat-friends .photo {
+    position: relative;
+}
+
+.chat-friends .unread-messages-label {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
 }

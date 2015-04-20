@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 
@@ -68,5 +69,22 @@ class MessageRepository extends EntityRepository
         return $this->getEntityManager()
             ->createQuery('SELECT m FROM AppBundle:Message m WHERE m.conversation = :conversation ORDER BY m.dateAdded DESC')
             ->setParameter('conversation', $conversation);
+    }
+
+    /**
+     * @param Conversation $conversation
+     * @param array $messageIds
+     * @return Message[]
+     */
+    public function getConversationMessagesById(Conversation $conversation, array $messageIds)
+    {
+        return $this->createQueryBuilder('m')
+            ->join('m.conversation', 'c')
+            ->where('c = :conversation')
+            ->andWhere('m.id IN (:ids)')
+            ->getQuery()
+            ->setParameter('conversation', $conversation)
+            ->setParameter('ids', $messageIds, Connection::PARAM_INT_ARRAY)
+            ->execute();
     }
 }

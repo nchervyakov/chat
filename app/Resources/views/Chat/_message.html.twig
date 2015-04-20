@@ -3,7 +3,7 @@
 {% else %}
     {% set orientation = 'right' %}
 {% endif %}
-<li class="{{ orientation }} clearfix js-message" data-id="{{ message.id }}">
+<li class="{{ orientation }} clearfix js-message message{% if not message.isSeenByUser(app.user) %} unseen{% endif %}" data-id="{{ message.id }}">
     <span class="chat-img pull-{{ orientation }}">
         <img src="{%- if message.author.thumbnail is not null and message.author.thumbnail.fileName != ''
             -%}{{ vich_uploader_asset(message.author.thumbnail, 'file', 'AppBundle\\Entity\\UserPhoto') | imagine_filter('user_message_thumb') }}
