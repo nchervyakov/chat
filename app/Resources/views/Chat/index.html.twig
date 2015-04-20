@@ -24,7 +24,7 @@
 {% block javascripts %}
     {{ parent() }}
     <script type="text/javascript" src="{{ asset('js/vendor/jquery.form.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('js/vendor/jquery.uploadify.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/vendor/jquery.uploadify.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/chat.js') }}"></script>
 {% endblock %}
 
@@ -115,7 +115,7 @@
 
                             <form action="{{ path('chat_add_image_message', {'companion_id': companion.id}) }}"
                                   class="uploadify-form js-uploadify-form" method="post"  enctype="multipart/form-data">
-                                <input type="file" class="js-image-message image-message btn btn-sm" name="Filedata" id="imageMessageInput"/>
+                                <input type="file" class="js-image-message-button image-message-button btn btn-sm" name="Filedata" id="imageMessageInput"/>
                                 <input type="submit" value="{{ 'chat_page.send_image'|trans }}" class="btn btn-default btn-sm js-send-image-btn hidden"/>
                             </form>
                         </div>

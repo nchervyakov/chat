@@ -362,6 +362,9 @@ Released under the MIT License <http://www.opensource.org/licenses/mit-license.p
 		destroy : function() {
 
 			this.each(function() {
+				if (!swfuploadify) {
+					return;
+				}
 				// Create a reference to the jQuery DOM object
 				var $this        = $(this),
 					swfuploadify = $this.data('uploadify'),

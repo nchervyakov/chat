@@ -35,29 +35,31 @@ can.Control('ChatWidget', {
             html: true
         });
 
-        this.imageMessageInput.uploadify({
-            swf: '/swf/uploadify.swf',
-            uploader: Routing.generate('chat_add_image_message', {companion_id: this.companionId}),
-            buttonText: 'Send image...',
-            queueID: 'chatUploadifyQueue',
-            formData: {
-                PHPSESSID: jQuery.cookie('PHPSESSID')
-            },
-            onUploadSuccess: this.proxy(this.onUploadImageSuccess),
-            onUploadError: this.proxy(this.onUploadImageError),
-            onFallback: this.proxy(this.onUploadifyFallback),
-            onSWFReady: function () {
-            },
-            onInit: function () {
-                var uploadifyChecker = function () {
-                    var uploadify = widget.imageMessageInput.data('uploadify');
-                    if (!uploadify.movieElement) {
-                        widget.onUploadifyFallback();
-                    }
-                };
-                setTimeout(uploadifyChecker, 1000);
-            }
-        });
+        if ($.fn.uploadify) {
+            this.imageMessageInput.uploadify({
+                swf: '/swf/uploadify.swf',
+                uploader: Routing.generate('chat_add_image_message', {companion_id: this.companionId}),
+                buttonText: 'Send image...',
+                queueID: 'chatUploadifyQueue',
+                formData: {
+                    PHPSESSID: jQuery.cookie('PHPSESSID')
+                },
+                onUploadSuccess: this.proxy(this.onUploadImageSuccess),
+                onUploadError: this.proxy(this.onUploadImageError),
+                onFallback: this.proxy(this.onUploadifyFallback),
+                onSWFReady: function () {
+                },
+                onInit: function () {
+                    //var uploadifyChecker = function () {
+                    //    var uploadify = widget.imageMessageInput.data('uploadify');
+                    //    if (!uploadify.movieElement) {
+                    //        widget.onUploadifyFallback();
+                    //    }
+                    //};
+                    //window.setTimeout(uploadifyChecker, 1000);
+                }
+            });
+        }
 
         var allMessageIds = this.list.children('.js-message').map(function () { return parseInt($(this).data('id'), 10); }).toArray();
         if (!allMessageIds.length) {
@@ -163,7 +165,7 @@ can.Control('ChatWidget', {
         this.sendImageButton.removeClass('hidden');
         this.imageMessageInput.uploadify('destroy');
         this.imageMessageInput = this.element.find('#imageMessageInput');
-        this.imageMessageInput.bootstrapFileInput();
+        //this.imageMessageInput.bootstrapFileInput();
     },
 
     sendAddMessageRequest: function (message) {
@@ -240,12 +242,18 @@ can.Control('ChatWidget', {
     },
 
     addNewMessages: function (messagesHtml) {
-        var list, messageContainer, containerHeight, listHeight;
+        var list;
         list = this.element.find('.chat');
         list.find('.no-messages').remove();
         list.append(messagesHtml);
-        this.inputElement.val('')
-            .focus();
+        this.inputElement.val('');
+        this.inputElement.focus();
+        this.scrollChatToBottom();
+    },
+
+    scrollChatToBottom: function () {
+        var list, messageContainer, containerHeight, listHeight;
+        list = this.element.find('.chat');
         messageContainer = this.element.find('.chat-messages');
         listHeight = list.outerHeight();
         containerHeight = messageContainer.height();
@@ -265,7 +273,7 @@ can.Control('ChatWidget', {
             complete: function () {
                 // Schedule new message fetching
                 var fetcher = widget.proxy(widget.fetchNewMessages);
-                widget.timer = setTimeout(fetcher, 5000);
+                widget.timer = window.setTimeout(fetcher, 5000);
             }
         }).success(function (res) {
             if (res.messages && res.latestMessageId > widget.latestMessageId) {
