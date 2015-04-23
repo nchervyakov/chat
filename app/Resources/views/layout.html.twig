@@ -106,6 +106,9 @@
                         <li>
                             <a href="{{ path("fos_user_profile_show") }}" title="{{ 'menu.go_to_account'|trans }}">{{ app.user.fullName }}</a>
                         </li>
+                        {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
+                            <li><a href="{{ path('sonata_admin_dashboard', {'_switch_user': '_exit'}) }}">Exit impersonation</a></li>
+                        {% endif %}
                         <li class="last"><a href="{{ path('fos_user_security_logout') }}" title="{{ 'menu.logout_from_the_app'|trans }}">{{ 'Logout'|trans }}</a></li>
                     </ul>
                 </div>

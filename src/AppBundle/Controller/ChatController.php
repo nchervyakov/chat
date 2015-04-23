@@ -162,12 +162,16 @@ class ChatController extends Controller
      * @param User $companion
      * @param Request $request
      * @Security("true")
-     * @Route("/{companion_id}/add-image-message", name="chat_add_image_message", methods={"POST"})
+     * @Route("/{companion_id}/add-image-message", name="chat_add_image_message", methods={"POST", "GET"})
      * @ParamConverter("companion", class="AppBundle:User", options={"id": "companion_id"})
      * @return Response|JsonResponse
      */
     public function addImageMessageAction(User $companion, Request $request)
     {
+        dump($this->isGranted('ROLE_MODEL'));
+        dump($this->isGranted('ROLE_CLIENT'));
+        dump($this->getUser());
+        dump($this->container->get('security.token_storage')->getToken());
         if (!$this->isGranted('ROLE_MODEL') && !$this->isGranted('ROLE_CLIENT')) {
             throw new AccessDeniedHttpException();
         }

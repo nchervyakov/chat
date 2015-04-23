@@ -363,6 +363,9 @@ sonata_user:
         user:
             class: AppBundle\Admin\UserAdmin
             controller: AppBundle:UserAdmin
+    impersonating:
+        route:                homepage
+        #parameters:           { path: / }
 
 lexik_maintenance:
     authorized:

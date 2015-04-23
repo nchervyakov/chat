@@ -38,6 +38,7 @@ security:
 
         # -> custom firewall for the admin area of the URL
         admin:
+            switch_user:        true
             pattern:            /admin(.*)
             context:            user
             form_login:
@@ -57,10 +58,17 @@ security:
                 domain:     ~
                 always_remember_me: true
 
+#        switch_user:
+#            switch_user: true
+#            pattern: ^/
+#            anonymous: ~
+
         secured_area:
             logout: true
+            switch_user: true
             anonymous: ~
             pattern: ^/
+            context: user
             form_login:
                 provider: fos_userbundle
                 login_path: /connect/
