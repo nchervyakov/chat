@@ -203,6 +203,7 @@ can.Control('ChatWidget', {
                 this.statsBlock.html(res.stat_html);
             }
 
+            this.inputElement.val('');
             this.inputElement.focus();
             this.markMessagesSeen(5000);
             App.updateHeaderCoins(res.coins);
@@ -252,7 +253,6 @@ can.Control('ChatWidget', {
         list = this.element.find('.chat');
         list.find('.no-messages').remove();
         list.append(messagesHtml);
-        this.inputElement.val('');
         //this.inputElement.focus();
         this.scrollChatToBottom();
     },
