@@ -62,13 +62,13 @@ sonata_user_profile:
     resource: "@SonataUserBundle/Resources/config/routing/sonata_profile_2.xml"
     prefix: /profile
 
-sonata_user_register:
-    resource: "@SonataUserBundle/Resources/config/routing/sonata_registration_2.xml"
-    prefix: /register
-
-sonata_user_change_password:
-    resource: "@SonataUserBundle/Resources/config/routing/sonata_change_password_2.xml"
-    prefix: /profile
+#sonata_user_register:
+#    resource: "@SonataUserBundle/Resources/config/routing/sonata_registration_2.xml"
+#    prefix: /register
+#
+#sonata_user_change_password:
+#    resource: "@SonataUserBundle/Resources/config/routing/sonata_change_password_2.xml"
+#    prefix: /profile
 
 #fos_user_group:
 #    resource: "@FOSUserBundle/Resources/config/routing/group.xml"

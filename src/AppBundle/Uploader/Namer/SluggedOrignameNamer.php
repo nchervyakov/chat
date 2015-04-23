@@ -35,7 +35,9 @@ class SluggedOrignameNamer implements NamerInterface
     {
         /** @var $file UploadedFile */
         $file = $mapping->getFile($object);
-
-        return uniqid().'_'.$this->slugify->slugify($file->getClientOriginalName());
+        $originalName = $file->getClientOriginalName();
+        $pathinfo = pathinfo($originalName);
+        mt_srand();
+        return uniqid().'_'.$this->slugify->slugify($pathinfo['filename']) . '.' . mb_strtolower($pathinfo['extension'], 'utf-8');
     }
 }

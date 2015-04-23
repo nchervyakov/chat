@@ -13,6 +13,7 @@
     {% stylesheets
         'css/bootstrap.css'
         'css/jquery-ui/jquery-ui.min.css'
+        'css/font-awesome.min.css'
         filter='cssrewrite'
         output='css/compiled/*.css'
     %}
@@ -91,20 +92,18 @@
             {% if app.user is not null %}
                 <div class="collapse navbar-collapse pull-right">
                     <ul class="nav navbar-nav">
-                        {% if is_granted('ROLE_USER') %}
+                        {% if is_granted('ROLE_MODEL') or is_granted('ROLE_CLIENT') %}
                             <li><a href="#" class="js-user-coins user-coins">{{ 'coins.user_coins'|trans }}: <span class="js-header-coins">{{ app.user.coins|number_format(2) }}</span></a></li>
                         {% endif %}
-
-                        {% if app.user.thumbnail is not null and app.user.thumbnail.fileName %}
-                            <li>
-                                <a href="{{ path("fos_user_profile_show") }}" class="user-photo-link">
-                                    <img src="{{ vich_uploader_asset(app.user.thumbnail, 'file', 'AppBundle\\Entity\\UserPhoto')
-                                    | imagine_filter('user_message_thumb') }}" alt="" title=""{{ app.user.fullName }} />
-                                </a>
-                            </li>
-                        {% endif %}
                         <li>
-                            <a href="{{ path("fos_user_profile_show") }}" title="{{ 'menu.go_to_account'|trans }}">{{ app.user.fullName }}</a>
+                            <a href="{{ path("fos_user_profile_show") }}" title="{{ 'menu.go_to_account'|trans }}">
+                                {% if app.user.thumbnail is not null and app.user.thumbnail.fileName %}
+                                    <span class="user-photo-link">
+                                        <img src="{{ vich_uploader_asset(app.user.thumbnail, 'file', 'AppBundle\\Entity\\UserPhoto')
+                                        | imagine_filter('user_message_thumb') }}" alt="" title=""{{ app.user.fullName }} />
+                                    </span>
+                                {% endif %}
+                                {{ app.user.fullName }}</a>
                         </li>
                         {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
                             <li><a href="{{ path('sonata_admin_dashboard', {'_switch_user': '_exit'}) }}">Exit impersonation</a></li>

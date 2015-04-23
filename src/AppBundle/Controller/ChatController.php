@@ -208,6 +208,7 @@ class ChatController extends Controller
 
         $message->setImageFile($uploadedFile);
         $this->container->get('vich_uploader.upload_handler')->upload($message, 'imageFile');
+        $this->get('app.image')->fixOrientation($message->getImageFile());
 
         if (($resp = $this->saveMessage($conversation, $message, $companion, true)) instanceof Response) {
             return $resp;

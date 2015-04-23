@@ -32,5 +32,15 @@ class FOSProfileListener extends ContainerAware
             $user->setThumbnail(null);
             $this->container->get('doctrine')->getManager()->flush();
         }
+
+        if ($user->getThumbnail()) {
+            $this->container->get('doctrine')->getManager()->flush();
+            $thumbnail = $user->getThumbnail();
+            $path = $this->container->get('vich_uploader.storage')->resolvePath($thumbnail, 'file');
+
+            if ($path && ($path = realpath($path))) {
+                $this->container->get('app.image')->fixOrientation($path);
+            }
+        }
     }
 }

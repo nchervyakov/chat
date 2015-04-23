@@ -11,6 +11,7 @@ use FOS\UserBundle\Model\UserInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -25,7 +26,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 class ProfileController extends Controller
 {
     /**
-     * @Route("/")
+     * @Route("/", name="profile_show")
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function showAction()
@@ -86,6 +87,8 @@ class ProfileController extends Controller
             $user->addPhoto($photo);
             $em->flush();
 
+            $this->get('app.image')->fixOrientation($photo->getFile());
+
             // Pregenerate thumbs
             $this->get('app.user_manager')->pregeneratePhotoThumbs($photo);
 
@@ -100,9 +103,32 @@ class ProfileController extends Controller
     }
 
     /**
+     * @Route("/delete-photo/{photo}", name="profile_delete_photo", methods={"POST"})
+     * @param UserPhoto $photo
+     * @return JsonResponse
+     */
+    public function deletePhotoAction(UserPhoto $photo)
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        if ($photo->getOwner()->getId() != $user->getId()) {
+            throw new AccessDeniedException;
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        $user->removePhoto($photo);
+        $em->remove($photo);
+        $em->flush();
+
+        return new JsonResponse(['success' => true]);
+    }
+
+    /**
      * @Route("/delete", name="profile_delete")
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @throws \Doctrine\DBAL\ConnectionException
+     * @throws \Exception
      */
     public function deleteAction(Request $request)
     {
@@ -133,7 +159,7 @@ class ProfileController extends Controller
             }
 
             $this->get('session')->invalidate();
-            $this->get('security.context')->setToken(null);
+            $this->get('security.token_storage')->setToken(null);
 
             return $this->redirectToRoute('homepage');
         }

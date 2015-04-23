@@ -118,3 +118,6 @@ coins:
 chatting:
     need_to_pay: 'To be able to chat with %model% you must agree to pay. Do you agree to pay?'
     not_enough_money: 'You do not have enough money to '
+
+user_photos:
+    remove_photo: 'Remove Photo'

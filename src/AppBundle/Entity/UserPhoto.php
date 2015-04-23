@@ -11,6 +11,7 @@ namespace AppBundle\Entity;
 
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
@@ -107,7 +108,7 @@ class UserPhoto
     /**
      * Get file
      *
-     * @return UploadedFile
+     * @return UploadedFile|File
      */
     public function getFile()
     {

@@ -21,8 +21,10 @@ class DefaultController extends Controller
             if ($checker->isGranted('ROLE_MODEL')) {
                 return $this->redirect($this->generateUrl('stat_index'));
 
-            } else {
+            } else if ($checker->isGranted('ROLE_CLIENT')) {
                 return $this->redirect($this->generateUrl('chat'));
+            } else {
+                return $this->redirect($this->generateUrl('profile_show'));
             }
         }
 

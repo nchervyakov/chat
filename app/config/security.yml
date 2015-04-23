@@ -16,7 +16,7 @@ security:
         ROLE_MODEL:       [ROLE_USER]
         ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
         SONATA:
-            - ROLE_SONATA_PAGE_ADMIN_PAGE_EDIT  # if you are using acl then this line must be commented
+#            - ROLE_SONATA_PAGE_ADMIN_PAGE_EDIT  # if you are using acl then this line must be commented
 
     # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
     providers:
@@ -57,6 +57,7 @@ security:
                 path:       /admin
                 domain:     ~
                 always_remember_me: true
+#                name:       "ADMIN_REMEMBERME"
 
 #        switch_user:
 #            switch_user: true

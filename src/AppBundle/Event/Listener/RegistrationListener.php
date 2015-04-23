@@ -136,6 +136,7 @@ class RegistrationListener extends ContainerAware
         if ($userPhoto) {
             $userPhoto->setTitle($photo['name']);
             $this->container->get('doctrine')->getManager()->flush();
+            $this->container->get('app.image')->fixOrientation($userPhoto->getFile());
         }
 
         return $userPhoto;

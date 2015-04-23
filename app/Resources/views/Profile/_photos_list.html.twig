@@ -1,7 +1,7 @@
 <div class="row user-photos">
     {% for photo in photos %}
         <div class="col-sm-6 col-md-3 user-photo">
-            <div class="thumbnail">
+            <div class="thumbnail user-photo-thumbnail">
                 <a href="{{ vich_uploader_asset(photo, 'file')|imagine_filter('user_photo_big') }}"
                         title="{{ photo.title }}" data-gallery>
                     <div class="img-wrapper">
@@ -9,6 +9,10 @@
                     </div>
                     <div class="caption">{{ photo.title }}</div>
                 </a>
+                {% if app.user == photo.owner %}
+                    <a href="#" class="remove-link js-remove-photo-link" title="{{ 'user_photos.remove_photo'|trans }}"
+                            data-photo-id="{{ photo.id }}"><i class="fa fa-remove"></i></a>
+                {% endif %}
             </div>
         </div>
     {% endfor %}

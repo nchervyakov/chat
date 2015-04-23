@@ -151,3 +151,7 @@ services:
         arguments: ["@service_container"]
         tags:
             - {name: kernel.event_subscriber}
+
+    app.image:
+        class: AppBundle\Tools\ImageTools
+        arguments: ["@liip_imagine"]

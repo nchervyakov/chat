@@ -217,6 +217,10 @@ fos_js_routing:
         - search_index
         - chat_agree_to_pay
         - coins_add
+        - profile_delete_photo
+        - profile_add_photo
+        - profile_show
+        - profile_photos
 #        - fos_user_registration_register
 
 knp_menu:
@@ -316,11 +320,11 @@ liip_imagine:
         user_photo_thumb:
             quality: 75
             filters:
-                thumbnail: { size: [252, 196], mode: outbond }
+                thumbnail: { size: [252, 196], mode: outbond, allow_upscale: true }
         user_photo_big:
             quality: 75
             filters:
-                thumbnail: { size: [800, 600], mode: outbond, allow_upscale: true }
+                thumbnail: { size: [800, 600], mode: inset,  }
         user_message_thumb:
             quality: 75
             filters:
