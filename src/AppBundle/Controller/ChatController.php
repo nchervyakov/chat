@@ -168,10 +168,6 @@ class ChatController extends Controller
      */
     public function addImageMessageAction(User $companion, Request $request)
     {
-        dump($this->isGranted('ROLE_MODEL'));
-        dump($this->isGranted('ROLE_CLIENT'));
-        dump($this->getUser());
-        dump($this->container->get('security.token_storage')->getToken());
         if (!$this->isGranted('ROLE_MODEL') && !$this->isGranted('ROLE_CLIENT')) {
             throw new AccessDeniedHttpException();
         }

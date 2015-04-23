@@ -35,6 +35,7 @@ class SessionListener extends \Symfony\Component\HttpKernel\EventListener\Sessio
 
         if (($sessId = $_POST[session_name()])) {
             $session->setId($sessId);
+            $session->start();
         }
 
         return $session;
