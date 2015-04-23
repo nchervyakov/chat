@@ -55,7 +55,7 @@ class SearchController extends Controller
                 // Save requested search parameters to session
                 $this->get('session')->set('search.model', $modelSearchModel);
             }
-             //dump($modelSearchModel);
+
             $repo = $this->getDoctrine()->getRepository('AppBundle:User');
             $qb = $repo->prepareQueryBuilderForModelSearch($modelSearchModel, 15);
             $qb->leftJoin('u.thumbnail', 'tn')->addSelect('tn');  // prefetch user thumbnails
