@@ -43,14 +43,7 @@ class ConversationService extends ContainerAware
             $this->recalculateConversationMessages($conversation);
         }
 
-        $maxFirstMessages = (int) $this->container->getParameter('chat.first_messages_limit') ?: 2;
-        $conversationMessagesCount = $this->getConversationPersonalMessagesCount($conversation);
-
-        $securityChecker = $this->container->get('security.authorization_checker');
-
-        // If client has many messages, but did not agreed to pay for chat, rise the exception.
-        $shouldPay = $securityChecker->isGranted('ROLE_CLIENT')
-                && $conversationMessagesCount >= $maxFirstMessages ? true : false;
+        $shouldPay = $this->checkCurrentUserShouldPay($conversation);
 
         if ($shouldPay && !$conversation->isClientAgreeToPay()) {
             throw new ClientNotAgreedToChatException();
@@ -70,14 +63,21 @@ class ConversationService extends ContainerAware
             if ($prevMessage/* && !$prevMessage->getFollowingInterval()*/) {
                 $conversation->setStalePaymentInfo(true);
                 $interval = $this->createConversationInterval($conversation, $message, $prevMessage);
+                if (!$shouldPay && !$conversation->isClientAgreeToPay()) {
+                    $interval->setPrice(0.0);
+                    $interval->setModelEarnings(0.0);
+                    $interval->setMinuteRate(0.0);
+                    $interval->setStatus(ConversationInterval::STATUS_PAYED);
+                }
                 $em->flush();
 
                 // If user does not have enough money and need to pay for message - throw an exception.
                 if ($interval) {
                     $user = $this->getUser();
+                    $securityChecker = $this->container->get('security.authorization_checker');
 
                     if ($shouldPay) {
-                        if ($interval->getPrice() > (double)$user->getCoins()) {
+                        if ((double)$user->getCoins() - $interval->getPrice() < 0.000001) {
                             throw new NotEnoughMoneyException();
                         }
 
@@ -349,6 +349,21 @@ class ConversationService extends ContainerAware
     }
 
     /**
+     * @param Conversation $conversation
+     * @return int
+     */
+    protected function getConversationModelMessagesCount(Conversation $conversation)
+    {
+        $em = $this->getManager();
+        $result = $em->createQuery("SELECT COUNT(m) cnt FROM AppBundle:Message m JOIN m.conversation c "
+            . "WHERE m.author = c.model AND c = :conversation")
+            ->setMaxResults(1)
+            ->execute(['conversation' => $conversation]);
+
+        return (int) $result[0]['cnt'];
+    }
+
+    /**
      * @return mixed|User
      */
     protected function getUser()
@@ -426,5 +441,19 @@ class ConversationService extends ContainerAware
         if ($flush) {
             $this->getManager()->flush();
         }
+    }
+
+    public function checkCurrentUserShouldPay(Conversation $conversation)
+    {
+        $maxFirstMessages = (int) $this->container->getParameter('chat.first_messages_limit') ?: 2;
+        $modelMessagesCount = $this->getConversationModelMessagesCount($conversation);
+
+        $securityChecker = $this->container->get('security.authorization_checker');
+
+        // If client has many messages, but did not agreed to pay for chat, rise the exception.
+        $shouldPay = $securityChecker->isGranted('ROLE_CLIENT')
+            && $modelMessagesCount >= $maxFirstMessages ? true : false;
+
+        return $shouldPay;
     }
 }

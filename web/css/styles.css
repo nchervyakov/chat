@@ -221,11 +221,13 @@ body {
 }
 
 .emoticons {
-    width: 738px;
+    /*width: 738px;*/
+    max-height: 250px;
+    overflow-y: auto;
 }
 
 .emoticon-popover {
-    width: 768px;
+    /*width: 768px;*/
     max-width: 768px;
 }
 

@@ -358,7 +358,7 @@ class ConversationInterval
     /**
      * Set minuteRate
      *
-     * @param string $minuteRate
+     * @param float $minuteRate
      * @return ConversationInterval
      */
     public function setMinuteRate($minuteRate)
@@ -371,7 +371,7 @@ class ConversationInterval
     /**
      * Get minuteRate
      *
-     * @return string 
+     * @return float
      */
     public function getMinuteRate()
     {

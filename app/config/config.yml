@@ -209,6 +209,7 @@ fos_js_routing:
         - chat
         - chat_add_message
         - chat_add_image_message
+        - chat_check_can_add_message
         - chat_show
         - chat_get_new_messages
         - chat_get_previous_messages

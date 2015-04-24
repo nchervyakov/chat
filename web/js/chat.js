@@ -211,20 +211,36 @@ can.Control('ChatWidget', {
     sendImageMessageRequest: function () {
         var widget = this,
             d = $.Deferred(),
-            el = this.element.find('.js-uploadify-form');
+            el = this.element.find('.js-uploadify-form'),
+            realSender;
 
-        el.ajaxSubmit({
-            success: this.proxy(this.onMessageResponse, d, function (res) {
-                widget.onSuccessfulMessage(res);
-                if (res.success) {
-                    el[0].reset();
-                    el.find('.file-input-name').text('');
+        realSender = function () {
+            el.ajaxSubmit({
+                success: widget.proxy(widget.onMessageResponse, d, function (res) {
+                    widget.onSuccessfulMessage(res);
+                    if (res.success) {
+                        el[0].reset();
+                        el.find('.file-input-name').remove();
+                    }
+                }),
+                error: function () {
+                    d.reject();
                 }
-            }),
-            error: function () {
-                d.reject();
+            });
+        };
+
+        $.ajax(Routing.generate('chat_check_can_add_message', {companion_id: this.companionId}), {
+            type: 'GET',
+            data: {},
+            timeout: 30000
+        }).success(function (checkRes) {
+            if (checkRes.success) {
+                realSender();
+            } else {
+                widget.proxy(widget.onMessageResponse, d, realSender)(checkRes);
             }
-        });
+
+        }).error(function () { d.reject(); });
 
         return d;
     },

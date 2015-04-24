@@ -21,6 +21,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Class ChatController
@@ -154,6 +155,48 @@ class ChatController extends Controller
         } else {
             return $this->redirectToRoute('chat', ['companion_id' => $companion->getId()]);
         }
+    }
+
+    /**
+     * @param User $companion
+     * @Route("/{companion_id}/check-can-add-message", name="chat_check_can_add_message", methods={"GET"})
+     * @ParamConverter("companion", class="AppBundle:User", options={"id": "companion_id"})
+     * @return Response|JsonResponse
+     */
+    public function checkCanAddMessageAction(User $companion)
+    {
+        if (!$this->get('app.request_access_evaluator')->canChatWith($companion)) {
+            throw new AccessDeniedHttpException();
+        }
+
+        /** @var User $user */
+        $user = $this->getUser();
+        $conversation = $this->getDoctrine()->getRepository('AppBundle:Conversation')
+            ->getByUsers($user, $companion);
+
+        if (!$conversation) {
+            throw new NotFoundHttpException;
+        }
+
+        if ($this->isGranted('ROLE_MODEL')) {
+            return new JsonResponse(['success' => true]);
+        }
+
+        $requiredMinutes = 0.5;
+        $rate = (float) $this->container->getParameter('payment.minute_rate');
+        $requirePrice = $requiredMinutes * $rate;
+        $shouldPay = $this->get('app.conversation')->checkCurrentUserShouldPay($conversation);
+
+        if ($shouldPay) {
+            if (!$conversation->isClientAgreeToPay()) {
+                return $this->createNeedToPayResponse($companion);
+
+            } else if ($user->getCoins() - $requirePrice < 0.0000001) {
+                return $this->createNotEnoughMoneyResponse();
+            }
+        }
+
+        return new JsonResponse(['success' => true]);
     }
 
     /**
@@ -411,11 +454,7 @@ class ChatController extends Controller
 
         } catch (ClientNotAgreedToChatException $ex) {
             if ($isAjax) {
-                return new JsonResponse([
-                    'error' => true,
-                    'message' => $this->get('translator')->trans('chatting.need_to_pay', ['%model%' => $companion->getFullName()]),
-                    'need_to_agree_to_pay' => true
-                ]);
+                return $this->createNeedToPayResponse($companion);
 
             } else {
                 return $this->redirectToRoute('chat', ['companion_id' => $companion->getId()]);
@@ -423,11 +462,7 @@ class ChatController extends Controller
 
         } catch (NotEnoughMoneyException $ex) {
             if ($isAjax) {
-                return new JsonResponse([
-                    'error' => true,
-                    'message' => $this->get('translator')->trans('chatting.not_enough_money'),
-                    'not_enough_money' => true
-                ]);
+                return $this->createNotEnoughMoneyResponse();
 
             } else {
                 return $this->redirectToRoute('chat', ['companion_id' => $companion->getId()]);
@@ -435,5 +470,28 @@ class ChatController extends Controller
         }
 
         return true;
+    }
+
+    protected function createNeedToPayResponse(User $companion = null)
+    {
+        $response = [
+            'error' => true,
+            'need_to_agree_to_pay' => true
+        ];
+
+        if ($companion) {
+            $response['message'] = $this->get('translator')->trans('chatting.need_to_pay', ['%model%' => $companion->getFullName()]);
+        }
+
+        return new JsonResponse($response);
+    }
+
+    protected function createNotEnoughMoneyResponse()
+    {
+        return new JsonResponse([
+            'error' => true,
+            'message' => $this->get('translator')->trans('chatting.not_enough_money'),
+            'not_enough_money' => true
+        ]);
     }
 }

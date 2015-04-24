@@ -106,16 +106,16 @@ security:
     access_control:
         #- { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
         - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/resetting, roles: IS_AUTHENTICATED_ANONYMOUSLY }
 
         # Admin login page needs to be access without credential
-        - { path: ^/admin/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/admin/logout$, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/admin/login_check$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin/login$, roles: [IS_AUTHENTICATED_ANONYMOUSLY, ROLE_USER] }
+        - { path: ^/admin/logout$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin/login_check$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
 
         # Secured part of the site
         # This config requires being logged for the whole site and having the admin role for the admin part.
         # Change these rules to adapt them to your needs
-        - { path: ^/admin/, role: [ROLE_ADMIN, ROLE_SONATA_ADMIN] }
-        - { path: ^/.*, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin/, roles: [ROLE_ADMIN, ROLE_SONATA_ADMIN] }
+        - { path: ^/.*, roles: IS_AUTHENTICATED_ANONYMOUSLY }
