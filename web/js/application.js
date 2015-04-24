@@ -10,7 +10,7 @@ var App = window.App || {};
 $.widget("custom.addCoinsDialog", $.ui.dialog, {
 });
 
-App.showAddCoinsDialog = function () {
+App.showAddCoinsDialog = function (request) {
     $('#addCoinsDialog').addCoinsDialog({
         title: 'Add coins',
         modal: true,
@@ -20,7 +20,7 @@ App.showAddCoinsDialog = function () {
                 $(this).addCoinsDialog('close')
             }
         }
-    });
+    }).data('request', request);
 };
 
 App.updateHeaderCoins = function (amount) {
@@ -54,15 +54,24 @@ can.Control('AddCoinsDialogControl', {
             },
             timeout: 10000,
             complete: function () {
-                //widget.element.closest('.ui-dialog').dialog('close');
+                widget.element.data('request', null);
             }
         }).success(function (res) {
             if (!res.success) {
                 return;
             }
+            var request = widget.element.data('request');
+
             App.updateHeaderCoins(res.amount);
+            if (request) {
+                request.copy().execute();
+            }
             $(document).trigger('coins.added', res.amount);
         });
+    },
+
+    destroy: function () {
+        this.element.data('request', null);
     }
 });
 

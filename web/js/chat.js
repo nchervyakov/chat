@@ -4,6 +4,7 @@
 * Date: 10.03.2015
 * Time: 11:02
 */
+var App = window.App || {};
 
 /**
  * Controls the chat widget
@@ -36,29 +37,30 @@ can.Control('ChatWidget', {
         });
 
         if ($.fn.uploadify) {
-            this.imageMessageInput.uploadify({
-                swf: '/swf/uploadify.swf',
-                uploader: Routing.generate('chat_add_image_message', {companion_id: this.companionId}),
-                buttonText: 'Send image...',
-                queueID: 'chatUploadifyQueue',
-                formData: {
-                    PHPSESSID: jQuery.cookie('PHPSESSID')
-                },
-                onUploadSuccess: this.proxy(this.onUploadImageSuccess),
-                onUploadError: this.proxy(this.onUploadImageError),
-                onFallback: this.proxy(this.onUploadifyFallback),
-                onSWFReady: function () {
-                },
-                onInit: function () {
-                    //var uploadifyChecker = function () {
-                    //    var uploadify = widget.imageMessageInput.data('uploadify');
-                    //    if (!uploadify.movieElement) {
-                    //        widget.onUploadifyFallback();
-                    //    }
-                    //};
-                    //window.setTimeout(uploadifyChecker, 1000);
-                }
-            });
+            //this.imageMessageInput.uploadify({
+            //    swf: '/swf/uploadify.swf',
+            //    uploader: Routing.generate('chat_add_image_message', {companion_id: this.companionId}),
+            //    buttonText: 'Send image...',
+            //    queueID: 'chatUploadifyQueue',
+            //    formData: {
+            //        PHPSESSID: jQuery.cookie('PHPSESSID')
+            //    },
+            //    onUploadSuccess: this.proxy(this.onUploadImageSuccess),
+            //    onUploadError: this.proxy(this.onUploadImageError),
+            //    onFallback: this.proxy(this.onUploadifyFallback),
+            //    onSWFReady: function () {
+            //    },
+            //    onInit: function () {
+            //        //var uploadifyChecker = function () {
+            //        //    var uploadify = widget.imageMessageInput.data('uploadify');
+            //        //    if (!uploadify.movieElement) {
+            //        //        widget.onUploadifyFallback();
+            //        //    }
+            //        //};
+            //        //window.setTimeout(uploadifyChecker, 1000);
+            //    }
+            //});
+            this.onUploadifyFallback();
         }
 
         var allMessageIds = this.list.children('.js-message').map(function () { return parseInt($(this).data('id'), 10); }).toArray();
@@ -80,8 +82,11 @@ can.Control('ChatWidget', {
         if (!$.trim(this.inputElement.val())) {
             return;
         }
-        this.sendAddMessageRequest(this.inputElement.val());
+
         ion.sound.play("snap");
+
+        this.createMessageRequest(this.proxy(this.sendAddMessageRequest, this.inputElement.val())).execute();
+        //this.sendAddMessageRequest(this.inputElement.val());
     },
 
     '.js-message-input keypress': function (el, ev) {
@@ -131,9 +136,6 @@ can.Control('ChatWidget', {
 
     '{document} coins.added': function (el, ev, amount) {
         App.updateHeaderCoins(amount);
-        if (this.inputElement.val()) {
-            this.sendAddMessageRequest(this.inputElement.val());
-        }
     },
 
     '.js-previous-messages-link click': function (el, ev) {
@@ -153,23 +155,84 @@ can.Control('ChatWidget', {
             return;
         }
 
-        var widget = this;
+        this.createMessageRequest(this.proxy(this.sendImageMessageRequest)).execute();
+        //this.sendImageMessageRequest();
+    },
+
+    createMessageRequest: function (callback, deferred) {
+
+        var defer = deferred || $.Deferred(),
+            widget = this,
+            request,
+            exec = false;
+
+        var execute = function () {
+            if (exec) {
+                return defer;
+            }
+
+            var d = callback();
+            exec = true;
+            d.done(function (res, success) {
+                res = res || {};
+
+                if (res.success) {
+                    if ($.isFunction(success)) {
+                        success(res);
+                    }
+                    defer.resolve();
+                } else {
+                    if (res.need_to_agree_to_pay) {
+                        widget.showAgreeToPayDialog(res.message, request);
+                    } else if (res.not_enough_money) {
+                        App.showAddCoinsDialog(request);
+                    }
+                }
+
+            }).fail(function () {
+                defer.reject();
+            });
+
+            return defer;
+        };
+
+        var copy = function () {
+            return widget.createMessageRequest(callback, defer);
+        };
+
+        request = {
+            execute: execute,
+            copy: copy
+        };
+
+        return request;
+    },
+
+    sendImageMessageRequest: function () {
+        var widget = this,
+            d = $.Deferred(),
+            el = this.element.find('.js-uploadify-form');
+
         el.ajaxSubmit({
-            success: function (res) {
+            success: this.proxy(this.onMessageResponse, d, function (res) {
                 widget.onSuccessfulMessage(res);
                 if (res.success) {
                     el[0].reset();
                     el.find('.file-input-name').text('');
                 }
+            }),
+            error: function () {
+                d.reject();
             }
         });
+
+        return d;
     },
 
     onUploadifyFallback: function () {
         this.sendImageButton.removeClass('hidden');
         this.imageMessageInput.uploadify('destroy');
         this.imageMessageInput = this.element.find('#imageMessageInput');
-        //this.imageMessageInput.bootstrapFileInput();
     },
 
     sendAddMessageRequest: function (message) {
@@ -177,7 +240,9 @@ can.Control('ChatWidget', {
             return;
         }
 
-        var widget = this;
+        var widget = this,
+            d = $.Deferred();
+
         $.ajax(Routing.generate('chat_add_message', {companion_id: this.companionId}), {
             type: 'POST',
             data: {
@@ -190,7 +255,14 @@ can.Control('ChatWidget', {
             complete: function () {
                 widget.submitButton.removeAttr('disabled');
             }
-        }).success(this.proxy(this.onSuccessfulMessage));
+        }).success(this.proxy(this.onMessageResponse, d, this.proxy(this.onSuccessfulMessage)))
+          .error(function () { d.reject(); });
+
+        return d;
+    },
+
+    onMessageResponse: function (d, success, res) {
+        d.resolve(res, success);
     },
 
     onSuccessfulMessage: function (res) {
@@ -208,16 +280,17 @@ can.Control('ChatWidget', {
             this.markMessagesSeen(5000);
             App.updateHeaderCoins(res.coins);
 
-        } else {
-            if (res.need_to_agree_to_pay) {
-                this.showAgreeToPayDialog(res.message);
-            } else if (res.not_enough_money) {
-                App.showAddCoinsDialog();
-            }
         }
+        //else {
+        //    if (res.need_to_agree_to_pay) {
+        //        this.showAgreeToPayDialog(res.message);
+        //    } else if (res.not_enough_money) {
+        //        App.showAddCoinsDialog();
+        //    }
+        //}
     },
 
-    showAgreeToPayDialog: function (message) {
+    showAgreeToPayDialog: function (message, request) {
         var widget = this,
             dialog = $('<div id="agreeToPayDialog"></div>').html(message).appendTo('body');
         dialog.dialog({
@@ -225,7 +298,7 @@ can.Control('ChatWidget', {
             resizable: false,
             buttons: {
                 "Pay": function () {
-                    widget.sendAgreeToPayRequest();
+                    widget.sendAgreeToPayRequest(request);
                     $(this).dialog('close');
                 },
                 "Cancel": function () {
@@ -235,15 +308,19 @@ can.Control('ChatWidget', {
         });
     },
 
-    sendAgreeToPayRequest: function () {
+    sendAgreeToPayRequest: function (request) {
         var widget = this;
         $.ajax(Routing.generate('chat_agree_to_pay', {companion_id: this.companionId}), {
             type: 'POST',
             data: {},
             timeout: 30000
         }).success(function (res) {
-            if (res.success && widget.inputElement.val()) {
-                widget.sendAddMessageRequest(widget.inputElement.val());
+            if (res.success/* && widget.inputElement.val()*/) {
+                if (!request) {
+                    widget.sendAddMessageRequest(widget.inputElement.val());
+                } else {
+                    request.copy().execute();
+                }
             }
         });
     },
@@ -313,7 +390,6 @@ can.Control('ChatWidget', {
             if (res.messages) {
                 widget.element.find('.js-previous-messages-block').remove();
                 widget.list.prepend(res.messages);
-                console.log(res);
             }
         });
     },
@@ -321,7 +397,7 @@ can.Control('ChatWidget', {
     onUploadImageSuccess: function(file, data/*, response*/) {
         var res = JSON.parse(data);
         if (res) {
-            this.onSuccessfulMessage(res);
+            this.onMessageResponse(res);
         }
     },
 
