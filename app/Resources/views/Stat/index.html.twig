@@ -23,7 +23,13 @@
                     <tbody>
                         {% for conversation in pagination %}
                             <tr>
-                                <td><a href="{{ path('chat_show', {"companion_id": conversation.client.id}) }}">{{ conversation.client.fullName }}</a></td>
+                                <td>
+                                {% if conversation.client is not null  %}
+                                    <a href="{{ path('chat_show', {"companion_id": conversation.client.id}) }}">{{ conversation.client.fullName }}</a>
+                                {% else %}
+                                    &mdash;
+                                {% endif %}
+                                </td>
                                 {#<td>{{ conversation.notPaidTimeInterval|date('%H:%I:%S') }}</td>#}
                                 {#<td>{{ conversation.paidTimeInterval|date('%H:%I:%S') }}</td>#}
                                 <td class="text-right">{{ conversation.seconds|date_interval }}</td>
