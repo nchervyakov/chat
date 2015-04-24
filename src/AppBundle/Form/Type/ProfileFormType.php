@@ -52,7 +52,9 @@ class ProfileFormType extends BaseType
             $user = $event->getData();
             /** @var User $user */
             if ($user) {
-                $user->setUsername($user->getEmail());
+                if (!$user->getUsername() || !$user->getId()) {
+                    $user->setUsername($user->getEmail());
+                }
                 $um->updateCanonicalFields($user);
             }
         });

@@ -58,7 +58,9 @@ class RegistrationFormType extends BaseType
             $user = $event->getData();
             /** @var \AppBundle\Entity\User $user */
             if ($user) {
-                $user->setUsername($user->getEmail());
+                if (!$user->getUsername() || !$user->getId()) {
+                    $user->setUsername($user->getEmail());
+                }
                 if (!$user->getPassword()) { // Set password as empty string for users without password (everyone except admin)
                     $user->setPassword('');
                 }
