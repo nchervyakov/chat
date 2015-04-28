@@ -136,6 +136,8 @@ services:
             - "@fos_user.user_manager"
         tags:
             - {name: kernel.event_subscriber}
+        calls:
+            - [setContainer, ["@service_container"]]
 
     app.coins:
         class: AppBundle\Coins\CoinsService
@@ -155,3 +157,8 @@ services:
     app.image:
         class: AppBundle\Tools\ImageTools
         arguments: ["@liip_imagine"]
+
+    app.queue:
+        class: AppBundle\Queue\Queue
+        calls:
+            - [setContainer, ["@service_container"]]

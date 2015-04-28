@@ -430,6 +430,7 @@ class ChatController extends Controller
 
         $this->get('app.conversation')->markConversationMessagesSeenById($conversation, $user, $messageIds);
         $this->get('app.conversation')->calculateWhoSeen($conversation);
+        $this->container->get('app.queue')->enqueueMessagesMarkedReadEvent($conversation, $messageIds);
 
         return new JsonResponse(['success' => true]);
     }

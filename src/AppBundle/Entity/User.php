@@ -175,6 +175,7 @@ class User extends BaseUser
 
     /**
      * @var bool
+     * @ORM\Column(name="is_online", type="boolean", options={"default": 0}, nullable=false)
      */
     private $online = null;
 
@@ -702,15 +703,6 @@ class User extends BaseUser
      */
     public function isOnline()
     {
-        if ($this->online === null) {
-            if ($this->lastVisitedDate === null) {
-                $this->online = false;
-            } else {
-                $diff = time() - (int) $this->lastVisitedDate->format('U');
-                $this->online = $diff <= 15 * 60;
-            }
-        }
-
         return $this->online;
     }
 
@@ -720,7 +712,7 @@ class User extends BaseUser
      */
     public function setOnline($online)
     {
-        $this->online = $online;
+        $this->online = (boolean)$online;
 
         return $this;
     }

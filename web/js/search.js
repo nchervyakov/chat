@@ -24,7 +24,7 @@ can.Control('SearchWidget', {
         this.loadPageIfNeeded();
     },
 
-    '{window} scroll': function (el, ev) {
+    '{window} scroll': function (/*el, ev*/) {
         this.loadPageIfNeeded();
     },
 
@@ -66,7 +66,7 @@ can.Control('SearchWidget', {
         $.ajax(this.urlBase.replace('__PAGE__', this.page + 1).replace('__OFFLINE__', this.isLoadingOffline ? 1 : 0), {
             type: 'GET',
             data: {},
-            timeout: 10000,
+            timeout: 30000,
             beforeSend: function () {
                 widget.addLoader();
             },

@@ -12,6 +12,7 @@ namespace AppBundle\User;
 
 use AppBundle\Entity\User;
 use AppBundle\Entity\UserPhoto;
+use Doctrine\ORM\EntityManager;
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -76,5 +77,29 @@ class UserManager extends ContainerAware
 
         $this->pregeneratePhotoThumbs($userPhoto);
         return $userPhoto;
+    }
+
+    public function updateUsersOnlineStatus()
+    {
+        //return;
+        mt_srand();
+
+        $updateProbability = $this->container->getParameter('user.online_status.update_probability');
+        $updateProbability = $updateProbability ? (float)$updateProbability : 0.01;
+        $updateProbability *= (float)mt_getrandmax();
+
+        $probability = mt_rand();
+
+        if ($probability > $updateProbability) {
+            return;
+        }
+
+        $thresholdDate = new \DateTime();
+        $thresholdDate->modify('-15 minutes');
+        /** @var EntityManager $em */
+        $em = $this->container->get('doctrine')->getManager();
+        $em->createQuery("UPDATE AppBundle\\Entity\\User u SET u.online = FALSE WHERE u.lastVisitedDate < :last_visit_date")
+            ->setParameter('last_visit_date', $thresholdDate)
+            ->execute();
     }
 }

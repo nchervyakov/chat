@@ -58,6 +58,7 @@
         'js/vendor/jquery-ui.min.js'
         'js/vendor/jquery.cookie.js'
         'js/vendor/bootstrap.file-input.js'
+        'js/vendor/ion.sound-3.0.0/ion.sound.min.js'
         'bundles/fosjsrouting/js/router.js'
         output='js/compiled/*.js'
     %}
@@ -76,6 +77,7 @@
     {% block jsplugins %}{% endblock %}
 
     {% javascripts
+        'js/ion_sound.config.js'
         'js/tools.js'
         'js/application.js'
         output='js/compiled/*.js'
@@ -122,7 +124,7 @@
                 <a class="navbar-brand" href="{{ path('homepage') }}">Chat with models</a>
             </div>
             <div class="collapse navbar-collapse">
-                {{ knp_menu_render('main', {currentClass: 'active' }) }}
+                {{ knp_menu_render('main', {currentClass: 'active', 'allow_safe_labels': true}) }}
             </div><!--/.nav-collapse -->
         </div>
         {# % embed ':Default:header.html.twig' %}{% endembed %#}

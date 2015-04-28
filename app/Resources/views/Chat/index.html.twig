@@ -23,8 +23,6 @@
 
 {% block javascripts %}
     {{ parent() }}
-    <script type="text/javascript" src="{{ asset('js/vendor/ion.sound-3.0.0/ion.sound.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('js/ion_sound.config.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/vendor/jquery.form.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/vendor/jquery.uploadify.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/chat.js') }}"></script>
@@ -59,7 +57,7 @@
 {% block page %}
     {{ parent() }}
 
-    <div class="row">
+    <div class="row js-chat-page">
         <div class="col-lg-3">
             <div class="well bs-component chat-friends">
                 <h3>{{ 'chat_page.title'|trans }}</h3>
@@ -82,6 +80,9 @@
                                             {% if companionUnreadMessageCount > 0 %}
                                                 <span class="label label-primary unread-messages-label">{{ companionUnreadMessageCount }}</span>
                                             {% endif %}
+                                        {% endif %}
+                                        {% if companion.online %}
+                                            <span class="user-status user-status-online"></span>
                                         {% endif %}
                                     </span>
                                     <span class="description">{{ companion.fullName }}, {{ companion.age }}</span>

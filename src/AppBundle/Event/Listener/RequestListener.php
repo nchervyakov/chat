@@ -13,13 +13,15 @@ namespace AppBundle\Event\Listener;
 
 use AppBundle\Entity\User;
 use Sonata\UserBundle\Model\UserManagerInterface;
+use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 
-class RequestListener implements EventSubscriberInterface
+class RequestListener extends ContainerAware implements EventSubscriberInterface
 {
     protected $storage;
 
@@ -58,14 +60,19 @@ class RequestListener implements EventSubscriberInterface
         ];
     }
 
-    public function onKernelRequest(/*GetResponseEvent $event*/)
+    public function onKernelRequest(GetResponseEvent $event)
     {
         $token = $this->storage->getToken();
 
         if ($token && ($user = $token->getUser()) instanceof UserInterface) {
             /** @var User $user */
             $user->setLastVisitedDate(new \DateTime());
+            $user->setOnline(true);
             $this->userManager->updateUser($user);
+
+            if (!$event->getRequest()->isXmlHttpRequest()) {
+                $this->container->get('app.user_manager')->updateUsersOnlineStatus();
+            }
         }
     }
 }

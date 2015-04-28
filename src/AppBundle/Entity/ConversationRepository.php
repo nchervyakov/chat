@@ -102,7 +102,8 @@ class ConversationRepository extends EntityRepository
             ->join($oppositeField, 'ou')
             ->where($field . ' = :user')
             ->andWhere('ou.id IN (:companion_ids)')
-            ->orderBy('c.lastMessageDate', 'DESC')
+            ->orderBy('ou.online', 'DESC')
+            ->addOrderBy('c.lastMessageDate', 'DESC')
             ->setParameter('user', $user)
             ->setParameter('companion_ids', $companionIds, Connection::PARAM_INT_ARRAY)
         ;

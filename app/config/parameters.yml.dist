@@ -41,5 +41,6 @@ parameters:
     website_robot_email: robot@kukik.co
     website: http://kukik.co
 
-    chat.first_messages_limit:      2   # The number of messages from a client or a model after which a client must pay for the chatting
+    chat.first_messages_limit:      2   # The number of messages from a model after which a client must pay for the chatting
+    user.online_status.update_probability:  0.01
 

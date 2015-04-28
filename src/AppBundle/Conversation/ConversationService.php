@@ -72,25 +72,23 @@ class ConversationService extends ContainerAware
                 $em->flush();
 
                 // If user does not have enough money and need to pay for message - throw an exception.
-                if ($interval) {
-                    $user = $this->getUser();
-                    $securityChecker = $this->container->get('security.authorization_checker');
+                $user = $this->getUser();
+                $securityChecker = $this->container->get('security.authorization_checker');
 
-                    if ($shouldPay) {
-                        if ((double)$user->getCoins() - $interval->getPrice() < 0.000001) {
-                            throw new NotEnoughMoneyException();
-                        }
+                if ($shouldPay) {
+                    if ((double)$user->getCoins() - $interval->getPrice() < 0.000001) {
+                        throw new NotEnoughMoneyException();
+                    }
 
+                    $this->payNotPayedConversationIntervals($conversation);
+
+                // if model sends a message and client agree to pay and has coins - then take the coins.
+                } else if ($securityChecker->isGranted('ROLE_MODEL') && $conversation->isClientAgreeToPay()
+                    && (double)$user->getCoins() >= $interval->getPrice()
+                ) {
+                    try {
                         $this->payNotPayedConversationIntervals($conversation);
-
-                    // if model sends a message and client agree to pay and has coins - then take the coins.
-                    } else if ($securityChecker->isGranted('ROLE_MODEL') && $conversation->isClientAgreeToPay()
-                        && (double)$user->getCoins() >= $interval->getPrice()
-                    ) {
-                        try {
-                            $this->payNotPayedConversationIntervals($conversation);
-                        } catch (NotEnoughMoneyException $ex) {
-                        }
+                    } catch (NotEnoughMoneyException $ex) {
                     }
                 }
             }
@@ -100,6 +98,8 @@ class ConversationService extends ContainerAware
 
             $this->calculateWhoSeen($conversation);
             $this->estimateConversation($conversation);
+
+            $this->container->get('app.queue')->enqueueNewChatMessageEvent($message);
 
         } catch (\Exception $e) {
             $em->rollBack();
@@ -455,5 +455,30 @@ class ConversationService extends ContainerAware
             && $modelMessagesCount >= $maxFirstMessages ? true : false;
 
         return $shouldPay;
+    }
+
+    public function countUserTotalUnreadMessages(User $user)
+    {
+        $qb = $this->getManager()->createQueryBuilder();
+
+        if ($user->hasRole('ROLE_CLIENT')) {
+            $field = 'clientUnseenMessages';
+            $roleField = 'client';
+
+        } else if ($user->hasRole('ROLE_MODEL')) {
+            $field = 'modelUnseenMessages';
+            $roleField = 'model';
+
+        } else {
+            return 0;
+        }
+
+        $result = $qb->select("SUM(c.$field) unreadCount")
+            ->from('AppBundle:Conversation', 'c')
+            ->where("c.$roleField = :user")
+            ->setParameter('user', $user)
+            ->getQuery()->execute();
+
+        return (int)$result[0]['unreadCount'];
     }
 }

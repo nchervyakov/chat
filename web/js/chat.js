@@ -145,6 +145,7 @@ can.Control('ChatWidget', {
         }
 
         var beforeMessageId = parseInt(el.data('before-message-id'), 10);
+        el.after('<img src="/images/ajax-loader-grey-bg.gif" alt="" class="ajax-loader" />');
         this.fetchPreviousMessages(beforeMessageId);
     },
 
@@ -398,7 +399,7 @@ can.Control('ChatWidget', {
             data: {
                 before_message_id: beforeMessageId
             },
-            timeout: 5000,
+            timeout: 30000,
             complete: function () {
                 widget.fetchingPrevMessages = false;
             }
@@ -454,6 +455,66 @@ can.Control('ChatWidget', {
     }
 });
 
+/**
+ * Controls the chat widget
+ */
+can.Control('ChatPage', {
+    pluginName: 'chatPage',
+    defaults: {
+        emoticonPopup: null
+    }
+}, {
+    init: function () {
+        this.element.find('.chat-widget').chatWidget();
+        this.companionId = this.element.find('.chat-widget').data('companion-id');
+    },
+
+    '{window} added.message': function (el, ev, d) {
+        var data = d && d.data || {};
+        var sameUserInChat = parseInt(this.companionId, 10) == parseInt(data.companionId, 10);
+
+        if (!sameUserInChat) {
+            if (data && data.hasOwnProperty('conversationUnreadMessages')) {
+                this.updateUnreadMessagesCount(data.companionId, data.conversationUnreadMessages);
+            }
+        }
+    },
+
+    '{window} read.message': function (el, ev, d) {
+        var data = d && d.data || {};
+        if (data && data.hasOwnProperty('conversationUnreadMessages')) {
+            this.updateUnreadMessagesCount(data.companionId, data.conversationUnreadMessages);
+        }
+    },
+
+    updateUnreadMessagesCount: function (companionId, count) {
+        if (!companionId) {
+            return;
+        }
+
+        var $friendList = $('.friend-list'),
+            $companion = $friendList.find('.friend[data-companion-id="' + companionId + '"]'),
+            $indicator = $companion.find('.unread-messages-label'),
+            $photo = $companion.find('.photo');
+
+        if (!$indicator.length) {
+            $photo.append('<span class="label label-primary unread-messages-label">0</span>');
+            $indicator = $companion.find('.unread-messages-label');
+        }
+
+        count = parseInt(count, 10);
+        $indicator.text(count);
+
+        if (count > 0) {
+            $indicator.removeClass('hidden');
+
+        } else {
+            $indicator.addClass('hidden');
+        }
+    }
+});
+
+
 jQuery(function ($) {
-    $('.chat-widget').chatWidget();
+    $('.js-chat-page').chatPage();
 });

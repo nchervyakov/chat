@@ -267,7 +267,8 @@ body {
 }
 
 .user-status-online {
-    background: green;
+    border: green;
+    background: #46ee44;
 }
 
 .chat-widget .uploadify-form {
@@ -324,6 +325,14 @@ body {
     position: relative;
 }
 
+.chat-friends .photo .user-status {
+    left: 5px;
+    bottom: 5px;
+    right: auto;
+    top: auto;
+
+}
+
 .chat-friends .unread-messages-label {
     position: absolute;
     bottom: 5px;
@@ -354,4 +363,8 @@ body {
 
 .user-photo-thumbnail .remove-link i {
     color: red;
+}
+
+.chat-widget .previous-messages-block .ajax-loader {
+    margin-left: 10px;
 }

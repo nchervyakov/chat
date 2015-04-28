@@ -4,6 +4,6 @@
     <p class="image-message"
             ><a href="{{ vich_uploader_asset(message, 'imageFile', 'AppBundle\\Entity\\ImageMessage')|imagine_filter('user_photo_big') }}"
                 class="{% if message.author != app.user %}pull-right{% endif %}" data-gallery><img
-                    width="252" height="196" alt="" class="img-rounded"
-                    src="{{ vich_uploader_asset(message, 'imageFile', 'AppBundle\\Entity\\ImageMessage')|imagine_filter('user_photo_thumb') }}" /></a></p>
+                    width="252" alt="" class="img-rounded"
+                    src="{{ vich_uploader_asset(message, 'imageFile', 'AppBundle\\Entity\\ImageMessage')|imagine_filter('user_message_image_thumb') }}" /></a></p>
 {% endblock %}

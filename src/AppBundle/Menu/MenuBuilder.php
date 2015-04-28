@@ -48,10 +48,16 @@ class MenuBuilder extends ContainerAware
 
         if ($checker->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
             if ($checker->isGranted('ROLE_MODEL') || $checker->isGranted('ROLE_CLIENT')) {
+                $user = $this->container->get('security.token_storage')->getToken()->getUser();
+                $totalUnreadCount = $this->container->get('app.conversation')->countUserTotalUnreadMessages($user);
+
                 $menu->addChild('chat', [
                     'route' => 'chat',
-                    'label' => $translator->trans('chat_page.title'),
-                    'attributes' => ['title' => $translator->trans('chat')]
+                    'label' => $translator->trans('chat_page.title')
+                        . ' <span class="js-total-unread-messages label label-default '.($totalUnreadCount == 0 ? 'hidden' : '').'">'
+                        . $totalUnreadCount . '</span>',
+                    'attributes' => ['title' => $translator->trans('chat')],
+                    'extras' => ['safe_label' => true],
                 ]);
             }
 

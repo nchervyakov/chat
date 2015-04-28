@@ -57,7 +57,7 @@ class SearchController extends Controller
             }
 
             $repo = $this->getDoctrine()->getRepository('AppBundle:User');
-            $qb = $repo->prepareQueryBuilderForModelSearch($modelSearchModel, 15);
+            $qb = $repo->prepareQueryBuilderForModelSearch($modelSearchModel);
             $qb->leftJoin('u.thumbnail', 'tn')->addSelect('tn');  // prefetch user thumbnails
 
             $paginator = $this->get('knp_paginator');

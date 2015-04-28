@@ -222,6 +222,7 @@ fos_js_routing:
         - profile_add_photo
         - profile_show
         - profile_photos
+        - queue_fetch_new_messages
 #        - fos_user_registration_register
 
 knp_menu:
@@ -330,6 +331,10 @@ liip_imagine:
             quality: 75
             filters:
                 thumbnail: { size: [52, 52], mode: outbond }
+        user_message_image_thumb:
+            quality: 75
+            filters:
+                thumbnail: { size: [252, 480], mode: inset, allow_upscale: true }
         search_user_photo:
             quality: 75
             filters:

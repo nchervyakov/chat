@@ -16,6 +16,10 @@ use JMS\Serializer\Annotation as Serialize;
  *      "text": "AppBundle\Entity\TextMessage",
  *      "image": "AppBundle\Entity\ImageMessage",
  * })
+ * @Serialize\Discriminator(field="discriminator", map={
+ *      "text": "AppBundle\Entity\TextMessage",
+ *      "image": "AppBundle\Entity\ImageMessage",
+ * })
  * @ORM\HasLifecycleCallbacks()
  */
 abstract class Message
@@ -26,6 +30,7 @@ abstract class Message
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\Column(name="id", type="integer")
+     * @Serialize\Expose()
      */
     private $id;
 
@@ -34,6 +39,8 @@ abstract class Message
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Conversation")
      * @ORM\JoinColumn(name="conversation_id", referencedColumnName="id", onDelete="CASCADE")
      * @Serialize\MaxDepth(0)
+     * @Serialize\Type("AppBundle\Entity\Conversation")
+     * @Serialize\Exclude()
      */
     private $conversation;
 
@@ -55,6 +62,7 @@ abstract class Message
      * @var \DateTime
      *
      * @ORM\Column(name="date_added", type="datetime", nullable=true)
+     * @Serialize\Expose()
      */
     private $dateAdded;
 
@@ -68,12 +76,14 @@ abstract class Message
     /**
      * @var string
      * @ORM\Column(name="content", type="text", nullable=true)
+     * @Serialize\Expose()
      */
-    private $content;
+    protected $content;
 
     /**
      * @var boolean
      * @ORM\Column(name="deleted_by_user", type="boolean", options={"default": false})
+     * @Serialize\Exclude()
      */
     private $deletedByUser = false;
 
@@ -82,18 +92,21 @@ abstract class Message
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumn(name="author_id", referencedColumnName="id", onDelete="CASCADE")
      * @Serialize\MaxDepth(0)
+     * @Serialize\Exclude()
      */
     private $author;
 
     /**
      * @var bool
      * @ORM\Column(name="is_seen_by_client", type="boolean", options={"default": 0})
+     * @Serialize\Exclude()
      */
     private $seenByClient = false;
 
     /**
      * @var bool
      * @ORM\Column(name="is_seen_by_model", type="boolean", options={"default": 0})
+     * @Serialize\Exclude()
      */
     private $seenByModel = false;
 
@@ -375,5 +388,14 @@ abstract class Message
         }
 
         return false;
+    }
+
+    /**
+     * @return int|null
+     * @Serialize\VirtualProperty()
+     */
+    public function getConversationId()
+    {
+        return $this->conversation ? $this->conversation->getId() : null;
     }
 }
