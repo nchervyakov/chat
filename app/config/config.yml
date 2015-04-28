@@ -322,7 +322,7 @@ liip_imagine:
         user_photo_thumb:
             quality: 75
             filters:
-                thumbnail: { size: [252, 196], mode: outbond, allow_upscale: true }
+                thumbnail: { size: [252, 196], mode: inset, allow_upscale: true }
         user_photo_big:
             quality: 75
             filters:
@@ -338,7 +338,7 @@ liip_imagine:
         search_user_photo:
             quality: 75
             filters:
-                thumbnail: { size: [348, 348], mode: outbond }
+                thumbnail: { size: [348, 348], mode: inset, allow_upscale: true }
 
 
 sonata_block:

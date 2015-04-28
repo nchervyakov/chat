@@ -23,6 +23,8 @@ body {
     width: 348px;
     height: 348px;
     max-width: 100%;
+    text-align: center;
+    line-height: 348px;
 }
 
 .search-results .thumbnail .img-wrapper img {
@@ -187,6 +189,9 @@ body {
 
 .user-photos .thumbnail .img-wrapper {
     text-align: center;
+    width: 252px;
+    height: 196px;
+    line-height: 196px;
 }
 
 .user-photos .thumbnail img {

@@ -2,7 +2,7 @@
 
 <div class="fos_user_user_show user-profile-block">
     {% if user.thumbnail is not null %}
-        <img src="{{ vich_uploader_asset(user.thumbnail, 'file', 'AppBundle\\Entity\\UserPhoto') | imagine_filter('user_photo_thumb') }}"
+        <img src="{{ vich_uploader_asset(user.thumbnail, 'file', 'AppBundle\\Entity\\UserPhoto') | imagine_filter('user_message_image_thumb') }}"
              alt="{{ user.fullName }}" class="user-photo"/><br/><br/>
     {% endif %}
     <p>{{ 'profile.show.email'|trans }}: {{ user.email }}</p>
