@@ -303,7 +303,7 @@ body {
 @media screen and (max-width: 640px) {
     .chat-widget .image-message a img {
         width: 196px;
-        height: 152px;
+        /*height: 152px;*/
     }
 }
 
