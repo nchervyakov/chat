@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity()
  * @Vich\Uploadable()
  */
-class ImageMessage extends Message
+class ImageMessage extends ParticipantMessage
 {
     /**
      * @var UploadedFile

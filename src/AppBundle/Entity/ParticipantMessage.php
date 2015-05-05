@@ -5,9 +5,9 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * TextMessage
+ * ParticipantMessage
  * @ORM\Entity()
  */
-class TextMessage extends ParticipantMessage
+class ParticipantMessage extends Message
 {
 }

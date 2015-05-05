@@ -1,6 +1,7 @@
 parameters:
     app.registration.form.class: AppBundle\Form\Type\RegistrationFormType
     app.profile.form.class: AppBundle\Form\Type\ProfileFormType
+    app.doctrine_extensions.event_listener.ip_trace.class: AppBundle\Event\Listener\IpTraceSubscriber
 
 services:
     app.menu_builder:
@@ -162,3 +163,17 @@ services:
         class: AppBundle\Queue\Queue
         calls:
             - [setContainer, ["@service_container"]]
+
+    gedmo_doctrine_extensions.listener.ip_traceable:
+        class: Gedmo\IpTraceable\IpTraceableListener
+        tags:
+            - {name: "doctrine.event_subscriber", connection: default}
+        calls:
+            - [setAnnotationReader, ["@annotation_reader"]]
+
+    app.doctrine_extensions.event_listener.ip_trace:
+        class: "%app.doctrine_extensions.event_listener.ip_trace.class%"
+        arguments: ["@gedmo_doctrine_extensions.listener.ip_traceable", "@service_container"]
+        tags:
+            - {name: "kernel.event_subscriber"}
+

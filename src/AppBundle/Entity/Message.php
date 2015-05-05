@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serialize;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * Message
@@ -15,10 +16,14 @@ use JMS\Serializer\Annotation as Serialize;
  * @ORM\DiscriminatorMap({
  *      "text": "AppBundle\Entity\TextMessage",
  *      "image": "AppBundle\Entity\ImageMessage",
+ *      "participant": "AppBundle\Entity\ParticipantMessage",
+ *      "notification": "AppBundle\Entity\NotificationMessage"
  * })
  * @Serialize\Discriminator(field="discriminator", map={
  *      "text": "AppBundle\Entity\TextMessage",
  *      "image": "AppBundle\Entity\ImageMessage",
+ *      "participant": "AppBundle\Entity\ParticipantMessage",
+ *      "notification": "AppBundle\Entity\NotificationMessage"
  * })
  * @ORM\HasLifecycleCallbacks()
  */
@@ -43,20 +48,6 @@ abstract class Message
      * @Serialize\Exclude()
      */
     private $conversation;
-
-//    /**
-//     * @var ConversationInterval
-//     * @ORM\OneToOne(targetEntity="AppBundle\Entity\ConversationInterval", mappedBy="startMessage", fetch="LAZY")
-//     * @Serialize\MaxDepth(0)
-//     */
-//    private $followingInterval;
-//
-//    /**
-//     * @var ConversationInterval
-//     * @ORM\OneToOne(targetEntity="AppBundle\Entity\ConversationInterval", mappedBy="endMessage", fetch="LAZY")
-//     * @Serialize\MaxDepth(0)
-//     */
-//    private $previousInterval;
 
     /**
      * @var \DateTime
@@ -109,6 +100,13 @@ abstract class Message
      * @Serialize\Exclude()
      */
     private $seenByModel = false;
+
+    /**
+     * @var string
+     * @ORM\Column(name="added_by_ip", type="string", length=45)
+     * @Gedmo\IpTraceable(on="create")
+     */
+    private $addedByIp;
 
     function __construct($content = null)
     {
@@ -220,49 +218,6 @@ abstract class Message
     {
         $this->setDateUpdated(new \DateTime());
     }
-
-//    /**
-//     * Set interval
-//     *
-//     * @param ConversationInterval $followingInterval
-//     * @return Message
-//     */
-//    public function setFollowingInterval(ConversationInterval $followingInterval = null)
-//    {
-//        $this->followingInterval = $followingInterval;
-//
-//        return $this;
-//    }
-
-//    /**
-//     * Get interval
-//     *
-//     * @return ConversationInterval
-//     */
-//    public function getFollowingInterval()
-//    {
-//        return $this->followingInterval;
-//    }
-//
-//    /**
-//     * @return ConversationInterval
-//     */
-//    public function getPreviousInterval()
-//    {
-//        return $this->previousInterval;
-//    }
-
-//    /**
-//     * @param ConversationInterval $previousInterval
-//     *
-//     * @return ConversationInterval
-//     */
-//    public function setPreviousInterval($previousInterval)
-//    {
-//        $this->previousInterval = $previousInterval;
-//
-//        return $this;
-//    }
 
     /**
      * Set deletedByUser
@@ -397,5 +352,21 @@ abstract class Message
     public function getConversationId()
     {
         return $this->conversation ? $this->conversation->getId() : null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAddedByIp()
+    {
+        return $this->addedByIp;
+    }
+
+    /**
+     * @param string $addedByIp
+     */
+    public function setAddedByIp($addedByIp)
+    {
+        $this->addedByIp = $addedByIp;
     }
 }
