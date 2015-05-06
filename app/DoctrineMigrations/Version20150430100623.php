@@ -65,18 +65,6 @@ class Version20150430100623 extends AbstractMigration
                     . "'2015-04-28 10:43:04', 1, '2015-04-01 12:32:51', '2015-04-01 12:32:51', NULL, NULL, 'u', NULL, "
                     . "NULL, NULL, NULL, NULL, 'null', NULL, NULL, 'null', NULL, NULL, 'null', NULL, NULL, NULL, NULL, "
                     . "NULL, 1, NULL, 0, '2015-04-28 10:43:04', 0.00000000, 0)");
-
-            // Add Admin to the "Admins" group.
-            $res = $conn->query("SELECT id FROM users WHERE username_canonical LIKE 'admin'")->fetch(Query::HYDRATE_SINGLE_SCALAR);
-            $adminId = (int) $res[0];
-
-            $res = $conn->query("SELECT id FROM groups WHERE name LIKE 'Admins'")->fetch(Query::HYDRATE_SINGLE_SCALAR);
-            $adminGroupId = (int) $res[0];
-
-            $this->addSql("INSERT INTO `users_groups` (`user_id`, `group_id`) VALUES (:user_id, :group_id)", [
-                ':user_id' => $adminId,
-                ':group_id' => $adminGroupId
-            ]);
         }
     }
 
