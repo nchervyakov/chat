@@ -5,3 +5,12 @@
     Order deny,allow
     Deny from all
 </IfModule>
+
+<IfModule mod_setenvif.c>
+    <IfModule mod_headers.c>
+        <FilesMatch "\.(cur|gif|ico|jpe?g|png|svgz?|webp|woff)$">
+            SetEnvIf Origin ":" IS_CORS
+            Header set Access-Control-Allow-Origin "*" env=IS_CORS
+        </FilesMatch>
+    </IfModule>
+</IfModule>

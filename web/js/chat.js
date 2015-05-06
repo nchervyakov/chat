@@ -363,6 +363,7 @@ can.Control('ChatWidget', {
     },
 
     fetchNewMessages: function () {
+        return;
         var widget = this;
         $.ajax(Routing.generate('chat_get_new_messages', {companion_id: this.companionId}), {
             type: 'GET',

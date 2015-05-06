@@ -11,6 +11,8 @@ parameters:
     hwi_oauth.user.provider.fosub_bridge.class: AppBundle\Security\Core\User\FOSUBUserProvider
     hwi_oauth.authentication.provider.oauth.class: AppBundle\Security\Core\Authentication\Provider\OAuthProvider
     sitename: 'Chat with Models'
+    developer_name: "Nikolay Chervyakov"
+    developer_email: "nick.chervyakov@gmail.com"
 
 framework:
     #esi:             ~
@@ -39,9 +41,13 @@ twig:
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
     globals:
-        sitename: "Chat with Models"
-        developer_name: "Nikolay Chervyakov"
-        developer_email: "nick.chervyakov@gmail.com"
+        sitename: "%sitename%"
+        developer_name: "%developer_name%"
+        developer_email: "%developer_email%"
+        js_params:
+            socket_io_host: "%socket_io.host%"
+            sitename: "%sitename%"
+
     form:
 #        #resources: ['bootstrap_3_layout.html.twig']
         resources:

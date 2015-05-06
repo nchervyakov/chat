@@ -84,6 +84,11 @@
     {# Contains different plugins which are used in application.js #}
     {% block jsplugins %}{% endblock %}
 
+    <script type="text/javascript">
+        var App = window.App = window.App || {};
+        App.parameters = {{ js_params|json_encode|raw }};
+    </script>
+
     {% javascripts
         'js/ion_sound.config.js'
         'js/tools.js'

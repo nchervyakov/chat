@@ -120,6 +120,7 @@ can.Control('ApplicationControl', {
     },
 
     fetchNewMessages: function () {
+        return;
         var widget = this;
         $.ajax(Routing.generate('queue_fetch_new_messages'), {
             type: 'GET',
@@ -150,5 +151,10 @@ jQuery(function ($) {
         App.showAddCoinsDialog();
     });
 
-   // var socket = io('http://socket.')
+    var socket = io(App.parameters.socket_io_host);
+    socket.on('connect', function () {
+        socket.on('new_messages', function (data) {
+            console.log(data);
+        });
+    });
 });

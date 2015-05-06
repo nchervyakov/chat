@@ -39,13 +39,15 @@ class Queue extends ContainerAware
         $qm = new QueueMessage();
         $qm->setTargetUser($targetUser);
         $qm->setName(QueueEvents::MESSAGE_ADDED);
-        $qm->setData([
+        $messageData = [
             'message' => json_decode($serializer->serialize($message, 'json'), true),
             'totalUnreadMessages' => $totalUnreadMessages,
             'conversationUnreadMessages' => $conversation->getUserUnseenMessageCount($targetUser),
             'conversationId' => $conversation->getId(),
             'companionId' => $author ? $author->getId() : null,
-        ]);
+        ];
+        $qm->setData($messageData);
+        $this->container->get('old_sound_rabbit_mq.task_producer')->publish($messageData);
 
         $em->persist($qm);
         $em->flush();

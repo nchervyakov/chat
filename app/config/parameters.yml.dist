@@ -44,3 +44,5 @@ parameters:
     chat.first_messages_limit:      2   # The number of messages from a model after which a client must pay for the chatting
     user.online_status.update_probability:  0.01
 
+    socket_io.host:                 "http://192.168.1.206:4397"
+
