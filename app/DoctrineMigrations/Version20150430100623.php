@@ -35,7 +35,7 @@ class Version20150430100623 extends AbstractMigration
                 $this->addSql("INSERT INTO `groups` (`name`, `roles`, `date_added`, `date_updated`) VALUES "
                         . "(:name, :role,	'2015-03-27 10:24:49', NULL)", [
                     ':name' => $groupName,
-                    ':role' => "a:1:{i:0;s:10:\"" . $data['role'] . "\";}"
+                    ':role' => "a:1:{i:0;s:".strlen($data['role']).":\"" . $data['role'] . "\";}"
                 ]);
             }
         }
