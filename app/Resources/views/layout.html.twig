@@ -66,6 +66,14 @@
     {% endjavascripts %}
 
     {% javascripts
+        'js/vendor/notify.min.js'
+        'js/vendor/socket.io.js'
+        output='js/compiled/*.js'
+    %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+
+    {% javascripts
         'js/fos_js_routes.js'
         output='js/compiled/*.js'
     %}

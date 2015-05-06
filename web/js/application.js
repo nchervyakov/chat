@@ -149,4 +149,6 @@ jQuery(function ($) {
     $('.js-header-coins').on('click', function () {
         App.showAddCoinsDialog();
     });
+
+   // var socket = io('http://socket.')
 });
