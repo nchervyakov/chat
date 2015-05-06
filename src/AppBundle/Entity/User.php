@@ -177,7 +177,7 @@ class User extends BaseUser
      * @var bool
      * @ORM\Column(name="is_online", type="boolean", options={"default": 0}, nullable=false)
      */
-    private $online = null;
+    private $online = 0;
 
     /**
      * @var float
