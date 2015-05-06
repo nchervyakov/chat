@@ -5,11 +5,47 @@
 
 ### 1. Установить Erlang
 
-
+```
+> sudo apt-get install erlang
+```
 
 ### 2. Устанавливаем RabbitMQ
 
-https://www.rabbitmq.com/install-debian.html
+Описание процесса установки есть здесь: [https://www.rabbitmq.com/install-debian.html]
+
+В целом, должно хватить этой команды:
+```
+> sudo apt-get install rabbitmq-server
+```
+
+### 3. Установка Node.JS 
+
+Описание процесса установки есть здесь: [https://github.com/joyent/node/wiki/Installing-Node.js-via-package-manager#debian-and-ubuntu-based-linux-distributions]
+
+Сама установка:
+```
+> curl -sL https://deb.nodesource.com/setup | sudo bash -
+> sudo apt-get install -y nodejs
+> sudo apt-get install -y npm
+```
+
+А также для установки компилируемых расширений node.js:
+```
+> apt-get install -y build-essential 
+```
+
+### 4. Устанавливаем зависимости проекта Node.js.
+
+После клонирования проекта push-сервера:
+```
+> git clone https://github.com/nchervyakov/chat-push-server
+```
+
+...Необходимо установить зависимости:
+```
+> sudo npm install
+```
+
 
 
 ## Конфигурирование в Windows
