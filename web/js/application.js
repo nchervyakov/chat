@@ -155,6 +155,10 @@ jQuery(function ($) {
     socket.on('connect', function () {
         socket.on('new_messages', function (data) {
             console.log(data);
+            $.notify(JSON.stringify(data), {
+                position: 'bottom left',
+                autoHideDelay: 15000
+            });
         });
     });
 });

@@ -47,7 +47,7 @@ class Queue extends ContainerAware
             'companionId' => $author ? $author->getId() : null,
         ];
         $qm->setData($messageData);
-        $this->container->get('old_sound_rabbit_mq.task_producer')->publish($messageData);
+        $this->container->get('old_sound_rabbit_mq.task_producer')->publish(json_encode($messageData));
 
         $em->persist($qm);
         $em->flush();
