@@ -102,7 +102,7 @@
                                 {% if app.user.thumbnail is not null and app.user.thumbnail.fileName %}
                                     <span class="user-photo-link">
                                         <img src="{{ vich_uploader_asset(app.user.thumbnail, 'file', 'AppBundle\\Entity\\UserPhoto')
-                                        | imagine_filter('user_message_thumb') }}" alt="" title=""{{ app.user.fullName }} />
+                                        | imagine_filter('user_message_thumb') }}" alt="" title="{{ app.user.fullName }}" />
                                     </span>
                                 {% endif %}
                                 {{ app.user.fullName }}</a>
