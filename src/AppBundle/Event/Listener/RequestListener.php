@@ -71,7 +71,7 @@ class RequestListener extends ContainerAware implements EventSubscriberInterface
             $this->userManager->updateUser($user);
 
             if (!$event->getRequest()->isXmlHttpRequest()) {
-                $this->container->get('app.user_manager')->updateUsersOnlineStatus();
+                $this->container->get('app.user_manager')->updateUsersOnlineStatusByProbability();
             }
         }
     }

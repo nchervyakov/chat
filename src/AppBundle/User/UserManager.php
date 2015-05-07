@@ -79,9 +79,8 @@ class UserManager extends ContainerAware
         return $userPhoto;
     }
 
-    public function updateUsersOnlineStatus()
+    public function updateUsersOnlineStatusByProbability()
     {
-        //return;
         mt_srand();
 
         $updateProbability = $this->container->getParameter('user.online_status.update_probability');
@@ -94,12 +93,41 @@ class UserManager extends ContainerAware
             return;
         }
 
+        $this->updateUsersOnlineStatus();
+    }
+
+    public function updateUsersOnlineStatus()
+    {
         $thresholdDate = new \DateTime();
         $thresholdDate->modify('-15 minutes');
-        /** @var EntityManager $em */
-        $em = $this->container->get('doctrine')->getManager();
-        $em->createQuery("UPDATE AppBundle\\Entity\\User u SET u.online = FALSE WHERE u.lastVisitedDate < :last_visit_date")
+
+        $this->getManager()->createQuery("UPDATE AppBundle\\Entity\\User u "
+                . "SET u.online = FALSE WHERE (u.lastVisitedDate IS NULL OR u.lastVisitedDate < :last_visit_date) AND u.online = TRUE")
             ->setParameter('last_visit_date', $thresholdDate)
             ->execute();
+    }
+
+    /**
+     * @return int
+     */
+    public function getOnlineUsersCount()
+    {
+        $thresholdDate = new \DateTime();
+        $thresholdDate->modify('-15 minutes');
+
+        $res = $this->getManager()->createQuery("SELECT COUNT(u) cnt FROM AppBundle:User u "
+                . "WHERE (u.lastVisitedDate IS NULL OR u.lastVisitedDate < :last_visit_date) AND u.online = TRUE")
+            ->setParameter('last_visit_date', $thresholdDate)
+            ->execute();
+
+        return (int) $res[0]['cnt'];
+    }
+
+    /**
+     * @return \Doctrine\Common\Persistence\ObjectManager|object|EntityManager
+     */
+    public function getManager()
+    {
+        return $this->container->get('doctrine')->getManager();
     }
 }
