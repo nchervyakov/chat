@@ -104,7 +104,7 @@ link_action_create_client: 'Create Client'
 link_action_send_model_notification: 'Send Notification To Model'
 model_notification:
     email_title: 'Invitation to %website%'
-    activated_by_admin_title: 'You are now activated'
+    activated_by_admin_title: 'You are now activated - %website%'
 link_action_create_model_by_request: 'Register Model'
 gender:
     male: Male
@@ -121,3 +121,6 @@ chatting:
 
 user_photos:
     remove_photo: 'Remove Photo'
+notification:
+    new_message:
+        subject: 'New message from %companion% - %website%'

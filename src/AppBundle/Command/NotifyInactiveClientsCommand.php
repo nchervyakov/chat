@@ -10,6 +10,8 @@ namespace AppBundle\Command;
 
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class NotifyInactiveClientsCommand
@@ -21,5 +23,10 @@ class NotifyInactiveClientsCommand extends ContainerAwareCommand
     {
         $this->setName('clients:notify-inactive')
             ->setDescription('Notifies those clients who registered but did not send any message for several days.');
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+
     }
 }

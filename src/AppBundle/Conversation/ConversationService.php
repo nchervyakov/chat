@@ -99,34 +99,18 @@ class ConversationService extends ContainerAware
             $this->calculateWhoSeen($conversation);
             $this->estimateConversation($conversation);
 
-            $this->container->get('app.queue')->enqueueNewChatMessageEvent($message);
+            $companion = $conversation->getCompanion($message->getAuthor());
+            if ($companion->isOnline()) {
+                $this->container->get('app.queue')->enqueueNewChatMessageEvent($message);
+            } else {
+                $this->container->get('app.notificator')->notifyNewMessageArrived($companion, $message);
+            }
 
         } catch (\Exception $e) {
             $em->rollBack();
             throw $e; //\ErrorException("Cannot add new message", 0, 1, __FILE__, __LINE__, $e);
         }
     }
-
-//    /**
-//     * Fetch or create a new active conversation interval.
-//     *
-//     * @param Conversation $conversation
-//     * @return ConversationInterval|mixed|null
-//     */
-//    public function getActiveInterval(Conversation $conversation)
-//    {
-//        $interval = $conversation->getActiveInterval();
-//        if (!$interval) {
-//            $em = $this->container->get('doctrine.orm.entity_manager');
-//            $interval = new ConversationInterval();
-//            $em->persist($interval);
-//            $conversation->addInterval($interval);
-//            $interval->setConversation($conversation);
-//            $this->estimateInterval($interval);
-//        }
-//
-//        return $interval;
-//    }
 
     /**
      * @param Conversation $conversation
