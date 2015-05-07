@@ -41,7 +41,7 @@
 > git clone https://github.com/nchervyakov/chat-push-server
 ```
 
-...Необходимо установить зависимости:
+...Необходимо установить зависимости (в директории проекта **chat-push-server**):
 ```
 > sudo npm install
 ```
@@ -88,11 +88,23 @@
 Просто установить из командной строки не получилось, но найден практически гарантированный способ.
     * Запускаем VisualC++ Express
     * Заходим в `Tools > Visual Studio Command Prompt`
-    * Переходим в папку проекта node.js и запускаем установку:
+    * Переходим в папку проекта node.js и запускаем установку (в директории проекта **chat-push-server**):
         ```
         >cd D:\projects\chat-push-server
         >"c:\Program Files\nodejs\npm.cmd" install 
         ```
+        
+
+## Запуск
+
+* RabbitMQ запускается в качестве сервиса при старте системы. Никаких манипуляций не требуется.
+* Адрес push-сервера указывается в parameters.yml чата.
+* Push-server запускается с помощью следующей команды:
+```
+> node index.js
+# или 
+> nodejs index.js
+```
 
 
 
