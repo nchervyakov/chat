@@ -50,7 +50,7 @@
         {% if message.complaint is not null %}
             <div class="clearfix"></div>
             {% if allowedToComplain %}
-                {% if message.complaint.isOpen and isMyMessage %}
+                {% if message.complaint.isOpen %}
                     <p class="notice">{{ 'chat_message.complaint_has_been_opened'|trans }}</p>
                 {% elseif message.complaint.isAccepted %}
                     <p class="notice notice-success">{{ 'chat_message.complaint_has_been_accepted'|trans }}</p>
