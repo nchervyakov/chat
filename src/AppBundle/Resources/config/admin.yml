@@ -52,3 +52,12 @@ services:
         tags:
             - {name: sonata.admin, manager_type: orm, group: Chat, label: Emoticons}
 
+    app.admin.message_complaint:
+        class: AppBundle\Admin\MessageComplaintAdmin
+        arguments: [~, AppBundle\Entity\MessageComplaint, AppBundle:MessageComplaintAdmin]
+        tags:
+            - {name: sonata.admin, manager_type: orm, group: Chat, label: Complaints}
+        calls:
+            - [setContainer, ["@service_container"]]
+            - [setTemplate, [edit, :MessageComplaintAdmin:edit.html.twig]]
+

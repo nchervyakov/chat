@@ -16,7 +16,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 /**
  * Class MessageComplaint
  * @package AppBundle\Entity
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="AppBundle\Entity\MessageComplaintRepository")
  * @ORM\Table(name="message_complaint")
  */
 class MessageComplaint 
@@ -41,7 +41,7 @@ class MessageComplaint
 
     /**
      * @var ParticipantMessage
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\ParticipantMessage", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\ParticipantMessage", inversedBy="complaint", cascade={"persist", "remove"})
      * @ORM\JoinColumn(name="message_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $message;
@@ -49,7 +49,7 @@ class MessageComplaint
     /**
      * @var User
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(name="model_id", referencedColumnName="id", nullable=false, onDelete="SET NULL")
+     * @ORM\JoinColumn(name="model_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $model;
 
@@ -85,13 +85,9 @@ class MessageComplaint
 
     /**
      * MessageComplaint constructor.
-     * @param ParticipantMessage $message
-     * @param User $model
      */
-    public function __construct(ParticipantMessage $message, User $model)
+    public function __construct()
     {
-        $this->message = $message;
-        $this->model = $model;
     }
 
     /**
@@ -236,5 +232,44 @@ class MessageComplaint
     public function setAddedByIp($addedByIp)
     {
         $this->addedByIp = $addedByIp;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getStatuses()
+    {
+        return [
+            self::STATUS_OPEN,
+            self::STATUS_ACCEPTED,
+            self::STATUS_REJECTED,
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public static function getStatusLabels()
+    {
+        return [
+            self::STATUS_OPEN => 'message_complaint.status.open',
+            self::STATUS_ACCEPTED => 'message_complaint.status.accepted',
+            self::STATUS_REJECTED => 'message_complaint.status.rejected',
+        ];
+    }
+
+    public function isAccepted()
+    {
+        return $this->status == self::STATUS_ACCEPTED;
+    }
+
+    public function isRejected()
+    {
+        return $this->status == self::STATUS_REJECTED;
+    }
+
+    public function isOpen()
+    {
+        return $this->status == self::STATUS_OPEN;
     }
 }

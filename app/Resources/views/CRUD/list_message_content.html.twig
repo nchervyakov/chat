@@ -1,0 +1,17 @@
+{% extends admin.getTemplate('base_list_field') %}
+
+{% block field%}
+    {%- set message=object.message -%}
+    {%- set isDeleted = message.deletedByUser -%}
+    {%- set imageType = 'admin_message_image' -%}
+
+    {%- if message is instanceof('AppBundle\\Entity\\ImageMessage') -%}
+        {%- if message.image is empty -%}
+            &nbsp;
+        {%- else -%}
+            {{ include(':Chat:_image_message_content.html.twig') }}
+        {%- endif -%}
+    {% else %}
+        {{ include(':Chat:_message_content.html.twig') }}
+    {% endif %}
+{% endblock %}

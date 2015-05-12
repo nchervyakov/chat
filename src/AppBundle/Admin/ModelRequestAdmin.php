@@ -10,7 +10,6 @@ use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Route\RouteCollection;
 use Sonata\AdminBundle\Show\ShowMapper;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
 
 class ModelRequestAdmin extends Admin
 {
@@ -39,11 +38,6 @@ class ModelRequestAdmin extends Admin
             'edit' => array(),
             'delete' => array(),
         );
-
-        /** @var ModelRequest $req */
-        if (($req = $this->getSubject()) && $req->getStatus() == ModelRequest::STATUS_NEW) {
-
-        }
 
         $actions['Register Model'] = [
             'template' => ':CRUD:list__action_create_model_by_request.html.twig'

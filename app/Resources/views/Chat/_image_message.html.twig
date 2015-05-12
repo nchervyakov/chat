@@ -1,9 +1,5 @@
 {% extends ':Chat:_message.html.twig' %}
 
 {% block message_content %}
-    <p class="image-message"
-            ><a href="{{ vich_uploader_asset(message, 'imageFile', 'AppBundle\\Entity\\ImageMessage')|imagine_filter('user_photo_big') }}"
-                class="{% if message.author != app.user %}pull-right{% endif %}" data-gallery><img
-                    width="252" alt="" class="img-rounded"
-                    src="{{ vich_uploader_asset(message, 'imageFile', 'AppBundle\\Entity\\ImageMessage')|imagine_filter('user_message_image_thumb') }}" /></a></p>
+    {{ include(':Chat:_image_message_content.html.twig') }}
 {% endblock %}

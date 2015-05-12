@@ -300,15 +300,16 @@ body {
     padding-top: 15px;
 }
 
+.chat-widget .image-message a img {
+    max-width: 100%;
+    width: 252px;
+}
+
 @media screen and (max-width: 640px) {
     .chat-widget .image-message a img {
         width: 196px;
         /*height: 152px;*/
     }
-}
-
-.chat-widget .image-message a img {
-    max-width: 100%;
 }
 
 .chat-friends .friends-container {
@@ -372,4 +373,44 @@ body {
 
 .chat-widget .previous-messages-block .ajax-loader {
     margin-left: 10px;
+}
+
+.chat-widget .message-actions {
+    display: none;
+}
+
+.chat-widget .message-actions .action-link {
+    padding-right: 0;
+    padding-left: 15px;
+}
+
+.chat-widget .message-actions.pull-right .action-link {
+    padding-right: 15px;
+    padding-left: 0;
+}
+
+.chat-widget .message:hover .message-actions {
+    display: inline;
+}
+
+.chat-widget .message.complained {
+    background-color: #ffeeee;
+}
+
+.chat-widget .message.deleted {
+    background-color: #f0f0f0;
+    opacity: 0.5;
+}
+
+.chat-widget .message.complained .notice {
+    font-weight: bold;
+    padding-top: 10px;
+}
+
+.chat-widget .message.complained .notice.notice-warning {
+    color: darkred;
+}
+
+.chat-widget .message.complained .notice.notice-success {
+    color: darkgreen;
 }

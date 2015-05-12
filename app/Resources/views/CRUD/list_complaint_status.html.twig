@@ -1,0 +1,9 @@
+{% extends admin.getTemplate('base_list_field') %}
+
+{% block field%}
+    {%- if value is empty -%}
+        &nbsp;
+    {%- else -%}
+        <span class="label label-default message-complaint-status status-{{ value }}">{{ value }}</span>
+    {%- endif -%}
+{% endblock %}
