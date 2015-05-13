@@ -108,6 +108,12 @@ abstract class Message
      */
     private $addedByIp;
 
+    /**
+     * @var MessageComplaint
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\MessageComplaint", mappedBy="message")
+     */
+    private $complaint;
+
     function __construct($content = null)
     {
         $this->content = $content;
@@ -368,5 +374,26 @@ abstract class Message
     public function setAddedByIp($addedByIp)
     {
         $this->addedByIp = $addedByIp;
+    }
+
+    /**
+     * @return MessageComplaint
+     */
+    public function getComplaint()
+    {
+        return $this->complaint;
+    }
+
+    /**
+     * @param MessageComplaint $complaint
+     */
+    public function setComplaint($complaint)
+    {
+        $this->complaint = $complaint;
+    }
+
+    function __toString()
+    {
+        return $this->content;
     }
 }

@@ -13,13 +13,16 @@ namespace AppBundle\Conversation;
 use AppBundle\Entity\Conversation;
 use AppBundle\Entity\ConversationInterval;
 use AppBundle\Entity\Message;
+use AppBundle\Entity\MessageComplaint;
 use AppBundle\Entity\MessageRepository;
+use AppBundle\Entity\ParticipantMessage;
 use AppBundle\Entity\User;
 use AppBundle\Exception\ClientNotAgreedToChatException;
 use AppBundle\Exception\NotEnoughMoneyException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query;
 use Symfony\Component\DependencyInjection\ContainerAware;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Class ConversationService
@@ -99,34 +102,18 @@ class ConversationService extends ContainerAware
             $this->calculateWhoSeen($conversation);
             $this->estimateConversation($conversation);
 
-            $this->container->get('app.queue')->enqueueNewChatMessageEvent($message);
+            $companion = $conversation->getCompanion($message->getAuthor());
+            if ($companion->isOnline()) {
+                $this->container->get('app.queue')->enqueueNewChatMessageEvent($message);
+            } else {
+                $this->container->get('app.notificator')->notifyNewMessageArrived($companion, $message);
+            }
 
         } catch (\Exception $e) {
             $em->rollBack();
             throw $e; //\ErrorException("Cannot add new message", 0, 1, __FILE__, __LINE__, $e);
         }
     }
-
-//    /**
-//     * Fetch or create a new active conversation interval.
-//     *
-//     * @param Conversation $conversation
-//     * @return ConversationInterval|mixed|null
-//     */
-//    public function getActiveInterval(Conversation $conversation)
-//    {
-//        $interval = $conversation->getActiveInterval();
-//        if (!$interval) {
-//            $em = $this->container->get('doctrine.orm.entity_manager');
-//            $interval = new ConversationInterval();
-//            $em->persist($interval);
-//            $conversation->addInterval($interval);
-//            $interval->setConversation($conversation);
-//            $this->estimateInterval($interval);
-//        }
-//
-//        return $interval;
-//    }
 
     /**
      * @param Conversation $conversation
@@ -302,7 +289,7 @@ class ConversationService extends ContainerAware
         $result = $em->createQuery("SELECT m FROM AppBundle:Message m JOIN m.conversation c "
                 . "WHERE (m.author = c.client OR m.author = c.model) AND c = :conversation "
                 . $messageCondition
-                . "ORDER BY m.dateAdded DESC")
+                . "ORDER BY m.dateAdded DESC, m.id DESC")
             ->setMaxResults(1)
             ->execute($params);
 
@@ -321,9 +308,7 @@ class ConversationService extends ContainerAware
         $interval = new ConversationInterval($conversation, $prevMessage, $message);
         $em->persist($interval);
 
-        //$prevMessage->setFollowingInterval($interval);
         $interval->setStartMessage($prevMessage);
-        //$message->setPreviousInterval($interval);
         $interval->setEndMessage($message);
 
         $interval->setSeconds($interval->calculateIntervalSeconds());
@@ -331,6 +316,41 @@ class ConversationService extends ContainerAware
         $em->flush();
         $this->estimateConversation($conversation);
         return $interval;
+    }
+
+    /**
+     * @param ParticipantMessage $message
+     */
+    public function complainMessage(ParticipantMessage $message)
+    {
+        if ($message->getComplaint()) {
+            throw new \InvalidArgumentException("The message has already been complained.");
+        }
+        $complaint = new MessageComplaint();
+        $complaint->setMessage($message);
+        $complaint->setModel($message->getConversation()->getModel());
+        $message->setComplaint($complaint);
+        $this->getManager()->persist($complaint);
+        $this->getManager()->flush();
+    }
+
+    /**
+     * @param ParticipantMessage $message
+     */
+    public function markMessageDeletedByUser(ParticipantMessage $message)
+    {
+        $user = $this->getUser();
+
+        if ($message->getAuthor()->getId() != $user->getId()) {
+            throw new AccessDeniedException();
+        }
+
+        if ($message->isDeletedByUser()) {
+            return;
+        }
+
+        $message->setDeletedByUser(true);
+        $this->getManager()->flush();
     }
 
     /**

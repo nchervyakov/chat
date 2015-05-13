@@ -233,6 +233,8 @@ fos_js_routing:
         - profile_show
         - profile_photos
         - queue_fetch_new_messages
+        - complain_message
+        - delete_own_message
 #        - fos_user_registration_register
 
 knp_menu:
@@ -336,7 +338,7 @@ liip_imagine:
         user_photo_big:
             quality: 75
             filters:
-                thumbnail: { size: [800, 600], mode: inset,  }
+                thumbnail: { size: [800, 600], mode: inset }
         user_message_thumb:
             quality: 75
             filters:
@@ -349,7 +351,10 @@ liip_imagine:
             quality: 75
             filters:
                 thumbnail: { size: [348, 348], mode: inset, allow_upscale: true }
-
+        admin_message_image:
+            quality: 75
+            filters:
+                thumbnail: { size: [128, 360], mode: inset, allow_upscale: true }
 
 sonata_block:
     default_contexts: [cms]

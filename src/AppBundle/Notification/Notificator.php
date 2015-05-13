@@ -11,6 +11,7 @@
 namespace AppBundle\Notification;
 
 
+use AppBundle\Entity\Message;
 use AppBundle\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerAware;
 
@@ -56,6 +57,34 @@ class Notificator extends ContainerAware
             ->setBody(
                 $this->container->get('templating')->render(':User:email_model_notification_activated_by_admin.html.twig', [
                     'user' => $model,
+                    'website' => $this->container->getParameter('website')
+                ]),
+                'text/html',
+                'utf-8'
+            );
+
+        $this->container->get('mailer')->send($message);
+    }
+
+    /**
+     * @param User $addressee
+     * @param Message $message
+     */
+    public function notifyNewMessageArrived(User $addressee, Message $message)
+    {
+        $translator = $this->container->get('translator');
+
+        $message = \Swift_Message::newInstance()
+            ->setSubject($translator->trans('notification.new_message.subject', [
+                '%companion%' => $message->getAuthor()->getFullName(),
+                '%website%' => $this->container->getParameter('website')
+            ]))
+            ->setTo($addressee->getEmail())
+            ->setFrom($this->container->getParameter('website_robot_email'))
+            ->setBody(
+                $this->container->get('templating')->render(':User:email_new_message_notification.html.twig', [
+                    'companion' => $message->getAuthor(),
+                    'user' => $addressee,
                     'website' => $this->container->getParameter('website')
                 ]),
                 'text/html',

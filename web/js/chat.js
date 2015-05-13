@@ -157,7 +157,58 @@ can.Control('ChatWidget', {
         }
 
         this.createMessageRequest(this.proxy(this.sendImageMessageRequest)).execute();
-        //this.sendImageMessageRequest();
+    },
+
+    '.js-message-actions .js-delete-link click': function (el, ev) {
+        ev.preventDefault();
+
+        var $message = el.closest('.js-message'),
+            messageId = parseInt($message.data('id'), 10);
+
+        el.addClass('hidden');
+
+        $.ajax(Routing.generate('delete_own_message', {message_id: messageId}), {
+            type: 'POST',
+            data: {},
+            timeout: 30000
+
+        }).success(function (res) {
+            if (res.success) {
+                el.remove();
+                $message.after(res.html);
+                $message.remove();
+            }
+            el.removeClass('hidden');
+
+        }).error(function () {
+            el.removeClass('hidden');
+        });
+    },
+
+    '.js-message-actions .js-complain-link click': function (el, ev) {
+        ev.preventDefault();
+
+        var $message = el.closest('.js-message'),
+            messageId = parseInt($message.data('id'), 10);
+
+        el.addClass('hidden');
+
+        $.ajax(Routing.generate('complain_message', {message_id: messageId}), {
+            type: 'POST',
+            data: {},
+            timeout: 30000
+
+        }).success(function (res) {
+            if (res.success) {
+                el.remove();
+                $message.after(res.html);
+                $message.remove();
+            }
+            el.removeClass('hidden');
+
+        }).error(function () {
+            el.removeClass('hidden');
+        });
     },
 
     createMessageRequest: function (callback, deferred) {

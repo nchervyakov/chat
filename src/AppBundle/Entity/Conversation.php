@@ -640,4 +640,14 @@ class Conversation
 
         return 0;
     }
+
+    /**
+     * Returns a companion of the user.
+     * @param User $user
+     * @return User
+     */
+    public function getCompanion(User $user)
+    {
+        return $this->getClient() === $user ? $this->getModel() : $this->getClient();
+    }
 }

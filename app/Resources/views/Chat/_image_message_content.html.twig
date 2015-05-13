@@ -1,0 +1,6 @@
+{%- set imageType = imageType is defined and imageType != '' ? imageType : 'user_photo_big' -%}
+<p class="image-message"><a href="{{ vich_uploader_asset(message, 'imageFile', 'AppBundle\\Entity\\ImageMessage')|imagine_filter('user_photo_big') }}"
+        class="{% if message.author != app.user %}pull-right{% endif %}"
+        data-gallery><img alt="" class="img-rounded"
+        src="{{ vich_uploader_asset(message, 'imageFile', 'AppBundle\\Entity\\ImageMessage')|imagine_filter(imageType) }}" /></a>
+</p>

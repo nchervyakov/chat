@@ -41,6 +41,11 @@ services:
         calls:
             - [setContainer, ["@service_container"]]
 
+    app.complaints:
+        class: AppBundle\Conversation\ComplaintsService
+        calls:
+            - [setContainer, ["@service_container"]]
+
     app.request_access_evaluator:
         class: AppBundle\Security\RequestAccessEvaluator
         calls:

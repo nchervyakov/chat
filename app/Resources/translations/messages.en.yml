@@ -104,7 +104,7 @@ link_action_create_client: 'Create Client'
 link_action_send_model_notification: 'Send Notification To Model'
 model_notification:
     email_title: 'Invitation to %website%'
-    activated_by_admin_title: 'You are now activated'
+    activated_by_admin_title: 'You are now activated - %website%'
 link_action_create_model_by_request: 'Register Model'
 gender:
     male: Male
@@ -121,3 +121,20 @@ chatting:
 
 user_photos:
     remove_photo: 'Remove Photo'
+notification:
+    new_message:
+        subject: 'New message from %companion% - %website%'
+chat_message:
+    deleted_message: 'The message has been deleted by the author.'
+    deleted_my_message: 'You have deleted this message.'
+    complaint_has_been_opened: 'You complained this message.'
+    complaint_has_been_accepted: 'Your complain was accepted.'
+    complaint_has_been_rejected: 'Your complain was rejected.'
+    your_message_has_been_complained_and_accepted: 'Administration informs you that your message violates the rules of our website.'
+message_complaint:
+    flash_accepted: 'The complaint has been accepted.'
+    flash_rejected: 'The complaint has been rejected.'
+    flash_complaint_is_accepted: 'The complaint is rejected already.'
+    flash_complaint_is_rejected: 'The complaint is accepted already.'
+action_accept_complaint: 'Accept'
+action_reject_complaint: 'Reject'

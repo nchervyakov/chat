@@ -12,6 +12,7 @@ namespace AppBundle\Event\Listener;
 
 
 use AppBundle\Entity\User;
+use Doctrine\ORM\EntityManager;
 use Sonata\UserBundle\Model\UserManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -65,13 +66,17 @@ class RequestListener extends ContainerAware implements EventSubscriberInterface
         $token = $this->storage->getToken();
 
         if ($token && ($user = $token->getUser()) instanceof UserInterface) {
-            /** @var User $user */
-            $user->setLastVisitedDate(new \DateTime());
-            $user->setOnline(true);
-            $this->userManager->updateUser($user);
+            /** @var EntityManager $em */
+            $em = $this->container->get('doctrine')->getManager();
+            if ($em && $em->isOpen()) {
+                /** @var User $user */
+                $user->setLastVisitedDate(new \DateTime());
+                $user->setOnline(true);
+                $this->userManager->updateUser($user);
+            }
 
             if (!$event->getRequest()->isXmlHttpRequest()) {
-                $this->container->get('app.user_manager')->updateUsersOnlineStatus();
+                $this->container->get('app.user_manager')->updateUsersOnlineStatusByProbability();
             }
         }
     }

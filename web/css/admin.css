@@ -1,3 +1,23 @@
 .emoticon-alias {
     padding: 0 6px;
 }
+
+.label.message-complaint-status {
+    color: #fff;
+}
+
+.message-complaint-status.status-open {
+    background-color: #74bae6;
+}
+
+.message-complaint-status.status-accepted {
+    background-color: #41ce3b;
+}
+
+.message-complaint-status.status-rejected {
+    background-color: #db686b;
+}
+
+.sonata-ba-list .image-message {
+    width: 128px;
+}

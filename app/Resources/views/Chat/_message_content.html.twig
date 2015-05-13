@@ -1,0 +1,15 @@
+{% if isDeleted %}
+    {% if isMyMessage %}
+        {{ 'chat_message.deleted_my_message'|trans }}
+    {% else %}
+        {{ 'chat_message.deleted_message'|trans }}
+    {% endif %}
+{% else %}
+    {% block message_content %}
+        {% if message is instanceof('AppBundle\\Entity\\ImageMessage') %}
+            {{ include(':Chat:_image_message_content.html.twig') }}
+        {% else %}
+            <p>{{ message.content|nl2br|emoticons }}</p>
+        {% endif %}
+    {% endblock %}
+{% endif %}

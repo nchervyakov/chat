@@ -1,0 +1,18 @@
+{% if admin.hasroute('reject') and admin.id(object) is not null and object.status == constant('AppBundle\\Entity\\MessageComplaint::STATUS_OPEN') %}
+    {% if admin.subClasses is empty %}
+        <a class="sonata-action-element" href="{{ admin.generateObjectUrl('reject', object) }}">
+            <i class="fa fa-plus-circle"></i>
+            {{ 'action_reject_complaint'|trans({}, 'messages') }}</a>
+    {% else %}
+        <li class="divider" role="presentation"></li>
+        {% for subclass in admin.subclasses|keys %}
+            <li>
+                <a href="{{ admin.generateObjectUrl('reject', object, {'subclass': subclass}) }}">
+                    <i class="fa fa-plus-circle"></i>
+                    {{ 'action_reject_complaint'|trans }} {{ subclass|trans({}, admin.translationdomain) }}
+                </a>
+            </li>
+        {% endfor %}
+        <li class="divider" role="presentation"></li>
+    {% endif %}
+{% endif %}

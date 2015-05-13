@@ -1,0 +1,7 @@
+{% if object.status == constant('AppBundle\\Entity\\MessageComplaint::STATUS_OPEN') %}
+    <a href="{{ admin.generateObjectUrl('accept', object) }}" class="btn btn-sm btn-default edit_link" title="{{ 'action_accept_complaint'|trans }}">
+        <i class="glyphicon glyphicon-registration-mark"></i>
+        {{ 'action_accept_complaint'|trans }}
+    </a>
+{% endif %}
+
