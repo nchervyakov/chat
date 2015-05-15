@@ -86,7 +86,10 @@
 
     <script type="text/javascript">
         var App = window.App = window.App || {};
-        App.parameters = {{ js_params|json_encode|raw }};
+        App.parameters = {{ js_params|merge({'socket_io_token': socket_io_token})|json_encode|raw }};
+        jQuery(function () {
+            App.socket = io(App.parameters.socket_io_host);
+        });
     </script>
 
     {% javascripts

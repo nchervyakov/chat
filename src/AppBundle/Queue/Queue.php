@@ -30,33 +30,43 @@ class Queue extends ContainerAware
             return;
         }
 
-        /** @var EntityManager $em */
-        $em = $this->container->get('doctrine')->getManager();
+//        /** @var EntityManager $em */
+//        $em = $this->container->get('doctrine')->getManager();
         $serializer = $this->container->get('serializer');
-
-        $totalUnreadMessages = $this->container->get('app.conversation')->countUserTotalUnreadMessages($targetUser);
+        $conversationService = $this->container->get('app.conversation');
+        $totalUnreadMessages = $conversationService->countUserTotalUnreadMessages($targetUser);
 
         $qm = new QueueMessage();
         $qm->setTargetUser($targetUser);
         $qm->setName(QueueEvents::MESSAGE_ADDED);
+        $templating = $this->container->get('templating');
         $messageData = [
             'message' => json_decode($serializer->serialize($message, 'json'), true),
             'totalUnreadMessages' => $totalUnreadMessages,
             'conversationUnreadMessages' => $conversation->getUserUnseenMessageCount($targetUser),
             'conversationId' => $conversation->getId(),
             'companionId' => $author ? $author->getId() : null,
+            'html' => $templating->render(':Chat:_message.html.twig', ['message' => $message, 'currentUser' => $targetUser])
         ];
         $qm->setData($messageData);
-        $this->container->get('old_sound_rabbit_mq.task_producer')->publish(json_encode($messageData));
 
-        $em->persist($qm);
-        $em->flush();
+        $producer = $this->container->get('old_sound_rabbit_mq.notifications_producer');
+        $producer->publish(json_encode(['type' => 'new-message', 'data' => $messageData]), 'user.' . $targetUser->getId());
+        $producer->publish(json_encode(['type' => 'new-message', 'data' => array_merge($messageData, [
+            'conversationUnreadMessages' => $conversation->getUserUnseenMessageCount($author),
+            'html' => $templating->render(':Chat:_message.html.twig', ['message' => $message, 'currentUser' => $author]),
+            'companionId' => $targetUser->getId(),
+            'totalUnreadMessages' => $conversationService->countUserTotalUnreadMessages($author),
+        ])]), 'user.' . $author->getId());
+
+//        $em->persist($qm);
+//        $em->flush();
     }
 
     public function enqueueMessagesMarkedReadEvent(Conversation $conversation, array $messageIds = [])
     {
-        /** @var EntityManager $em */
-        $em = $this->container->get('doctrine')->getManager();
+//        /** @var EntityManager $em */
+//        $em = $this->container->get('doctrine')->getManager();
         /** @var User $user */
         $user = $this->container->get('security.token_storage')->getToken()->getUser();
         $targetUser = $user;
@@ -71,15 +81,19 @@ class Queue extends ContainerAware
         $qm = new QueueMessage();
         $qm->setTargetUser($targetUser);
         $qm->setName(QueueEvents::MESSAGE_READ);
-        $qm->setData([
+        $messageData = [
             'totalUnreadMessages' => $totalUnreadMessages,
             'conversationUnreadMessages' => $conversation->getUserUnseenMessageCount($targetUser),
             'conversationId' => $conversation->getId(),
             'companionId' => $companion ? $companion->getId() : null,
             'messageIds' => $messageIds
-        ]);
+        ];
+        $qm->setData($messageData);
 
-        $em->persist($qm);
-        $em->flush();
+        $producer = $this->container->get('old_sound_rabbit_mq.notifications_producer');
+        $producer->publish(json_encode(['type' => 'messages-marked-read', 'data' => $messageData]), 'user.' . $targetUser->getId());
+
+//        $em->persist($qm);
+//        $em->flush();
     }
 }

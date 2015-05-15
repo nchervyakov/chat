@@ -64,6 +64,7 @@ class RequestListener extends ContainerAware implements EventSubscriberInterface
     public function onKernelRequest(GetResponseEvent $event)
     {
         $token = $this->storage->getToken();
+        $socketIOToken = '';
 
         if ($token && ($user = $token->getUser()) instanceof UserInterface) {
             /** @var EntityManager $em */
@@ -78,6 +79,16 @@ class RequestListener extends ContainerAware implements EventSubscriberInterface
             if (!$event->getRequest()->isXmlHttpRequest()) {
                 $this->container->get('app.user_manager')->updateUsersOnlineStatusByProbability();
             }
+
+            $socketIOToken = $this->container->get('app.socket_io.token_storage')->getToken();
+            $producer = $this->container->get('old_sound_rabbit_mq.user_info_producer');
+            $producer->setContentType('application/json');
+            $producer->publish(json_encode([
+                'user_id' => $user->getId(),
+                'token' => $socketIOToken
+            ]));
         }
+
+        $this->container->get('twig')->addGlobal('socket_io_token', $socketIOToken);
     }
 }

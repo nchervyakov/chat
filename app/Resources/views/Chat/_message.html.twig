@@ -1,12 +1,13 @@
-{%- set isMyMessage = message.author.id == app.user.id -%}
+{%- set currentUser = currentUser is defined and currentUser is not null ? currentUser : app.user -%}
+{%- set isMyMessage = message.author.id == currentUser.id -%}
 {%- set orientation = isMyMessage ? 'left' : 'right' -%}
-{%- set allowedToComplain = is_granted('ROLE_MODEL') and message.author.id != app.user.id -%}
+{%- set allowedToComplain = currentUser.hasRole('ROLE_MODEL') and message.author.id != currentUser.id -%}
 {%- set canComplain = allowedToComplain and message.complaint is null and not message.deletedByUser -%}
 {%- set complained = message.complaint is not null -%}
-{%- set canDelete = message.author == app.user and not message.deletedByUser -%}
+{%- set canDelete = message.author == currentUser and not message.deletedByUser -%}
 {%- set isDeleted = message.deletedByUser -%}
 
-<li class="{{ orientation }} clearfix js-message message{% if not message.isSeenByUser(app.user) %} unseen{% endif -%}
+<li class="{{ orientation }} clearfix js-message message{% if not message.isSeenByUser(currentUser) %} unseen{% endif -%}
         {%- if canComplain %} can-complain{% endif -%} {%- if complained and (allowedToComplain or message.complaint.isAccepted) %} complained{% endif -%} {%- if isDeleted %} deleted{% endif -%}"
         data-id="{{ message.id }}">
     <span class="chat-img pull-{{ orientation }}">
@@ -18,14 +19,14 @@
 
     <div class="chat-body clearfix">
         <div class="header">
-            {% if message.author == app.user %}
+            {% if message.author == currentUser %}
                 <strong class="primary-font"><a href="{{ path('user_show', {'user_id': message.author.id}) }}"
                             >{{ message.author.fullName }}</a></strong>
                 <small class="pull-right text-muted">
                     <span class="glyphicon glyphicon-time"></span>{{ message.dateAdded|date("F jS \\a\\t G:i") }}
                 </small>
                 {% block message_actions %}
-                    <small class="message-actions js-message-actions {% if message.author == app.user %}pull-right{% endif %}">
+                    <small class="message-actions js-message-actions {% if message.author == currentUser %}pull-right{% endif %}">
                         {%- if canComplain -%}
                             <a href="{{ path('complain_message', {'message_id': message.id}) }}" class="action-link js-complain-link">Complain</a>
                         {%- endif -%}

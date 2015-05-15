@@ -12,10 +12,12 @@ var App = window.App || {};
 can.Control('ChatWidget', {
     pluginName: 'chatWidget',
     defaults: {
-        emoticonPopup: null
+        emoticonPopup: null,
+        socket: null
     }
 }, {
     init: function () {
+        this.socket = this.options.socket;
         this.form = this.element.find('.js-message-form');
         this.inputElement = this.form.find('.js-message-input');
         this.submitButton = this.form.find('.js-submit-button');
@@ -26,6 +28,8 @@ can.Control('ChatWidget', {
         this.emoticonLink = this.element.find('[data-toggle=popover]');
         this.imageMessageInput = this.element.find('#imageMessageInput');
         this.sendImageButton = this.element.find('.js-send-image-btn');
+
+        this.bindSocket();
 
         //var widget = this;
 
@@ -69,7 +73,7 @@ can.Control('ChatWidget', {
         }
         this.latestMessageId = Math.max.apply(null, allMessageIds);
         this.timer = null;
-        this.fetchNewMessages();
+        //this.fetchNewMessages();
 
         this.fetchingPrevMessages = false;
 
@@ -211,6 +215,42 @@ can.Control('ChatWidget', {
         });
     },
 
+    onAddedMessage: function (data) {
+         if (this.hasMessageWithId(data.message.id)) {
+             return;
+         }
+
+        if (this.latestMessageId < data.message.id) {
+            this.latestMessageId = data.message.id;
+        }
+
+        this.addNewMessages(data.html);
+        this.markMessagesSeen(5000);
+    },
+
+    hasMessageWithId: function (id) {
+        return this.list.find('.js-message[data-id="' + id + '"]').length > 0;
+    },
+
+    bindSocket: function () {
+        //console.log(['Socket: ', this.options.socket]);
+        if (!this.socket) {
+            //console.log('Socket inactive.');
+            return;
+        }
+        //console.log('Bound chat page');
+        var widget = this;
+        this.socket.on('new-message', function (data) {
+            //console.log(['new-message', data]);
+            widget.onAddedMessage(data);
+        });
+
+        //this.socket.on('messages-marked-read', function (data) {
+        //    //console.log(['messages-marked-read', data]);
+        //    widget.onReadMessages(data);
+        //});
+    },
+
     createMessageRequest: function (callback, deferred) {
 
         var defer = deferred || $.Deferred(),
@@ -336,7 +376,9 @@ can.Control('ChatWidget', {
     onSuccessfulMessage: function (res) {
         if (res.success) {
             if (res.message) {
-                this.addNewMessages(res.message);
+                if (!this.hasMessageWithId(res.id)) {
+                    this.addNewMessages(res.message);
+                }
                 this.latestMessageId = res.id;
             }
             if (res.stat_html) {
@@ -349,13 +391,6 @@ can.Control('ChatWidget', {
             App.updateHeaderCoins(res.coins);
 
         }
-        //else {
-        //    if (res.need_to_agree_to_pay) {
-        //        this.showAgreeToPayDialog(res.message);
-        //    } else if (res.not_enough_money) {
-        //        App.showAddCoinsDialog();
-        //    }
-        //}
     },
 
     showAgreeToPayDialog: function (message, request) {
@@ -513,16 +548,47 @@ can.Control('ChatWidget', {
 can.Control('ChatPage', {
     pluginName: 'chatPage',
     defaults: {
-        emoticonPopup: null
+        emoticonPopup: null,
+        socket: null
     }
 }, {
     init: function () {
-        this.element.find('.chat-widget').chatWidget();
+        this.socket = this.options.socket;
+        this.element.find('.chat-widget').chatWidget({socket: this.options.socket});
         this.companionId = this.element.find('.chat-widget').data('companion-id');
+        this.bindSocket();
     },
 
     '{window} added.message': function (el, ev, d) {
         var data = d && d.data || {};
+        this.onAddedMessage(data);
+    },
+
+    '{window} read.message': function (el, ev, d) {
+        var data = d && d.data || {};
+        this.onReadMessages(data);
+    },
+
+    bindSocket: function () {
+        //console.log(['Socket: ', this.options.socket]);
+        if (!this.socket) {
+            //console.log('Socket inactive.');
+            return;
+        }
+        //console.log('Bound chat page');
+        var widget = this;
+        this.socket.on('new-message', function (data) {
+            //console.log(['new-message', data]);
+            widget.onAddedMessage(data);
+        });
+
+        this.socket.on('messages-marked-read', function (data) {
+            //console.log(['messages-marked-read', data]);
+            widget.onReadMessages(data);
+        });
+    },
+
+    onAddedMessage: function (data) {
         var sameUserInChat = parseInt(this.companionId, 10) == parseInt(data.companionId, 10);
 
         if (!sameUserInChat) {
@@ -532,8 +598,7 @@ can.Control('ChatPage', {
         }
     },
 
-    '{window} read.message': function (el, ev, d) {
-        var data = d && d.data || {};
+    onReadMessages: function (data) {
         if (data && data.hasOwnProperty('conversationUnreadMessages')) {
             this.updateUnreadMessagesCount(data.companionId, data.conversationUnreadMessages);
         }
@@ -568,5 +633,5 @@ can.Control('ChatPage', {
 
 
 jQuery(function ($) {
-    $('.js-chat-page').chatPage();
+    $('.js-chat-page').chatPage({socket: App.socket});
 });

@@ -182,3 +182,8 @@ services:
         tags:
             - {name: "kernel.event_subscriber"}
 
+    app.socket_io.token_storage:
+        class: AppBundle\SocketIO\SocketIOTokenStorage
+        calls:
+            - [setContainer, ["@service_container"]]
+

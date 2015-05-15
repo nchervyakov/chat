@@ -27,6 +27,6 @@ class SendMQTaskCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->getContainer()->get('old_sound_rabbit_mq.task_producer')->publish($input->getArgument('message'));
+        $this->getContainer()->get('old_sound_rabbit_mq.notifications_producer')->publish($input->getArgument('message'));
     }
 }
