@@ -3,7 +3,6 @@
 namespace AppBundle\Entity;
 
 use AppBundle\Model\ModelSearch;
-use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 
@@ -87,14 +86,19 @@ class UserRepository extends EntityRepository
      * @param User $user
      * @param User $companion
      * @param bool $withConversations
+     * @param null $online
      * @return User[]
      */
-    public function findUserCompanions(User $user, User $companion = null, $withConversations = false)
+    public function findUserCompanions(User $user, User $companion = null, $withConversations = false, $online = null)
     {
         $qb = $this->createUserFriendsQueryBuilder($user, $companion);
 
         if ($withConversations) {
             $qb->addSelect('c');
+        }
+
+        if ($online !== null)  {
+            $qb->andWhere('u.online = :online_status')->setParameter('online_status', (boolean) $online);
         }
 
         /** @var User[] $result */

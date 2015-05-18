@@ -101,10 +101,25 @@ class UserManager extends ContainerAware
         $thresholdDate = new \DateTime();
         $thresholdDate->modify('-15 minutes');
 
-        $this->getManager()->createQuery("UPDATE AppBundle\\Entity\\User u "
-                . "SET u.online = FALSE WHERE (u.lastVisitedDate IS NULL OR u.lastVisitedDate < :last_visit_date) AND u.online = TRUE")
+        /** @var User[] $newOfflineUsers */
+        $newOfflineUsers = $this->getManager()
+            ->createQuery("SELECT u FROM AppBundle\\Entity\\User u WHERE (u.lastVisitedDate IS NULL OR u.lastVisitedDate < :last_visit_date) AND u.online = TRUE")
             ->setParameter('last_visit_date', $thresholdDate)
             ->execute();
+
+//        $this->getManager()->createQuery("UPDATE AppBundle\\Entity\\User u "
+//                . "SET u.online = FALSE WHERE (u.lastVisitedDate IS NULL OR u.lastVisitedDate < :last_visit_date) AND u.online = TRUE")
+//            ->setParameter('last_visit_date', $thresholdDate)
+//            ->execute();
+
+        $notificator = $this->container->get('app.mq_notificator');
+
+        foreach ($newOfflineUsers as $user) {
+            $user->setOnline(false);
+            $notificator->notifyCompanionsThatUserStatusChanged($user, false);
+        }
+
+        $this->getManager()->flush();
     }
 
     /**

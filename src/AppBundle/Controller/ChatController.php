@@ -150,6 +150,20 @@ class ChatController extends Controller
                 'id' => $message->getId()
             ];
 
+            if ($companion->isOnline()) {
+                $producer = $this->container->get('old_sound_rabbit_mq.notifications_producer');
+                $producer->setContentType('application/json');
+
+                $producer->publish(json_encode(['type' => 'conversation-stats-changed', 'data' => [
+                    'total_time' => $conversation->getSeconds(),
+                    'stat_html' => $this->renderView(':Chat:_chat_stats.html.twig', [
+                        'conversation' => $conversation,
+                        'messages' => true,
+                        'currentUser' => $companion
+                    ])
+                ]]), 'user.' . $companion->getId());
+            }
+
             return new JsonResponse($responseData);
 
         } else {

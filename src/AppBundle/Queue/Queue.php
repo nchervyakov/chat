@@ -15,7 +15,6 @@ use AppBundle\Entity\Conversation;
 use AppBundle\Entity\Message;
 use AppBundle\Entity\QueueMessage;
 use AppBundle\Entity\User;
-use Doctrine\ORM\EntityManager;
 use Symfony\Component\DependencyInjection\ContainerAware;
 
 class Queue extends ContainerAware
@@ -51,6 +50,7 @@ class Queue extends ContainerAware
         $qm->setData($messageData);
 
         $producer = $this->container->get('old_sound_rabbit_mq.notifications_producer');
+        $producer->setContentType('application/json');
         $producer->publish(json_encode(['type' => 'new-message', 'data' => $messageData]), 'user.' . $targetUser->getId());
         $producer->publish(json_encode(['type' => 'new-message', 'data' => array_merge($messageData, [
             'conversationUnreadMessages' => $conversation->getUserUnseenMessageCount($author),
@@ -91,6 +91,7 @@ class Queue extends ContainerAware
         $qm->setData($messageData);
 
         $producer = $this->container->get('old_sound_rabbit_mq.notifications_producer');
+        $producer->setContentType('application/json');
         $producer->publish(json_encode(['type' => 'messages-marked-read', 'data' => $messageData]), 'user.' . $targetUser->getId());
 
 //        $em->persist($qm);

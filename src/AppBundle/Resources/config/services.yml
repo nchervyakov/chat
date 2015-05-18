@@ -135,6 +135,11 @@ services:
         calls:
             - [setContainer, ["@service_container"]]
 
+    app.mq_notificator:
+        class: AppBundle\Notification\MQNotificator
+        calls:
+            - [setContainer, ["@service_container"]]
+
     app.event.request_subscriber:
         class: AppBundle\Event\Listener\RequestListener
         arguments:

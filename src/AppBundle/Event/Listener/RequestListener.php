@@ -69,8 +69,10 @@ class RequestListener extends ContainerAware implements EventSubscriberInterface
         if ($token && ($user = $token->getUser()) instanceof UserInterface) {
             /** @var EntityManager $em */
             $em = $this->container->get('doctrine')->getManager();
+            /** @var User $user */
+            $showedUp = !$user->isOnline();
+
             if ($em && $em->isOpen()) {
-                /** @var User $user */
                 $user->setLastVisitedDate(new \DateTime());
                 $user->setOnline(true);
                 $this->userManager->updateUser($user);
@@ -81,12 +83,12 @@ class RequestListener extends ContainerAware implements EventSubscriberInterface
             }
 
             $socketIOToken = $this->container->get('app.socket_io.token_storage')->getToken();
-            $producer = $this->container->get('old_sound_rabbit_mq.user_info_producer');
-            $producer->setContentType('application/json');
-            $producer->publish(json_encode([
-                'user_id' => $user->getId(),
-                'token' => $socketIOToken
-            ]));
+            $notificator = $this->container->get('app.mq_notificator');
+            $notificator->notifyUserToken($user);
+
+            if ($showedUp && $em && $em->isOpen()) {
+                $notificator->notifyCompanionsThatUserStatusChanged($user, true);
+            }
         }
 
         $this->container->get('twig')->addGlobal('socket_io_token', $socketIOToken);

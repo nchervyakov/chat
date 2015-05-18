@@ -108,8 +108,8 @@ can.Control('ApplicationControl', {
             if (data && data.hasOwnProperty('totalUnreadMessages')) {
                 this.updateUnreadMessagesCount(data.totalUnreadMessages);
             }
-            ion.sound.play("button_tiny");
         }
+        ion.sound.play("button_tiny");
     },
 
     onReadMessages: function (data) {
@@ -130,6 +130,9 @@ can.Control('ApplicationControl', {
 
         this.socket.on('messages-marked-read', function (data) {
             widget.onReadMessages(data);
+        });
+
+        this.socket.on('user-online-status-changed', function (data) {
         });
     },
 
@@ -180,19 +183,21 @@ jQuery(function ($) {
 
     socket.on('connect', function () {
         var token = App.parameters && App.parameters.socket_io_token,
-            connected = false;
+            connected = false,
+            timer;
 
         if (token) {
             var binder = function () {
                 if (!connected) {
                     socket.emit('register_token', token);
+                    timer = setTimeout(binder, 5000);
+                } else {
+                    clearTimeout(timer);
                 }
-                setTimeout(binder, 5000);
             };
             binder();
 
             socket.on('bound', function (res) {
-                console.log('Bound: ' + res);
                 if (res) {
                     connected = true;
                 }

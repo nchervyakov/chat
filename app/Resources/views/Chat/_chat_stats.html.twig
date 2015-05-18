@@ -1,6 +1,7 @@
+{% set isModel = currentUser is defined and currentUser is not null ? currentUser.hasRole('ROLE_MODEL') : is_granted('ROLE_MODEL') %}
 {%- if messages is defined -%}
     {{ conversation.seconds|date_interval }}
-    {%- if is_granted('ROLE_MODEL') %}
+    {%- if isModel %}
         = ${{ conversation.modelEarnings|number_format(2) }}
     {%- endif -%}
 {%- endif -%}

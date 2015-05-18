@@ -245,6 +245,16 @@ can.Control('ChatWidget', {
             widget.onAddedMessage(data);
         });
 
+        this.socket.on('coins-changed', function (data) {
+            App.updateHeaderCoins(data.coins);
+        });
+
+        this.socket.on('conversation-stats-changed', this.proxy(function (data) {
+            if (data.stat_html) {
+                this.statsBlock.html(data.stat_html);
+            }
+        }));
+
         //this.socket.on('messages-marked-read', function (data) {
         //    //console.log(['messages-marked-read', data]);
         //    widget.onReadMessages(data);
@@ -494,6 +504,7 @@ can.Control('ChatWidget', {
             if (res.messages) {
                 widget.element.find('.js-previous-messages-block').remove();
                 widget.list.prepend(res.messages);
+                widget.markMessagesSeen(5000);
             }
         });
     },
@@ -586,6 +597,20 @@ can.Control('ChatPage', {
             //console.log(['messages-marked-read', data]);
             widget.onReadMessages(data);
         });
+
+        this.socket.on('user-online-status-changed', this.proxy(function (data) {
+            var friend = this.element.find('.chat-friends .friend[data-companion-id=' + data.user_id + ']');
+
+            if (friend.length) {
+                if (data.is_online) {
+                    if (!friend.find('.photo .user-status').length) {
+                        friend.find('.photo').append('<span class="user-status user-status-online"></span>')
+                    }
+                } else {
+                    friend.find('.photo .user-status').remove();
+                }
+            }
+        }));
     },
 
     onAddedMessage: function (data) {
