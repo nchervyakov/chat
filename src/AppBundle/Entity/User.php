@@ -140,13 +140,6 @@ class User extends BaseUser
      */
     private $instagramURL;
 
-//    /**
-//     * @var ModelRequest|null
-//     * @ORM\OneToOne(targetEntity="AppBundle\Entity\ModelRequest", inversedBy="model")
-//     * @ORM\JoinColumn(name="model_request_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
-//     */
-//    private $modelRequest;
-
     /**
      * @var bool
      * @ORM\Column(name="activated", type="boolean", options={"default": "1"})
@@ -567,29 +560,6 @@ class User extends BaseUser
     {
         $this->instagramURL = $instagramURL;
     }
-
-//    /**
-//     * Set modelRequest
-//     *
-//     * @param ModelRequest $modelRequest
-//     * @return User
-//     */
-//    public function setModelRequest(ModelRequest $modelRequest = null)
-//    {
-//        $this->modelRequest = $modelRequest;
-//
-//        return $this;
-//    }
-//
-//    /**
-//     * Get modelRequest
-//     *
-//     * @return ModelRequest
-//     */
-//    public function getModelRequest()
-//    {
-//        return $this->modelRequest;
-//    }
 
     /**
      * @return string

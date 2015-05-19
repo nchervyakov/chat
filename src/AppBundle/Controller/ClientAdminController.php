@@ -12,6 +12,7 @@ namespace AppBundle\Controller;
 
 
 use AppBundle\Entity\User;
+use Sonata\AdminBundle\Exception\ModelManagerException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 

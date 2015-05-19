@@ -11,7 +11,6 @@
 namespace AppBundle\Admin;
 
 
-//use AppBundle\Entity\ModelRequest;
 use AppBundle\Entity\User;
 use AppBundle\Tools\DateTimeServices;
 use Knp\Menu\ItemInterface as MenuItemInterface;
@@ -22,7 +21,6 @@ use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Route\RouteCollection;
 use Sonata\AdminBundle\Show\ShowMapper;
 use Sonata\UserBundle\Admin\Entity\UserAdmin as BaseUserAdmin;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
 
 class UserAdmin extends BaseUserAdmin
 {
@@ -145,24 +143,6 @@ class UserAdmin extends BaseUserAdmin
                 ->end()
             ;
         }
-
-//        if ($this->getSubject() && $this->getSubject()->getId()
-//            || $this->request->isXmlHttpRequest()
-//        ) {
-//            $formMapper
-//                ->tab('User')
-//                    ->with('General')
-//                        ->add('modelRequest', 'sonata_type_model_autocomplete', [
-//                            'property' => ['email', 'firstName', 'lastName'],
-//                            'required' => false,
-//                            'to_string_callback' => function($entity, $property) {
-//                                /** @var ModelRequest $entity */
-//                                return $entity->getEmail() . ' (' . trim($entity->getFirstName() . ' ' . $entity->getLastName()) . ')';
-//                            },
-//                        ])
-//                    ->end()
-//                ->end();
-//        }
     }
 
     protected function configureDatagridFilters(DatagridMapper $filterMapper)
@@ -254,11 +234,6 @@ class UserAdmin extends BaseUserAdmin
                 $user->setPlainPassword('');
                 $user->setPassword('');
             }
-
-//            if ($user->getModelRequest()) {
-//                $user->getModelRequest()->setModel($user);
-//                $user->getModelRequest()->setStatus(ModelRequest::STATUS_CREATED_MODEL);
-//            }
         }
         parent::prePersist($user);
     }
@@ -314,15 +289,6 @@ class UserAdmin extends BaseUserAdmin
                 ->add('twoStepVerificationCode')
             ->end()
         ;
-
-//        if ($this->getSubject() && $this->getSubject()->hasRole('ROLE_MODEL')) {
-//            $showMapper
-//                ->with('General')
-//                    ->add('modelRequest', null, [
-//                        'associated_property' => 'getDescription'
-//                    ])
-//                ->end();
-//        }
     }
 
     protected function configureTabMenu(MenuItemInterface $menu, $action, AdminInterface $childAdmin = null)
