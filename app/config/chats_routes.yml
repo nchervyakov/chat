@@ -1,0 +1,8 @@
+chats:
+    type:       rest
+    resource:   AppBundle\Controller\Api\ChatController
+
+messages:
+    type:       rest
+    parent:     chats
+    resource:   AppBundle\Controller\Api\MessageController

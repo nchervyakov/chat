@@ -99,6 +99,9 @@ doctrine:
 #            default:
 #                mappings:
 
+sensio_framework_extra:
+    request:
+        converters: true
 
 doctrine_migrations:
     dir_name: %kernel.root_dir%/DoctrineMigrations
@@ -239,6 +242,37 @@ fos_js_routing:
         - complain_message
         - delete_own_message
 #        - fos_user_registration_register
+
+fos_rest:
+    view:
+        jsonp_handler: ~
+        view_response_listener: force
+        formats:
+            jsonp: false
+            json: true
+            xml: true
+            rss: false
+        templating_formats:
+            html: false
+    disable_csrf_role: ROLE_API
+    param_fetcher_listener: true
+    allowed_methods_listener: true
+    body_listener: true
+    format_listener:
+        rules:
+            - { path: '^/api', priorities: ['json', 'xml'], fallback_format: json, prefer_extension: true }
+            - { path: '^/', stop: true } # Available for version >= 1.5
+        media_type:
+            version_regex:        '/(v|version)=(?P<version>[0-9\.]+)/'
+    body_converter:
+        enabled: true
+        validate: true
+        validation_errors_argument: validationErrors # This is the default value
+    exception:
+        enabled: true
+    routing_loader:
+        default_format: json
+        include_format: true
 
 knp_menu:
 #    twig:
@@ -484,3 +518,7 @@ old_sound_rabbit_mq:
 #            exchange_options: {name: 'upload-picture', type: direct}
 #            queue_options:    {name: 'upload-picture'}
 #            callback:         upload_picture_service
+
+nelmio_api_doc:
+    cache:
+        enabled: true

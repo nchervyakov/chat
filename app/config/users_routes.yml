@@ -1,0 +1,8 @@
+users:
+    type:       rest
+    resource:   AppBundle\Controller\Api\UserController
+
+user_photos:
+    type:       rest
+    parent:     users
+    resource:   AppBundle\Controller\Api\UserPhotoController

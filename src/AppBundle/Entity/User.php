@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Sonata\UserBundle\Model\BaseUser;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
+use JMS\Serializer\Annotation as JMSSerializer;
 
 /**
  * User
@@ -24,6 +25,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @UniqueEntity(fields={"emailCanonical"}, errorPath="email", message="fos_user.email.already_used",
  *      groups={"AppRegistration", "AppProfile"})
  * @ORM\HasLifecycleCallbacks()
+ *
+ * @JMSSerializer\ExclusionPolicy("ALL")
+ * @JMSSerializer\XmlRoot("user")
  */
 class User extends BaseUser
 {
@@ -36,6 +40,9 @@ class User extends BaseUser
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Groups({"user_read"})
+     * @JMSSerializer\XmlAttribute()
      */
     protected $id;
 
@@ -47,8 +54,25 @@ class User extends BaseUser
      *      max=254, maxMessage="fos_user.email.long",
      *      groups={"AppRegistration", "AppProfile"})
      * @Assert\Email(message="fos_user.email.invalid", groups={"AppRegistration", "AppProfile"})
+     * @JMSSerializer\Groups({"user_read"})
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\XmlAttribute()
      */
     protected $email;
+
+    /**
+     * @var string
+     * @JMSSerializer\Exclude()
+     * @JMSSerializer\Groups({"admin_read", "admin_write"})
+     */
+    protected $password;
+
+    /**
+     * @var string
+     * @JMSSerializer\Exclude()
+     * @JMSSerializer\Groups({"admin_read", "admin_write"})
+     */
+    protected $passwordCanonical;
 
     /**
      * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Group")
@@ -56,6 +80,10 @@ class User extends BaseUser
      *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE")},
      *      inverseJoinColumns={@ORM\JoinColumn(name="group_id", referencedColumnName="id", onDelete="CASCADE")}
      * )
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Groups({"Default", "user_read", "admin_write"})
+     * @JMSSerializer\XmlList("group")
+     * @JMSSerializer\Type("array<AppBundle\Entity\Group>")
      */
     protected $groups;
 
@@ -99,6 +127,9 @@ class User extends BaseUser
      * @var \DateTime
      *
      * @ORM\Column(name="date_added", type="datetime", nullable=true)
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\XmlAttribute()
+     * @JMSSerializer\Groups({"Default", "user_read", "admin_write"})
      */
     private $dateAdded;
 
@@ -106,12 +137,18 @@ class User extends BaseUser
      * @var \DateTime
      *
      * @ORM\Column(name="date_updated", type="datetime", nullable=true)
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\XmlAttribute()
+     * @JMSSerializer\Groups({"Default", "user_read", "admin_write"})
      */
     private $dateUpdated;
 
     /**
      * @ORM\Column(name="sort_order", type="bigint", nullable=true, options={"default": 0})
      * @ORM\OrderBy("DESC")
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\XmlAttribute()
+     * @JMSSerializer\Groups({"Default", "user_read", "admin_write"})
      */
     private $order;
 
@@ -119,12 +156,16 @@ class User extends BaseUser
      * @var UserPhoto
      * @ORM\OneToOne(targetEntity="AppBundle\Entity\UserPhoto", cascade={"remove", "persist", "merge"}, orphanRemoval=true)
      * @ORM\JoinColumn(name="thumbnail_id", referencedColumnName="id", onDelete="SET NULL")
+     * @JMSSerializer\MaxDepth(depth=1)
+     * @JMSSerializer\Expose()
      */
     private $thumbnail;
 
     /**
      * @var Collection|UserPhoto[]
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\UserPhoto", mappedBy="owner", cascade={"merge", "persist", "remove"})
+     * @JMSSerializer\Type("array<AppBundle\Entity\UserPhoto>")
+     * @JMSSerializer\Expose()
      */
     private $photos;
 
@@ -141,14 +182,20 @@ class User extends BaseUser
     private $instagramURL;
 
     /**
-     * @var bool
+     * @var bool Whether the user (model) is activated.
      * @ORM\Column(name="activated", type="boolean", options={"default": "1"})
+     * @JMSSerializer\XmlAttribute()
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Groups({"admin_read", "admin_write"})
      */
     private $activated = true;
 
     /**
      * @var string
      * @ORM\Column(name="activation_token", type="string", length=64, nullable=true)
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Groups({"admin_read", "admin_write"})
+     * @JMSSerializer\XmlAttribute()
      */
     private $activationToken;
 
@@ -156,6 +203,9 @@ class User extends BaseUser
      * Is the model notified about either she is registered by admin, or about she is activated.
      * @var bool
      * @ORM\Column(name="model_notified", type="boolean", options={"default": 0})
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Groups({"admin_read", "admin_write"})
+     * @JMSSerializer\XmlAttribute()
      */
     private $modelNotified = false;
 
@@ -163,20 +213,43 @@ class User extends BaseUser
      * @var \DateTime
      *
      * @ORM\Column(name="last_visited_date", type="datetime", nullable=true)
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Groups({"user_read", "admin_write"})
+     * @JMSSerializer\XmlAttribute()
      */
     private $lastVisitedDate;
 
     /**
      * @var bool
      * @ORM\Column(name="is_online", type="boolean", options={"default": 0}, nullable=false)
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Groups({"user_read", "admin_write"})
+     * @JMSSerializer\XmlAttribute()
      */
     private $online = 0;
 
     /**
      * @var float
      * @ORM\Column(name="coins", type="decimal", precision=18, scale=8, nullable=false, options={"default": 0.0})
+     * @JMSSerializer\XmlAttribute()
      */
     private $coins = 0.0;
+
+    /**
+     * @var string
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\XmlAttribute()
+     * @JMSSerializer\Groups({"Default", "user_read", "admin_write"})
+     */
+    protected $firstname;
+
+    /**
+     * @var string
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\XmlAttribute()
+     * @JMSSerializer\Groups({"Default", "user_read", "admin_write"})
+     */
+    protected $lastname;
 
     /**
      * Constructor
@@ -521,6 +594,9 @@ class User extends BaseUser
     }
 
     /**
+     * @JMSSerializer\VirtualProperty()
+     * @JMSSerializer\Groups({"Default", "user_read"})
+     * @JMSSerializer\XmlAttribute()
      * @return bool
      */
     public function hasThumbnail()

@@ -43,6 +43,7 @@ class AppKernel extends Kernel
             new Cocur\Slugify\Bridge\Symfony\CocurSlugifyBundle(),
             new Knp\Bundle\TimeBundle\KnpTimeBundle(),
             new OldSound\RabbitMqBundle\OldSoundRabbitMqBundle(),
+            new Nelmio\ApiDocBundle\NelmioApiDocBundle(),
             new AppBundle\AppBundle(),
         );
 

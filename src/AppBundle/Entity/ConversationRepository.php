@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Proxy\Exception\InvalidArgumentException;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityRepository;
 
@@ -117,5 +118,35 @@ class ConversationRepository extends EntityRepository
         }
 
         return $result;
+    }
+
+    /**
+     * @param User $user
+     *
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    public function prepareUserConversationsQB(User $user)
+    {
+        if ($user->hasRole('ROLE_CLIENT')) {
+            $field = 'c.client';
+            $oppositeField = 'c.model';
+
+        } else if ($user->hasRole('ROLE_MODEL')) {
+            $field = 'c.model';
+            $oppositeField = 'c.client';
+
+        } else {
+            throw new \InvalidArgumentException("The user must be either client or model.");
+        }
+
+        $qb = $this->createQueryBuilder('c');
+        $qb->join($oppositeField, 'ou')
+            ->where($field . ' = :user')
+            ->addOrderBy('c.lastMessageDate', 'DESC')
+            ->addOrderBy('ou.online', 'DESC')
+            ->setParameter('user', $user)
+        ;
+
+        return $qb;
     }
 }

@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as JMSSerializer;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -18,6 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass="AppBundle\Entity\EmoticonRepository")
  * @ORM\HasLifecycleCallbacks()
  * @Vich\Uploadable()
+ * @JMSSerializer\XmlRoot("emoticon")
  */
 class Emoticon
 {
@@ -27,6 +29,8 @@ class Emoticon
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @JMSSerializer\XmlAttribute()
+     * @JMSSerializer\Type("integer")
      */
     private $id;
 
@@ -34,18 +38,23 @@ class Emoticon
      * @var string
      * @ORM\Column(name="symbol", type="string", length=32)
      * @Assert\NotBlank()
+     * @JMSSerializer\XmlAttribute()
+     * @JMSSerializer\Type("string")
      */
     private $symbol;
 
     /**
      * @var array
      * @ORM\Column(name="aliases", type="array")
+     * @JMSSerializer\XmlList(entry="alias")
+     * @JMSSerializer\Type("array<string>")
      */
     private $aliases = [];
 
     /**
      * @var UploadedFile
      * @Vich\UploadableField(mapping="emoticon", fileNameProperty="icon")
+     * @JMSSerializer\Exclude()
      */
     private $iconFile;
 
@@ -53,12 +62,15 @@ class Emoticon
      * @var string
      * @ORM\Column(name="icon", type="string", length=255)
      * @Assert\NotBlank(message="Emoticon file is required")
+     * @JMSSerializer\XmlAttribute()
+     * @JMSSerializer\Type("string")
      */
     private $icon;
 
     /**
      * @var int
      * @ORM\Column(name="sort_order", type="integer", nullable=true)
+     * @JMSSerializer\XmlAttribute()
      */
     private $sortOrder;
 
@@ -66,6 +78,7 @@ class Emoticon
      * @var \DateTime
      *
      * @ORM\Column(name="date_added", type="datetime", nullable=true)
+     * @JMSSerializer\XmlAttribute()
      */
     private $dateAdded;
 
@@ -73,6 +86,9 @@ class Emoticon
      * @var \DateTime
      *
      * @ORM\Column(name="date_updated", type="datetime", nullable=true)
+     * @JMSSerializer\XmlAttribute()
+     * @JMSSerializer\Type("DateTime")
+     * @JMSSerializer\Expose()
      */
     private $dateUpdated;
 

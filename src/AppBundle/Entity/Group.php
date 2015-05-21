@@ -11,6 +11,7 @@ namespace AppBundle\Entity;
 
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as JMSSerializer;
 use Sonata\UserBundle\Model\BaseGroup;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -20,6 +21,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="groups")
  * @ORM\Entity(repositoryClass="AppBundle\Entity\GroupRepository")
  * @ORM\HasLifecycleCallbacks()
+ * @JMSSerializer\XmlRoot("group")
+ * @JMSSerializer\ExclusionPolicy("ALL")
  */
 class Group extends BaseGroup
 {
@@ -29,6 +32,9 @@ class Group extends BaseGroup
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @JMSSerializer\XmlAttribute()
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Groups({"Default", "user_read", "admin_write"})
      */
     protected $id;
 
@@ -36,6 +42,9 @@ class Group extends BaseGroup
      * @var \DateTime
      *
      * @ORM\Column(name="date_added", type="datetime", nullable=true)
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\XmlAttribute()
+     * @JMSSerializer\Groups({"Default", "user_read", "admin_write"})
      */
     private $dateAdded;
 
@@ -43,8 +52,28 @@ class Group extends BaseGroup
      * @var \DateTime
      *
      * @ORM\Column(name="date_updated", type="datetime", nullable=true)
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\XmlAttribute()
+     * @JMSSerializer\Groups({"Default", "user_read", "admin_write"})
      */
     private $dateUpdated;
+
+    /**
+     * @var string Name
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\XmlAttribute()
+     * @JMSSerializer\Groups({"Default", "user_read", "admin_write"})
+     */
+    protected $name;
+
+    /**
+     * @var array Roles
+     * @JMSSerializer\Type("array<string>")
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Groups({"Default", "user_read", "admin_write"})
+     * @JMSSerializer\XmlList("role")
+     */
+    protected $roles;
 
     function __construct($name, $roles = array())
     {

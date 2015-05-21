@@ -93,7 +93,15 @@ sonata_user:
     resource: '@SonataUserBundle/Resources/config/routing/admin_security.xml'
     prefix: /admin
 
-app:
-    resource: @AppBundle/Controller/
-    type:     annotation
+api:
+    resource:   rest_routes.yml
+    type:       rest
+    prefix:     /api/v1
 
+app:
+    resource:   @AppBundle/Controller/
+    type:       annotation
+
+NelmioApiDocBundle:
+    resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
+    prefix:   /api/doc

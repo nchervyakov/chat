@@ -11,6 +11,7 @@ namespace AppBundle\Entity;
 
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\XmlRoot;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
@@ -23,6 +24,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * @ORM\Table(name="user_photos")
  * @Vich\Uploadable()
  * @ORM\HasLifecycleCallbacks()
+ * @XmlRoot("user_photo")
  */
 class UserPhoto 
 {

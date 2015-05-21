@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as JMSSerializer;
 use Symfony\Bridge\Doctrine\Validator\Constraints as DoctrineConstraints;
 
 /**
@@ -15,6 +16,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints as DoctrineConstraints;
  * )
  * @ORM\Entity(repositoryClass="AppBundle\Entity\ConversationRepository")
  * @ORM\HasLifecycleCallbacks()
+ * @JMSSerializer\XmlRoot("chat")
  */
 class Conversation
 {
@@ -24,6 +26,8 @@ class Conversation
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @JMSSerializer\Groups({"user_read"})
+     * @JMSSerializer\XmlAttribute()
      */
     private $id;
 
@@ -32,6 +36,8 @@ class Conversation
      * @var User
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
      * @ORM\JoinColumn(name="client_id", referencedColumnName="id", onDelete="CASCADE")
+     * @JMSSerializer\Groups({"user_read", "user_write"})
+     * @JMSSerializer\Type("AppBundle\Entity\User")
      */
     protected $client;
 
@@ -40,37 +46,33 @@ class Conversation
      * @var User
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User", cascade={"remove"})
      * @ORM\JoinColumn(name="model_id", referencedColumnName="id", onDelete="CASCADE")
+     * @JMSSerializer\Groups({"user_read", "user_write"})
      */
     protected $model;
 
-//    /**
-//     * @var Collection|array|Message[]
-//     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Message", mappedBy="conversation", cascade={"remove"}, orphanRemoval=true)
-//     * @ORM\OrderBy({"dateAdded" = "ASC"})
-//     */
-//    protected $messages;
-
-//    /**
-//     * @var ConversationInterval[]|array|Collection
-//     * @ORM\OneToMany(targetEntity="AppBundle\Entity\ConversationInterval", mappedBy="conversation", cascade={"remove"}, orphanRemoval=true)
-//     */
-//    protected $intervals;
-
     /**
-     * @var integer
+     * @var integer Total seconds from start
      * @ORM\Column(name="seconds", type="integer", options={"default": 0})
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\XmlAttribute()
+     * @JMSSerializer\Groups({"user_read"})
      */
     private $seconds = 0;
 
     /**
-     * @var float
+     * @var float Total earnings for this chat
      * @ORM\Column(name="price", type="decimal", precision=18, scale=8, options={"default": 0.0})
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\XmlAttribute()
+     * @JMSSerializer\Groups({"user_read"})
      */
     private $price = 0.0;
 
     /**
-     * @var float
+     * @var float Total model earnings on this chat
      * @ORM\Column(name="model_earnings", type="decimal", precision=18, scale=8, options={"default": 0.0})
+     * @JMSSerializer\XmlAttribute()
+     * @JMSSerializer\Groups({"user_read"})
      */
     private $modelEarnings = 0.0;
 
@@ -78,6 +80,8 @@ class Conversation
      * @var \DateTime
      *
      * @ORM\Column(name="date_added", type="datetime", nullable=true)
+     * @JMSSerializer\XmlAttribute()
+     * @JMSSerializer\Groups({"user_read", "admin_write"})
      */
     private $dateAdded;
 
@@ -85,6 +89,8 @@ class Conversation
      * @var \DateTime
      *
      * @ORM\Column(name="date_updated", type="datetime", nullable=true)
+     * @JMSSerializer\XmlAttribute()
+     * @JMSSerializer\Groups({"user_read", "admin_write"})
      */
     private $dateUpdated;
 
@@ -92,43 +98,55 @@ class Conversation
      * @var \DateTime
      *
      * @ORM\Column(name="last_message_date", type="datetime", nullable=true)
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\XmlAttribute()
+     * @JMSSerializer\Groups({"user_read", "admin_write"})
      */
     private $lastMessageDate;
 
     /**
      * @var bool Whether the conversation was recalculated after changing the interval calculation algorithm (Version20150410151931)
      * @ORM\Column(name="recalculated", type="boolean", nullable=false, options={"default": 1})
+     * @JMSSerializer\Groups({"admin_read", "admin_write"})
      */
     private $recalculated = false;
 
     /**
      * @var bool
      * @ORM\Column(name="client_agree_to_pay", type="boolean", nullable=false, options={"default": 0})
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\XmlAttribute()
+     * @JMSSerializer\Groups({"user_read", "admin_write"})
      */
     private $clientAgreeToPay = false;
 
     /**
      * @var bool
      * @ORM\Column(name="stale_payment_info", type="boolean", nullable=false, options={"default": 1})
+     * @JMSSerializer\Exclude()
      */
     private $stalePaymentInfo = true;
 
     /**
-     * @var int
+     * @var int Number of messages client haven't seen
      * @ORM\Column(name="client_unseen_messages", type="integer", options={"default": 0})
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\XmlAttribute()
+     * @JMSSerializer\Groups({"user_read"})
      */
     private $clientUnseenMessages = 0;
 
     /**
-     * @var int
+     * @var int Number of messages model haven't seen
      * @ORM\Column(name="model_unseen_messages", type="integer", options={"default": 0})
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\XmlAttribute()
+     * @JMSSerializer\Groups({"user_read"})
      */
     private $modelUnseenMessages = 0;
 
     function __construct()
     {
-//        $this->messages = new ArrayCollection();
-        //$this->intervals = new ArrayCollection();
         $this->setDateAdded(new \DateTime());
     }
 
