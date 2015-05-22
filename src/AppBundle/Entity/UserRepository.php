@@ -154,6 +154,7 @@ class UserRepository extends EntityRepository
             ->join('AppBundle:User', 'u', Join::WITH, $field . ' = u')
             ->where($oppositeField . ' = :user')
             ->orderBy('c.lastMessageDate', 'DESC')
+           // ->orderBy('u.online', 'DESC')
             ->setParameter('user', $user);
 
         if ($companion) {
@@ -189,6 +190,36 @@ class UserRepository extends EntityRepository
         if ($companion) {
             $qb->andWhere($field . ' != :companion')->setParameter('companion', $companion);
         }
+        return $qb;
+    }
+
+    /**
+     * @param User $user
+     *
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    public function prepareUserCompanionsQB(User $user)
+    {
+        if ($user->hasRole('ROLE_CLIENT')) {
+            $field = 'c.client';
+            $oppositeField = 'u.modelConversations';
+
+        } else if ($user->hasRole('ROLE_MODEL')) {
+            $field = 'c.model';
+            $oppositeField = 'u.clientConversations';
+
+        } else {
+            throw new \InvalidArgumentException("The user must be either client or model.");
+        }
+
+        $qb = $this->createQueryBuilder('u');
+        $qb->join($oppositeField, 'c')
+            ->where($field . ' = :user')
+            ->addOrderBy('c.lastMessageDate', 'DESC')
+            ->addOrderBy('u.online', 'DESC')
+            ->setParameter('user', $user)
+        ;
+
         return $qb;
     }
 }

@@ -34,19 +34,26 @@ class Conversation
     /**
      * Client user.
      * @var User
+     *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
      * @ORM\JoinColumn(name="client_id", referencedColumnName="id", onDelete="CASCADE")
+     *
      * @JMSSerializer\Groups({"user_read", "user_write"})
      * @JMSSerializer\Type("AppBundle\Entity\User")
+     * @JMSSerializer\MaxDepth(depth=1)
      */
     protected $client;
 
     /**
      * Model user.
      * @var User
+     *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User", cascade={"remove"})
      * @ORM\JoinColumn(name="model_id", referencedColumnName="id", onDelete="CASCADE")
+     *
      * @JMSSerializer\Groups({"user_read", "user_write"})
+     * @JMSSerializer\Type("AppBundle\Entity\User")
+     * @JMSSerializer\MaxDepth(1)
      */
     protected $model;
 
@@ -661,6 +668,10 @@ class Conversation
 
     /**
      * Returns a companion of the user.
+     *
+     * @JMSSerializer\VirtualProperty()
+     * JMSSerializer\Groups({"Default", "user_read"})
+     *
      * @param User $user
      * @return User
      */

@@ -6,6 +6,10 @@ emoticons:
     type:       rest
     resource:   AppBundle\Controller\Api\EmoticonController
 
+me:
+    type:       rest
+    resource:   AppBundle\Controller\Api\MeController
+
 chats:
     type:       rest
     resource:   "chats_routes.yml"

@@ -75,15 +75,19 @@ class User extends BaseUser
     protected $passwordCanonical;
 
     /**
+     * @var Group[]
+     *
      * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Group")
      * @ORM\JoinTable(name="users_groups",
      *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE")},
      *      inverseJoinColumns={@ORM\JoinColumn(name="group_id", referencedColumnName="id", onDelete="CASCADE")}
      * )
+     *
      * @JMSSerializer\Expose()
      * @JMSSerializer\Groups({"Default", "user_read", "admin_write"})
      * @JMSSerializer\XmlList("group")
      * @JMSSerializer\Type("array<AppBundle\Entity\Group>")
+     * @JMSSerializer\MaxDepth(depth=1)
      */
     protected $groups;
 
@@ -250,6 +254,20 @@ class User extends BaseUser
      * @JMSSerializer\Groups({"Default", "user_read", "admin_write"})
      */
     protected $lastname;
+
+    /**
+     * Used for DQL Queries
+     * @var Conversation[]
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Conversation", mappedBy="client")
+     */
+    private $clientConversations;
+
+    /**
+     * Used for DQL Queries
+     * @var Conversation[]
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Conversation", mappedBy="model")
+     */
+    private $modelConversations;
 
     /**
      * Constructor

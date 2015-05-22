@@ -34,6 +34,7 @@ class EmoticonController extends FOSRestController
 
     /**
      * @ApiDoc(
+     *      resource=true,
      *      description="Returns a collection of emoticons.",
      *      statusCodes={
      *          200="Returned when successful"

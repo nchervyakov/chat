@@ -12,12 +12,9 @@ namespace AppBundle\Controller\Api;
 
 
 use AppBundle\Entity\User;
-use AppBundle\Model\ChatCollection;
 use FOS\RestBundle\Controller\Annotations as FOSRest;
 use FOS\RestBundle\Controller\FOSRestController;
-use FOS\RestBundle\Request\ParamFetcherInterface;
 use JMS\Serializer\Annotation as JMSSerializer;
-use Knp\Component\Pager\Pagination\SlidingPagination;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
@@ -49,6 +46,20 @@ class UserController extends FOSRestController
     /**
      * @ApiDoc(
      *      resource=true,
+     *      description="Returns a list of models",
+     *      section="Users"
+     * )
+     *
+     * @return User[]
+     */
+    public function getUsersModelsAction()
+    {
+
+    }
+
+    /**
+     * @ApiDoc(
+     *      resource=true,
      *      description="Returns a user by ID.",
      *      section="Users",
      *      statusCodes={
@@ -70,7 +81,10 @@ class UserController extends FOSRestController
             return $this->createNotFoundException("There is no user with such id.");
         }
 
-        return $user;
+        $view = $this->view($user);
+        $view->getSerializationContext()->setGroups(['user_read']);
+
+        return $view;
     }
 
     /**
@@ -130,45 +144,4 @@ class UserController extends FOSRestController
 //    {
 //
 //    }
-
-    /**
-     * @ApiDoc(
-     *      resource=true,
-     *      description="Returns current user chats.",
-     *      section="Users",
-     *      output="AppBundle\Model\ChatCollection"
-     * )
-     *
-     * @FOSRest\QueryParam(name="page", requirements="\d+", nullable=true, description="Page from which to list chats.")
-     * @FOSRest\QueryParam(name="per_page", requirements="\d+", default="10", description="How many chats to return per page.")
-     *
-     * @FOSRest\View()
-     * @JMSSerializer\SerializedName("chat")
-     *
-     * @param ParamFetcherInterface $paramFetcher
-     * @return ChatCollection
-     */
-    public function getUserChatsAction(ParamFetcherInterface $paramFetcher)
-    {
-        $page = $paramFetcher->get('page');
-        $page = null === $page ? 1 : $page;
-        $perPage = $paramFetcher->get('per_page');
-
-        /** @var User $user */
-        $user = $this->getUser();
-        $qb = $this->getDoctrine()->getRepository('AppBundle:Conversation')->prepareUserConversationsQB($user);
-
-        $paginator = $this->get('knp_paginator');
-        /** @var SlidingPagination $pagination */
-        $pagination = $paginator->paginate($qb, $page, $perPage);
-        $paginationData = $pagination->getPaginationData();
-        $result = new ChatCollection($pagination->getItems(), $page, $perPage);
-        $result->setPageCount($paginationData['pageCount']);
-        $result->setTotalItemsCount($paginationData['totalCount']);
-
-        $view = $this->view($result);
-        $view->getSerializationContext()->setGroups(['user_read']);
-
-        return $view;
-    }
 }
