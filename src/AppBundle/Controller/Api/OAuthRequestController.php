@@ -58,7 +58,11 @@ class OAuthRequestController extends FOSRestController
      *      resource=true,
      *      description="Creates a new OAuthRequest object if request to oAuth server succeeds.",
      *      section="Users",
-     *      input="AppBundle\Form\Type\OAuthRequestType",
+     *      parameters={
+     *          {"name"="provider_name", "dataType"="string", "required"=true, "description"="e.g. 'facebook'"},
+     *          {"name"="code", "dataType"="string", "required"=true, "description"="The code received by OAuth provider."},
+     *          {"name"="redirect_uri", "dataType"="string", "required"=false, "description"="If used non-standard redirect URI for the given provider, put it in this field (to match when server will get the access_token)"}
+     *      },
      *      output="AppBundle\Entity\OAuthRequest"
      * )
      *
