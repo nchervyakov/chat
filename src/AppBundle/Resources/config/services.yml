@@ -65,6 +65,12 @@ services:
         tags:
             - {name: form.type, alias: user_photo}
 
+    form.oauth_request:
+        class: AppBundle\Form\Type\OAuthRequestType
+        scope: prototype
+        tags:
+            - {name: form.type, alias: oauth_request}
+
     app.event.profile_listener:
         class: AppBundle\Event\Listener\FOSProfileListener
         calls:
@@ -192,3 +198,41 @@ services:
         calls:
             - [setContainer, ["@service_container"]]
 
+    app.oauth:
+        class: AppBundle\Security\OAuthService
+        calls:
+            - [setContainer, ["@service_container"]]
+
+    api_token_authenticator:
+        class:  AppBundle\Security\ApiTokenAuthenticator
+        public: false
+
+    api_token_user_provider:
+        class: AppBundle\Security\ApiTokenUserProvider
+        calls:
+            - [setContainer, ["@service_container"]]
+
+    app.rest.access_denied_listener:
+        class: AppBundle\Event\Listener\AccessDeniedListener
+        arguments:
+            - "%fos_rest.access_denied_listener.formats%"
+            - "%fos_rest.access_denied_listener.unauthorized_challenge%"
+            - "%twig.exception_listener.controller%"
+            - @?logger
+        tags:
+            - {name: "kernel.event_subscriber"}
+            - {name: "monolog.logger", channel: "request"}
+        calls:
+            - [setContainer, ["@service_container"]]
+
+#    app.rest.body_listener:
+#        class: AppBundle\Event\Listener\RestBodyListener
+#        arguments:
+#            - "@fos_rest.decoder_provider"
+#            - "%fos_rest.throw_exception_on_unsupported_content_type%"
+#            - null
+#            - true
+#        tags:
+#            - {name: "kernel.event_listener", event: "kernel.request", method: "onKernelRequest", priority: 11}
+#        calls:
+#            - [setDefaultFormat, ["%fos_rest.body_default_format%"]]

@@ -37,7 +37,7 @@ class FOSUBUserProvider extends \HWI\Bundle\OAuthBundle\Security\Core\User\FOSUB
             return parent::loadUserByOAuthUserResponse($response);
 
         } catch (AccountNotLinkedException $ex) {
-            if ($token->hasAttribute('activation_token') && $token->getAttribute('activation_token')) {
+            if ($token && $token->hasAttribute('activation_token') && $token->getAttribute('activation_token')) {
                 /** @var User $user */
                 if ($user = $this->userManager->findUserBy(['activationToken' => $token->getAttribute('activation_token')])) {
                     $responseBody = $response->getResponse();

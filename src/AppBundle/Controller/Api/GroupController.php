@@ -17,7 +17,6 @@ use FOS\RestBundle\Controller\Annotations as FOSRest;
 use FOS\RestBundle\Request\ParamFetcherInterface;
 use Knp\Component\Pager\Pagination\SlidingPagination;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 /**
  * Class GroupController
@@ -48,7 +47,7 @@ class GroupController extends FOSRestController
         $page = null === $page ? 1 : $page;
         $perPage = $paramFetcher->get('per_page');
 
-        $qb = $this->getDoctrine()->getRepository('AppBundle:Emoticon')->createQueryBuilder('g');
+        $qb = $this->getDoctrine()->getRepository('AppBundle:Group')->createQueryBuilder('g');
         $qb->orderBy('g.name', 'ASC');
 
         $paginator = $this->get('knp_paginator');
@@ -69,6 +68,8 @@ class GroupController extends FOSRestController
      *      output="AppBundle\Entity\Group"
      * )
      *
+     * @FOSRest\View()
+     *
      * @param int $id Group ID
      * @return \AppBundle\Entity\Group
      */
@@ -80,7 +81,7 @@ class GroupController extends FOSRestController
             throw $this->createNotFoundException("Invalid id for group.");
         }
 
-        return $group;
+        return $this->view($group);
     }
 
 //    /**

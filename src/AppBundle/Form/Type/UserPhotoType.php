@@ -10,8 +10,11 @@
 namespace AppBundle\Form\Type;
 
 
+use AppBundle\Entity\UserPhoto;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
@@ -23,19 +26,27 @@ class UserPhotoType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-            ->add('file', 'vich_image', [
-                'required' => true,
-                'label' => false,
-                'error_bubbling' => true
-            ]);
-
         if ($options['title']) {
             $builder->add('title', null, [
                 'required' => false,
                 'error_bubbling' => true,
             ]);
         }
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+            $data = $event->getData();
+            $form = $event->getForm();
+
+            if (!$data) {
+                $event->setData(new UserPhoto());
+            }
+
+            $form->add('file', 'vich_image', [
+                'required' => true,
+                'label' => false,
+                'error_bubbling' => true
+            ]);
+        });
     }
 
     /**

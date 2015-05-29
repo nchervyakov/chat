@@ -1,0 +1,3 @@
+1. Для поддержки в Facebook необходимо в настройках OAuth-приложения facebook прописать в разделе
+ https://developers.facebook.com/apps/{APP_ID}/settings/advanced/  в подразделе **OAuth Settings** > в поле **Valid OAuth redirect URIs** следующий URL:
+`https://www.facebook.com/connect/login_success.html`, а также указывать его как return_url при получении кода авторизации на Facebook в мобильном приложении. 

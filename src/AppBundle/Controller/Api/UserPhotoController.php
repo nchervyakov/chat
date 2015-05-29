@@ -78,7 +78,8 @@ class UserPhotoController extends FOSRestController
      *      description="Creates a new user photo",
      *      section="Users",
      *      authentication=true,
-     *      authenticationRoles={"ROLE_USER"}
+     *      authenticationRoles={"ROLE_USER"},
+     *      input="AppBundle\Form\Type\UserPhotoType"
      * )
      *
      * @param int $userId User ID

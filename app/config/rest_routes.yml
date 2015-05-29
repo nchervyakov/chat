@@ -10,6 +10,10 @@ me:
     type:       rest
     resource:   AppBundle\Controller\Api\MeController
 
+oauth_request:
+    type:       rest
+    resource:   AppBundle\Controller\Api\OAuthRequestController
+
 chats:
     type:       rest
     resource:   "chats_routes.yml"

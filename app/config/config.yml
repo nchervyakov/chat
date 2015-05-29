@@ -10,6 +10,7 @@ parameters:
     hwi_oauth.authentication.listener.oauth.class: AppBundle\Security\Http\Firewall\OAuthListener
     hwi_oauth.user.provider.fosub_bridge.class: AppBundle\Security\Core\User\FOSUBUserProvider
     hwi_oauth.authentication.provider.oauth.class: AppBundle\Security\Core\Authentication\Provider\OAuthProvider
+    fos_rest.body_listener.class: AppBundle\Event\Listener\RestBodyListener
     sitename: 'Chat with Models'
     developer_name: "Nikolay Chervyakov"
     developer_email: "nick.chervyakov@gmail.com"
@@ -255,9 +256,15 @@ fos_rest:
         templating_formats:
             html: false
     disable_csrf_role: ROLE_API
+    unauthorized_challenge: "Token realm=\"API area\""
     param_fetcher_listener: true
     allowed_methods_listener: true
-    body_listener: true
+    body_listener:
+        array_normalizer:
+            service: fos_rest.normalizer.camel_keys
+            forms: true
+    access_denied_listener:
+        json: true
     format_listener:
         rules:
             - { path: '^/api', priorities: ['json', 'xml'], fallback_format: json, prefer_extension: true }
@@ -270,6 +277,8 @@ fos_rest:
         validation_errors_argument: validationErrors # This is the default value
     exception:
         enabled: true
+#        codes:
+#            'Symfony\Component\Security\Core\Exception\InsufficientAuthenticationException': 401
     routing_loader:
         default_format: json
         include_format: true
@@ -522,3 +531,13 @@ old_sound_rabbit_mq:
 nelmio_api_doc:
     cache:
         enabled: true
+
+nelmio_cors:
+    paths:
+        '^/api/':
+            allow_origin: ['*']
+            allow_headers: ['*']
+            allow_methods: ['POST', 'PUT', 'GET', 'DELETE', 'PATCH', 'OPTIONS']
+            max_age: 3600
+
+

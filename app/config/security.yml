@@ -28,6 +28,9 @@ security:
         fos_userbundle:
             id: fos_user.user_provider.username
 
+        api_token_user_provider:
+            id: api_token_user_provider
+
     # the main part of the security, where you can set up firewalls
     # for specific sections of your app
     firewalls:
@@ -36,10 +39,19 @@ security:
             pattern:  ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
+        api:
+            pattern: ^/api
+            anonymous: ~
+            stateless: true
+            context: api
+            simple_preauth:
+                authenticator: api_token_authenticator
+            provider: api_token_user_provider
+
         # -> custom firewall for the admin area of the URL
         admin:
             switch_user:        true
-            pattern:            /admin(.*)
+            pattern:            '^/admin(.*)'
             context:            user
             form_login:
                 provider:       fos_userbundle

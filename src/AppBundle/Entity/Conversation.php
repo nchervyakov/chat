@@ -35,7 +35,7 @@ class Conversation
      * Client user.
      * @var User
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User", inversedBy="clientConversations")
      * @ORM\JoinColumn(name="client_id", referencedColumnName="id", onDelete="CASCADE")
      *
      * @JMSSerializer\Groups({"user_read", "user_write"})
@@ -48,7 +48,7 @@ class Conversation
      * Model user.
      * @var User
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User", cascade={"remove"})
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User", inversedBy="modelConversations", cascade={"remove"})
      * @ORM\JoinColumn(name="model_id", referencedColumnName="id", onDelete="CASCADE")
      *
      * @JMSSerializer\Groups({"user_read", "user_write"})

@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Sonata\UserBundle\Model\BaseUser;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation as JMSSerializer;
 
@@ -48,12 +49,14 @@ class User extends BaseUser
 
     /**
      * @var string
+     *
      * @Assert\NotBlank(message="fos_user.email.blank", groups={"AppRegistration", "AppProfile"})
      * @Assert\Length(
      *      min=2, minMessage="fos_user.email.short",
      *      max=254, maxMessage="fos_user.email.long",
      *      groups={"AppRegistration", "AppProfile"})
      * @Assert\Email(message="fos_user.email.invalid", groups={"AppRegistration", "AppProfile"})
+     *
      * @JMSSerializer\Groups({"user_read"})
      * @JMSSerializer\Expose()
      * @JMSSerializer\XmlAttribute()
@@ -162,6 +165,7 @@ class User extends BaseUser
      * @ORM\JoinColumn(name="thumbnail_id", referencedColumnName="id", onDelete="SET NULL")
      * @JMSSerializer\MaxDepth(depth=1)
      * @JMSSerializer\Expose()
+     * @JMSSerializer\Groups({"Default", "user_read"})
      */
     private $thumbnail;
 
@@ -188,9 +192,10 @@ class User extends BaseUser
     /**
      * @var bool Whether the user (model) is activated.
      * @ORM\Column(name="activated", type="boolean", options={"default": "1"})
+     *
      * @JMSSerializer\XmlAttribute()
      * @JMSSerializer\Expose()
-     * @JMSSerializer\Groups({"admin_read", "admin_write"})
+     * @JMSSerializer\Groups({"Default", "user_read", "admin_read", "admin_write"})
      */
     private $activated = true;
 
@@ -244,14 +249,19 @@ class User extends BaseUser
      * @JMSSerializer\Expose()
      * @JMSSerializer\XmlAttribute()
      * @JMSSerializer\Groups({"Default", "user_read", "admin_write"})
+     *
+     * @Assert\NotBlank(groups={"Default", "AppRegistration", "AppProfile"}, message="Name cannot be blank")
      */
     protected $firstname;
 
     /**
      * @var string
+     *
      * @JMSSerializer\Expose()
      * @JMSSerializer\XmlAttribute()
      * @JMSSerializer\Groups({"Default", "user_read", "admin_write"})
+     *
+     * @Assert\NotBlank(groups={"Default", "AppRegistration", "AppProfile"}, message="Last name cannot be blank")
      */
     protected $lastname;
 
@@ -270,12 +280,21 @@ class User extends BaseUser
     private $modelConversations;
 
     /**
+     * @var OAuthRequest[]
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\OAuthRequest", mappedBy="user")
+     */
+    private $oauthRequests;
+
+    /**
      * Constructor
      */
     public function __construct()
     {
         parent::__construct();
         $this->photos = new ArrayCollection();
+        $this->oauthRequests = new ArrayCollection();
+        $this->modelConversations = new ArrayCollection();
+        $this->clientConversations = new ArrayCollection();
         $birthDay = new \DateTime();
         $birthDay->modify('- 20 years');
         $this->setDateOfBirth($birthDay);
@@ -615,12 +634,14 @@ class User extends BaseUser
      * @JMSSerializer\VirtualProperty()
      * @JMSSerializer\Groups({"Default", "user_read"})
      * @JMSSerializer\XmlAttribute()
+     *
      * @return bool
      */
     public function hasThumbnail()
     {
         return (boolean) ($this->thumbnail
-            && ($this->thumbnail->getFile() && $this->thumbnail->getFile()->isValid() || $this->thumbnail->getFileName()));
+            && ($this->thumbnail->getFile() && $this->thumbnail->getFile() instanceof UploadedFile && $this->thumbnail->getFile()->isValid()
+                || $this->thumbnail->getFileName()));
     }
 
     /**
@@ -795,5 +816,33 @@ class User extends BaseUser
     public function setCoins($coins)
     {
         $this->coins = $coins;
+    }
+
+    /**
+     * @JMSSerializer\VirtualProperty()
+     * @JMSSerializer\XmlList("group")
+     * @JMSSerializer\Groups({"Default", "user_read"})
+     */
+    public function getGroupNames()
+    {
+        /** @var Group[] $groups */
+        $groups = $this->getGroups();
+        $groupNames = [];
+        foreach ($groups as $group) {
+            $groupNames[] = $group->getName();
+        }
+
+        return $groupNames;
+    }
+
+    /**
+     * @inheritdoc
+     * @JMSSerializer\XmlList("role")
+     * @JMSSerializer\VirtualProperty()
+     * @JMSSerializer\Groups({"Default", "user_read"})
+     */
+    public function getRoles()
+    {
+        return parent::getRoles();
     }
 }

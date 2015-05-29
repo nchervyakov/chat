@@ -33,7 +33,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 class MeController extends FOSRestController
 {
     /**
-     * @FOSRest\Get("/me.{_format}", name="api_v1_get_me", requirements={"_format": "json|xml"})
+     * @FOSRest\Get("/me.{_format}", name="api_v1_get_me", requirements={"_format": "json|xml"}, defaults={"_format": "json"})
      * @ApiDoc(
      *      resource=true,
      *      description="Returns current authenticated user",
@@ -68,7 +68,7 @@ class MeController extends FOSRestController
      * @FOSRest\QueryParam(name="page", requirements="\d+", nullable=true, description="Page from which to list chats.")
      * @FOSRest\QueryParam(name="per_page", requirements="\d+", default="10", description="How many chats to return per page.")
      *
-     * @FOSRest\View()
+     * @FOSRest\View(serializerEnableMaxDepthChecks=true)
      * @JMSSerializer\SerializedName("chat")
      *
      * @param ParamFetcherInterface $paramFetcher

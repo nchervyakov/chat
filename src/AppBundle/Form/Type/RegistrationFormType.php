@@ -17,6 +17,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
  * Class RegistrationFormType
@@ -41,17 +42,45 @@ class RegistrationFormType extends BaseType
                 ->add('gender', 'choice', [
                     'choices' => User::getGendersLabels(),
                     'multiple' => false,
-                    'expanded' => true
+                    'expanded' => true,
+                    'constraints' => [
+                        new NotBlank(['groups' => ['AppRegistration', 'AppProfile']])
+                    ],
+                ]);
+        }
+
+        if ($options['api']) {
+            $builder
+                ->add('type', 'choice', [
+                    'choices' => [
+                        'model' => 'model',
+                        'client' => 'client'
+                    ],
+                    'multiple' => false,
+                    'expanded' => true,
+                    'mapped' => false,
+                    'constraints' => [
+                        new NotBlank(['message' => 'User type is required', 'groups' => 'AppRegistration'])
+                    ],
                 ]);
         }
 
         $builder
             ->add('firstname')
             ->add('lastname')
-            ->add('dateOfBirth', 'birthday')
             ->remove('plainPassword')
             ->remove('username')
         ;
+
+        if ($options['api']) {
+            $builder->add('dateOfBirth', 'birthday', [
+                'widget' => 'single_text',
+                'format' => 'y-M-d'
+            ]);
+
+        } else {
+            $builder->add('dateOfBirth', 'birthday');
+        }
 
         $um = $this->userManager;
         $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) use ($um) {
@@ -78,6 +107,7 @@ class RegistrationFormType extends BaseType
         $resolver->setDefaults([
             'csrf_field_name' => '_user_registration_token',
             'choose_gender' => true,
+            'api' => false
         ]);
     }
 

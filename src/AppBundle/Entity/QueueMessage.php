@@ -47,7 +47,7 @@ class QueueMessage
     /**
      * @var User
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
-     * @ORM\JoinColumn(name="target_user_id", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="target_user_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      * @JMS\Exclude()
      */
     private $targetUser;
