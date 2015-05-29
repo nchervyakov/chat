@@ -130,6 +130,7 @@ class OAuthRequest
      * @JMSSerializer\Expose()
      * @JMSSerializer\Groups({"user_read"})
      * @JMSSerializer\MaxDepth(1)
+     * @JMSSerializer\Type("AppBundle\Entity\User")
      */
     private $user;
 
@@ -149,6 +150,7 @@ class OAuthRequest
      * @JMSSerializer\XmlAttribute()
      * @JMSSerializer\Expose()
      * @JMSSerializer\Groups({"Default", "user_read"})
+     * @JMSSerializer\Type("datetime")
      */
     private $dateAdded;
 
@@ -175,6 +177,7 @@ class OAuthRequest
      *
      * @JMSSerializer\Expose()
      * @JMSSerializer\Groups({"Default", "user_read"})
+     * @JMSSerializer\Type("array")
      */
     private $oauthData = [];
 

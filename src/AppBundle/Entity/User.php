@@ -235,7 +235,7 @@ class User extends BaseUser
      * @JMSSerializer\Groups({"user_read", "admin_write"})
      * @JMSSerializer\XmlAttribute()
      */
-    private $online = 0;
+    private $online = false;
 
     /**
      * @var float

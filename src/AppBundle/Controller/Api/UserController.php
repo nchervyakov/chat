@@ -155,6 +155,8 @@ class UserController extends FOSRestController
         }
 
         $user = new User();
+        $user->setEnabled(true);
+
         $form = $this->get('form.factory')->createNamed('', 'user_registration', $user, [
             'method' => 'POST',
             'api' => true,

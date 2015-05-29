@@ -40,8 +40,8 @@ security:
             security: false
 
         api:
-            pattern: ^/api
-            anonymous: ~
+            pattern: '^/api(.*)'
+            anonymous: true
             stateless: true
             context: api
             simple_preauth:

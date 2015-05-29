@@ -80,6 +80,11 @@ class RestBodyListener
     public function onKernelRequest(GetResponseEvent $event)
     {
         $request = $event->getRequest();
+
+        if (!preg_match('#^/api/v#', $request->getPathInfo())) {
+            return;
+        }
+
         $method = $request->getMethod();
         $contentType = $request->headers->get('Content-Type');
         if ($contentType !== null) {
