@@ -23,6 +23,7 @@ use Symfony\Component\HttpFoundation\Request;
  * @package AppBundle\Controller\Api
  *
  * @FOSRest\NamePrefix("api_v1_")
+ * @FOSRest\Route("/api/v1")
  */
 class OAuthRequestController extends FOSRestController
 {
@@ -35,7 +36,7 @@ class OAuthRequestController extends FOSRestController
      * )
      *
      * @FOSRest\View(serializerEnableMaxDepthChecks=true, serializerGroups={"user_read"})
-     * @FOSRest\Get("/oauth_requests/{token}", name="api_v1_get_oauth_request", requirements={"_format": "json|xml"})
+     * @FOSRest\Get("/oauth_requests/{token}", name="api_v1_get_oauth_request", requirements={"_format": "json|xml"}, defaults={"_format": "json"})
      *
      * @param int $token Chat API access token as string
      * @return \AppBundle\Entity\OAuthRequest
@@ -67,7 +68,7 @@ class OAuthRequestController extends FOSRestController
      * )
      *
      * @FOSRest\View(serializerEnableMaxDepthChecks=true, serializerGroups={"user_read"})
-     * @FOSRest\Post("/oauth_requests", name="api_v1_post_oauth_request", requirements={"_format": "json|xml"})
+     * @FOSRest\Post("/oauth_requests", name="api_v1_post_oauth_request", requirements={"_format": "json|xml"}, defaults={"_format": "json"})
      *
      * @param Request $request
      * @return \Symfony\Component\Form\Form

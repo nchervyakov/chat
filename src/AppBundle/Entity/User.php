@@ -42,7 +42,7 @@ class User extends BaseUser
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      * @JMSSerializer\Expose()
-     * @JMSSerializer\Groups({"user_read"})
+     * @JMSSerializer\Groups({"user_read", "model_stat"})
      * @JMSSerializer\XmlAttribute()
      */
     protected $id;
@@ -57,7 +57,7 @@ class User extends BaseUser
      *      groups={"AppRegistration", "AppProfile"})
      * @Assert\Email(message="fos_user.email.invalid", groups={"AppRegistration", "AppProfile"})
      *
-     * @JMSSerializer\Groups({"user_read"})
+     * @JMSSerializer\Groups({})
      * @JMSSerializer\Expose()
      * @JMSSerializer\XmlAttribute()
      */
@@ -163,7 +163,7 @@ class User extends BaseUser
      * @var UserPhoto
      * @ORM\OneToOne(targetEntity="AppBundle\Entity\UserPhoto", cascade={"remove", "persist", "merge"}, orphanRemoval=true)
      * @ORM\JoinColumn(name="thumbnail_id", referencedColumnName="id", onDelete="SET NULL")
-     * @JMSSerializer\MaxDepth(depth=1)
+     * @JMSSerializer\MaxDepth(depth=2)
      * @JMSSerializer\Expose()
      * @JMSSerializer\Groups({"Default", "user_read"})
      */
@@ -232,7 +232,7 @@ class User extends BaseUser
      * @var bool
      * @ORM\Column(name="is_online", type="boolean", options={"default": 0}, nullable=false)
      * @JMSSerializer\Expose()
-     * @JMSSerializer\Groups({"user_read", "admin_write"})
+     * @JMSSerializer\Groups({"user_read", "admin_write", "model_stat"})
      * @JMSSerializer\XmlAttribute()
      */
     private $online = false;
@@ -248,7 +248,7 @@ class User extends BaseUser
      * @var string
      * @JMSSerializer\Expose()
      * @JMSSerializer\XmlAttribute()
-     * @JMSSerializer\Groups({"Default", "user_read", "admin_write"})
+     * @JMSSerializer\Groups({"Default", "user_read", "admin_write", "model_stat"})
      *
      * @Assert\NotBlank(groups={"Default", "AppRegistration", "AppProfile"}, message="Name cannot be blank")
      */
@@ -259,7 +259,7 @@ class User extends BaseUser
      *
      * @JMSSerializer\Expose()
      * @JMSSerializer\XmlAttribute()
-     * @JMSSerializer\Groups({"Default", "user_read", "admin_write"})
+     * @JMSSerializer\Groups({"Default", "user_read", "admin_write", "model_stat"})
      *
      * @Assert\NotBlank(groups={"Default", "AppRegistration", "AppProfile"}, message="Last name cannot be blank")
      */

@@ -17,6 +17,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use FOS\UserBundle\Form\Type\ProfileFormType as BaseType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Class ProfileFormType
@@ -41,11 +43,17 @@ class ProfileFormType extends BaseType
             ->add('firstname')
             ->add('lastname')
             ->remove('username')
-            ->remove('current_password')
-            ->add('thumbnail', 'user_photo', [
+            ->remove('current_password');
+
+        if (!$options['api']) {
+            $builder->add('thumbnail', 'user_photo', [
                 'required' => false,
                 'title' => false
             ]);
+
+        } else {
+            $builder->remove('email');
+        }
 
         $um = $this->userManager;
         $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) use ($um) {
@@ -68,5 +76,14 @@ class ProfileFormType extends BaseType
     public function getParent()
     {
         return 'fos_user_profile';
+    }
+
+    /**
+     * @param OptionsResolverInterface|OptionsResolver $resolver
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        parent::setDefaultOptions($resolver);
+        $resolver->setDefault('api', false);
     }
 }

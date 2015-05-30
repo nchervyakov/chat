@@ -13,6 +13,7 @@ namespace AppBundle\Security;
 
 use AppBundle\Entity\OAuthRequest;
 use Doctrine\ORM\EntityManager;
+use HWI\Bundle\OAuthBundle\OAuth\ResourceOwnerInterface;
 use HWI\Bundle\OAuthBundle\Security\Core\Exception\AccountNotLinkedException;
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\HttpFoundation\Request;
@@ -90,5 +91,25 @@ class OAuthService extends ContainerAware
         $em->flush();
 
         return $oauthRequest;
+    }
+
+    /**
+     * Get a resource owner by name.
+     *
+     * @param string $name
+     *
+     * @return ResourceOwnerInterface
+     *
+     * @throws \RuntimeException if there is no resource owner with the given name.
+     */
+    public function getResourceOwnerByName($name)
+    {
+        $ownerMap = $this->container->get('hwi_oauth.resource_ownermap.'.$this->container->getParameter('hwi_oauth.firewall_name'));
+
+        if (null === $resourceOwner = $ownerMap->getResourceOwnerByName($name)) {
+            throw new \RuntimeException(sprintf("No resource owner with name '%s'.", $name));
+        }
+
+        return $resourceOwner;
     }
 }

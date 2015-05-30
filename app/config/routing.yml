@@ -95,7 +95,6 @@ sonata_user:
 
 api:
     resource:   rest_routes.yml
-    type:       rest
     prefix:     /api/v1
 
 app:

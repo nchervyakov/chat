@@ -283,6 +283,9 @@ fos_rest:
         default_format: json
         include_format: true
 
+    serializer:
+        serialize_null: true
+
 knp_menu:
 #    twig:
 #        template: AppBundle:Default:knp_menu.html.twig
@@ -531,6 +534,11 @@ old_sound_rabbit_mq:
 nelmio_api_doc:
     cache:
         enabled: true
+
+    sandbox:
+        authentication:
+            delivery: header
+            name: Authorization
 
 nelmio_cors:
     paths:

@@ -20,7 +20,6 @@ use Doctrine\ORM\EntityManager;
 use FOS\RestBundle\Controller\Annotations as FOSRest;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Request\ParamFetcherInterface;
-use HWI\Bundle\OAuthBundle\OAuth\ResourceOwnerInterface;
 use JMS\Serializer\Annotation as JMSSerializer;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
@@ -134,12 +133,11 @@ class UserController extends FOSRestController
      *          {"name"="lastname", "dataType"="string", "required"=true},
      *          {"name"="gender", "dataType"="choice", "required"=true, "format"="{'m', 'f'}"},
      *          {"name"="type", "dataType"="choice", "required"=true, "format"="{'client', 'model'}"},
-     *          {"name"="date_of_birth", "dataType"="date", "required"=true},
+     *          {"name"="date_of_birth", "dataType"="date", "required"=true}
      *      }
      * )
      *
      * @FOSRest\View(serializerEnableMaxDepthChecks=true, serializerGroups={"user_read"}, statusCode=201)
-     * @FOSRest\RequestParam()
      *
      * @param Request $request
      * @return \FOS\RestBundle\View\View
@@ -174,7 +172,7 @@ class UserController extends FOSRestController
 
             $dispatcher = $this->container->get('event_dispatcher');
 
-            $userInformation = $this
+            $userInformation = $this->get('app.oauth')
                 ->getResourceOwnerByName($oauthRequest->getProviderName())
                 ->getUserInformation(['access_token' => $oauthRequest->getAccessToken()])
             ;
@@ -227,65 +225,62 @@ class UserController extends FOSRestController
      * @ApiDoc(
      *      resource=true,
      *      description="Modifies user with new data.",
-     *      section="Users"
+     *      section="Users",
+     *      output="AppBundle\Entity\User",
+     *      authentication=true,
+     *      authenticationRoles={"ROLE_USER"},
+     *      parameters={
+     *          {"name"="firstname", "dataType"="string", "required"=true},
+     *          {"name"="lastname", "dataType"="string", "required"=true},
+     *      }
      * )
      *
+     * @FOSRest\View(serializerEnableMaxDepthChecks=true, serializerGroups={"user_read"})
+     *
+     * @param Request $request
      * @param int $id User ID
+     * @return \FOS\RestBundle\View\View
      */
-    public function putUserAction($id)
+    public function putUserAction(Request $request, $id)
     {
+        /** @var User $authUser */
+        $authUser = $this->getUser();
 
-    }
-
-    /**
-     * @ApiDoc(
-     *      resource=true,
-     *      description="Modifies some properties of the user",
-     *      section="Users"
-     * )
-     *
-     * @param int $id User ID
-     */
-    public function patchUserAction($id)
-    {
-
-    }
-
-//    /**
-//     * @ApiDoc(
-//     *      resource=true,
-//     *      description="Deletes the user",
-//     *      section="Users",
-//     *      authentication=true,
-//     *      authenticationRoles={"ROLE_ADMIN"}
-//     * )
-//     *
-//     * @Security("has_role('ROLE_ADMIN')")
-//     *
-//     * @param int $id User ID
-//     */
-//    public function deleteUserAction($id)
-//    {
-//
-//    }
-
-    /**
-     * Get a resource owner by name.
-     *
-     * @param string $name
-     *
-     * @return ResourceOwnerInterface
-     *
-     * @throws \RuntimeException if there is no resource owner with the given name.
-     */
-    protected function getResourceOwnerByName($name)
-    {
-        $ownerMap = $this->get('hwi_oauth.resource_ownermap.'.$this->container->getParameter('hwi_oauth.firewall_name'));
-
-        if (null === $resourceOwner = $ownerMap->getResourceOwnerByName($name)) {
-            throw new \RuntimeException(sprintf("No resource owner with name '%s'.", $name));
+        if (!$authUser) {
+            throw new AccessDeniedException('Authorize before editing users.');
         }
 
-        return $resourceOwner;
+        /** @var User $user */
+        $user = $this->get('fos_user.user_manager')->find($id);
+
+        if (!$user) {
+            throw $this->createNotFoundException('There is no such user.');
+        }
+
+        if ($user->getId() !== $authUser->getId()) {
+            throw $this->createAccessDeniedException('You cannot edit another user');
+        }
+
+        $form = $this->get('form.factory')->createNamed('', 'user_profile', $user, [
+            'method' => 'PUT',
+            'api' => true,
+            'validation_groups' => ['Default', 'AppProfile']
+        ]);
+
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            $this->getDoctrine()->getManager()->flush();
+
+            $view = $this->view($user);
+            $view->getSerializationContext()
+                ->setGroups(['user_read'])
+                ->enableMaxDepthChecks();
+            return $view;
+        }
+
+        $view = $this->view($form);
+        $view->setStatusCode(400);
+        return $view;
     }
 }

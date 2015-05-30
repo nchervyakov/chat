@@ -26,7 +26,7 @@ class Conversation
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
-     * @JMSSerializer\Groups({"user_read"})
+     * @JMSSerializer\Groups({"user_read", "model_stat"})
      * @JMSSerializer\XmlAttribute()
      */
     private $id;
@@ -38,7 +38,7 @@ class Conversation
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User", inversedBy="clientConversations")
      * @ORM\JoinColumn(name="client_id", referencedColumnName="id", onDelete="CASCADE")
      *
-     * @JMSSerializer\Groups({"user_read", "user_write"})
+     * @JMSSerializer\Groups({"user_read", "user_write", "model_stat"})
      * @JMSSerializer\Type("AppBundle\Entity\User")
      * @JMSSerializer\MaxDepth(depth=1)
      */
@@ -62,7 +62,7 @@ class Conversation
      * @ORM\Column(name="seconds", type="integer", options={"default": 0})
      * @JMSSerializer\Expose()
      * @JMSSerializer\XmlAttribute()
-     * @JMSSerializer\Groups({"user_read"})
+     * @JMSSerializer\Groups({"user_read", "model_stat"})
      */
     private $seconds = 0;
 
@@ -79,7 +79,7 @@ class Conversation
      * @var float Total model earnings on this chat
      * @ORM\Column(name="model_earnings", type="decimal", precision=18, scale=8, options={"default": 0.0})
      * @JMSSerializer\XmlAttribute()
-     * @JMSSerializer\Groups({"user_read"})
+     * @JMSSerializer\Groups({"user_read", "model_stat"})
      */
     private $modelEarnings = 0.0;
 
