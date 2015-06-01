@@ -11,20 +11,25 @@ namespace AppBundle\Entity;
 
 
 use Doctrine\ORM\Mapping as ORM;
-use JMS\Serializer\Annotation\XmlRoot;
+use JMS\Serializer\Annotation as JMSSerializer;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 
 /**
  * Class UserPhoto
  * @package AppBundle\Entity
+ *
  * @ORM\Entity(repositoryClass="AppBundle\Entity\UserPhotoRepository")
  * @ORM\Table(name="user_photos")
- * @Vich\Uploadable()
  * @ORM\HasLifecycleCallbacks()
- * @XmlRoot("user_photo")
+ *
+ * @Vich\Uploadable()
+ *
+ * @JMSSerializer\XmlRoot("user_photo")
+ * @JMSSerializer\ExclusionPolicy("ALL")
  */
 class UserPhoto 
 {
@@ -33,24 +38,41 @@ class UserPhoto
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(name="id", type="integer")
+     *
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Type("integer")
+     * @JMSSerializer\Groups({"user_read"})
+     * @JMSSerializer\XmlAttribute()
      */
     private $id;
 
     /**
      * @var UploadedFile
      * @Vich\UploadableField(mapping="user_image", fileNameProperty="fileName")
+     *
+     * @Assert\NotBlank(groups={"create"})
      */
     private $file;
 
     /**
      * @var string
      * @ORM\Column(name="file_name", type="string", length=255, options={"default": ""})
+     *
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Type("string")
+     * @JMSSerializer\Groups({"user_read"})
+     * @JMSSerializer\XmlAttribute()
      */
     private $fileName = '';
 
     /**
      * @var string
      * @ORM\Column(name="title", type="string", length=255, options={"default": ""})
+     *
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Type("string")
+     * @JMSSerializer\Groups({"user_read"})
+     * @JMSSerializer\XmlAttribute()
      */
     private $title = '';
 
@@ -65,6 +87,10 @@ class UserPhoto
      * @var \DateTime
      *
      * @ORM\Column(name="date_added", type="datetime", nullable=true)
+     *
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Groups({"user_read"})
+     * @JMSSerializer\XmlAttribute()
      */
     private $dateAdded;
 

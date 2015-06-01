@@ -11,12 +11,14 @@
 namespace AppBundle\Controller\Api;
 
 
+use AppBundle\Entity\Conversation;
 use AppBundle\Entity\User;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Controller\Annotations as FOSRest;
 use JMS\Serializer\Annotation\SerializedName;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class ChatController
@@ -35,7 +37,7 @@ class ChatController extends FOSRestController
      *      output="AppBundle\Entity\Conversation"
      * )
      *
-     * @FOSRest\View()
+     * @FOSRest\View(serializerEnableMaxDepthChecks=true)
      * @SerializedName("chat")
      *
      * @param int $id Chat ID
@@ -52,33 +54,72 @@ class ChatController extends FOSRestController
             throw $this->createNotFoundException('There is no chat with such ID.');
         }
 
+        $groups = ['user_read'];
+        if ($this->isGranted('ROLE_MODEL')) {
+            $groups[] = 'model_read';
+        } else if ($this->isGranted('ROLE_CLIENT')) {
+            $groups[] = 'client_read';
+        }
+
         $view = $this->view($conversation);
-        $view->getSerializationContext()->setGroups(['user_read']);
+        $view->getSerializationContext()
+            ->setGroups($groups)
+            ->enableMaxDepthChecks();
 
         return $view;
     }
 
     /**
-     * @param int $id
+     * @ApiDoc(
+     *      resource=true,
+     *      description="Creates a new chat",
+     *      section="Chats",
+     *      authentication=true,
+     *      authenticationRoles={"ROLE_USER"},
+     *      input={
+     *          "class"="AppBundle\Form\Type\ConversationType",
+     *          "name"="",
+     *          "options"={
+     *              "method"="POST",
+     *          }
+     *      },
+     *      output={
+     *          "class"="AppBundle\Entity\Conversation",
+     *          "groups"={"user_read"}
+     *      }
+     * )
+     *
+     * @FOSRest\View(serializerEnableMaxDepthChecks=true)
+     *
+     * @param Request $request
+     * @return \FOS\RestBundle\View\View
      */
-    public function putChatAction($id)
+    public function postChatAction(Request $request)
     {
+        $conversation = new Conversation();
 
-    }
+        $form = $this->get('form.factory')->createNamed('', 'conversation', $conversation, [
+            'method' => 'POST',
+            'validation_groups' => ['create'],
+        ]);
 
-    /**
-     * @param int $id
-     */
-    public function patchChatAction($id)
-    {
+        $form->handleRequest($request);
 
-    }
+        if ($form->isValid()) {
+            /** @var \Doctrine\ORM\EntityManager $em */
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($conversation);
+            $em->flush();
 
-    /**
-     * @param int $id
-     */
-    public function deleteChatAction($id)
-    {
+            $view = $this->view($conversation);
+            $view->getSerializationContext()
+                ->setGroups(['user_read'])
+                ->enableMaxDepthChecks();
+            return $view;
+        }
 
+        $view = $this->view($form);
+        $view->setStatusCode(400);
+        return $view;
     }
 }

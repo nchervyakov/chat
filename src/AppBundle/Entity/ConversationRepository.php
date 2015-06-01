@@ -2,7 +2,7 @@
 
 namespace AppBundle\Entity;
 
-use Doctrine\Common\Proxy\Exception\InvalidArgumentException;
+
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityRepository;
 

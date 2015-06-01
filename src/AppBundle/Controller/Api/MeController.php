@@ -11,10 +11,12 @@
 namespace AppBundle\Controller\Api;
 
 
+use AppBundle\Entity\Conversation;
 use AppBundle\Entity\User;
 use AppBundle\Model\ChatCollection;
 use AppBundle\Model\ModelStatCollection;
 use AppBundle\Model\UserCollection;
+use Doctrine\ORM\EntityManager;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Request\ParamFetcherInterface;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
@@ -36,7 +38,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 class MeController extends FOSRestController
 {
     /**
-     * @FOSRest\Get("/me.{_format}", name="api_v1_get_me", requirements={"_format": "json|xml"}, defaults={"_format": "json"})
      * @ApiDoc(
      *      resource=true,
      *      description="Returns current authenticated user",
@@ -46,7 +47,9 @@ class MeController extends FOSRestController
      *      output="AppBundle\Entity\User"
      * )
      *
-     * @return User
+     * @FOSRest\Get("/me.{_format}", name="api_v1_get_me", requirements={"_format": "json|xml"}, defaults={"_format": "json"})
+     *
+     * @return \FOS\RestBundle\View\View
      */
     public function getMe()
     {
@@ -96,9 +99,102 @@ class MeController extends FOSRestController
 
         $view = $this->view($result);
         $view->getSerializationContext()
-            ->setGroups(['user_read'])
+            ->setGroups(['chat_list', 'essential_public'])
             ->enableMaxDepthChecks();
 
+        return $view;
+    }
+
+    /**
+     * @ApiDoc(
+     *      resource=true,
+     *      description="Returns current user chats.",
+     *      section="Me",
+     *      output="AppBundle\Entity\Conversation"
+     * )
+     *
+     * @FOSRest\View(serializerEnableMaxDepthChecks=true)
+     * @FOSRest\Get("/me/chats/{companionId}", name="api_v1_get_me_chat_with_companion", requirements={"_format": "json|xml"}, defaults={"_format": "json"})
+     *
+     * @param $companionId
+     * @return \FOS\RestBundle\View\View
+     */
+    public function getMeChatAction($companionId)
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $companion = $this->getDoctrine()->getRepository('AppBundle:User')->find($companionId);
+
+        if (!$companion) {
+            throw $this->createNotFoundException('Companion not found');
+        }
+
+        $conversation = $this->getDoctrine()->getRepository('AppBundle:Conversation')->getByUsers($user, $companion);
+        $accessEvaluator = $this->get('app.request_access_evaluator');
+
+        if (!$conversation || !$accessEvaluator->canChatWith($conversation->getCompanion($user))) {
+            throw $this->createNotFoundException('There is no chat with such ID.');
+        }
+
+        $view = $this->view($conversation);
+        $view->getSerializationContext()->setGroups(['user_read'])
+            ->enableMaxDepthChecks();
+
+        return $view;
+    }
+
+    /**
+     * @ApiDoc(
+     *      resource=true,
+     *      description="Creates a new chat for current user",
+     *      section="Me",
+     *      authentication=true,
+     *      authenticationRoles={"ROLE_USER"},
+     *      output={
+     *          "class"="AppBundle\Entity\Conversation",
+     *          "groups"={"user_read"}
+     *      }
+     * )
+     *
+     * @FOSRest\Post("/me/chats/{companionId}", name="api_v1_post_me_chat", requirements={"_format": "json|xml"}, defaults={"_format": "json"})
+     * @FOSRest\View()
+     *
+     * @param $companionId
+     * @return \FOS\RestBundle\View\View
+     */
+    public function postMeChatAction($companionId)
+    {
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $companion = $this->getDoctrine()->getRepository('AppBundle:User')->find($companionId);
+
+        if (!$companion) {
+            throw $this->createNotFoundException('Companion not found');
+        }
+
+        if (!$this->get('app.request_access_evaluator')->canChatWith($companion)) {
+            throw $this->createAccessDeniedException("You cannot chat with this user.");
+        }
+
+        $conversation = $em->getRepository('AppBundle:Conversation')->getByUsers($user, $companion);
+        if ($conversation) {
+            throw $this->createAccessDeniedException("The conversation already exists.");
+        }
+
+        $conversation = $em->getRepository('AppBundle:Conversation')->createByUsers($user, $companion);
+
+        $em->persist($conversation);
+        $em->flush();
+
+        $view = $this->view($conversation);
+        $view->getSerializationContext()
+            ->setGroups(['user_read'])
+            ->enableMaxDepthChecks();
         return $view;
     }
 

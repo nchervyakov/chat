@@ -26,26 +26,30 @@ class UserPhotoType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $bubbleErrors = $options['api'] !== null ? !$options['api'] : true;
+
         if ($options['title']) {
             $builder->add('title', null, [
                 'required' => false,
-                'error_bubbling' => true,
+                'error_bubbling' => $bubbleErrors,
             ]);
         }
 
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($bubbleErrors, $options) {
             $data = $event->getData();
             $form = $event->getForm();
 
-            if (!$data) {
-                $event->setData(new UserPhoto());
-            }
+            if (!$options['edit']) {
+                if (!$data) {
+                    $event->setData(new UserPhoto());
+                }
 
-            $form->add('file', 'vich_image', [
-                'required' => true,
-                'label' => false,
-                'error_bubbling' => true
-            ]);
+                $form->add('file', 'vich_image', [
+                    'required' => true,
+                    'label' => false,
+                    'error_bubbling' => $bubbleErrors
+                ]);
+            }
         });
     }
 
@@ -56,7 +60,9 @@ class UserPhotoType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => 'AppBundle\Entity\UserPhoto',
-            'title' => true
+            'title' => true,
+            'api' => null,
+            'edit' => false
         ]);
     }
 

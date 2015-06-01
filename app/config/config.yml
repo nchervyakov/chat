@@ -283,8 +283,8 @@ fos_rest:
         default_format: json
         include_format: true
 
-    serializer:
-        serialize_null: true
+#    serializer:
+#        serialize_null: true
 
 knp_menu:
 #    twig:

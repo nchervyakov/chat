@@ -3,8 +3,8 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use JMS\Serializer\Annotation as Serialize;
 use Gedmo\Mapping\Annotation as Gedmo;
+use JMS\Serializer\Annotation as JMSSerializer;
 
 /**
  * Message
@@ -19,13 +19,16 @@ use Gedmo\Mapping\Annotation as Gedmo;
  *      "participant": "AppBundle\Entity\ParticipantMessage",
  *      "notification": "AppBundle\Entity\NotificationMessage"
  * })
- * @Serialize\Discriminator(field="discriminator", map={
+ * @ORM\HasLifecycleCallbacks()
+ *
+ * @JMSSerializer\Discriminator(field="discriminator", disabled=false, map={
  *      "text": "AppBundle\Entity\TextMessage",
  *      "image": "AppBundle\Entity\ImageMessage",
  *      "participant": "AppBundle\Entity\ParticipantMessage",
  *      "notification": "AppBundle\Entity\NotificationMessage"
  * })
- * @ORM\HasLifecycleCallbacks()
+ *
+ * @JMSSerializer\ExclusionPolicy("ALL")
  */
 abstract class Message
 {
@@ -35,17 +38,23 @@ abstract class Message
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\Column(name="id", type="integer")
-     * @Serialize\Expose()
+     *
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Groups({"user_read", "message_list"})
+     * @JMSSerializer\Type("integer")
      */
     private $id;
 
     /**
      * @var Conversation
+     *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Conversation")
      * @ORM\JoinColumn(name="conversation_id", referencedColumnName="id", onDelete="CASCADE")
-     * @Serialize\MaxDepth(0)
-     * @Serialize\Type("AppBundle\Entity\Conversation")
-     * @Serialize\Exclude()
+     *
+     * @JMSSerializer\MaxDepth(1)
+     * @JMSSerializer\Type("AppBundle\Entity\Conversation")
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Groups({"user_read", "message_list"})
      */
     private $conversation;
 
@@ -53,7 +62,10 @@ abstract class Message
      * @var \DateTime
      *
      * @ORM\Column(name="date_added", type="datetime", nullable=true)
-     * @Serialize\Expose()
+     *
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Type("DateTime")
+     * @JMSSerializer\Groups({"user_read", "message_list"})
      */
     private $dateAdded;
 
@@ -66,38 +78,55 @@ abstract class Message
 
     /**
      * @var string
+     *
      * @ORM\Column(name="content", type="text", nullable=true)
-     * @Serialize\Expose()
+     *
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Groups({"user_read", "message_list"})
+     * @JMSSerializer\Type("string")
      */
     protected $content;
 
     /**
      * @var boolean
+     *
      * @ORM\Column(name="deleted_by_user", type="boolean", options={"default": false})
-     * @Serialize\Exclude()
+     *
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Groups({"user_read", "message_list"})
+     * @JMSSerializer\Type("boolean")
      */
     private $deletedByUser = false;
 
     /**
      * @var User
+     *
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumn(name="author_id", referencedColumnName="id", onDelete="CASCADE")
-     * @Serialize\MaxDepth(0)
-     * @Serialize\Exclude()
+     *
+     * @JMSSerializer\MaxDepth(1)
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Groups({"user_read", "message_list"})
      */
     private $author;
 
     /**
      * @var bool
      * @ORM\Column(name="is_seen_by_client", type="boolean", options={"default": 0})
-     * @Serialize\Exclude()
+     *
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Type("boolean")
+     * @JMSSerializer\Groups({"user_read", "message_list"})
      */
     private $seenByClient = false;
 
     /**
      * @var bool
      * @ORM\Column(name="is_seen_by_model", type="boolean", options={"default": 0})
-     * @Serialize\Exclude()
+     *
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Type("boolean")
+     * @JMSSerializer\Groups({"user_read"})
      */
     private $seenByModel = false;
 
@@ -110,7 +139,12 @@ abstract class Message
 
     /**
      * @var MessageComplaint
+     *
      * @ORM\OneToOne(targetEntity="AppBundle\Entity\MessageComplaint", mappedBy="message")
+     *
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Type("AppBundle\Entity\MessageComplaint")
+     * @JMSSerializer\Groups({"user_read", "message_list"})
      */
     private $complaint;
 
@@ -353,7 +387,8 @@ abstract class Message
 
     /**
      * @return int|null
-     * @Serialize\VirtualProperty()
+     * @JMSSerializer\VirtualProperty()
+     * @JMSSerializer\Groups({"user_read", "message_list"})
      */
     public function getConversationId()
     {

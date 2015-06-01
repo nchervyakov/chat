@@ -2,9 +2,12 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Validator\Constraints\UserOwnConversation;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as JMSSerializer;
 use Symfony\Bridge\Doctrine\Validator\Constraints as DoctrineConstraints;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * Conversation
@@ -16,7 +19,11 @@ use Symfony\Bridge\Doctrine\Validator\Constraints as DoctrineConstraints;
  * )
  * @ORM\Entity(repositoryClass="AppBundle\Entity\ConversationRepository")
  * @ORM\HasLifecycleCallbacks()
+ *
  * @JMSSerializer\XmlRoot("chat")
+ *
+ * @Assert\Callback(methods={"checkUserRoles"}, groups={"Default", "create"})
+ * @UserOwnConversation(groups={"Default", "create"})
  */
 class Conversation
 {
@@ -26,7 +33,7 @@ class Conversation
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
-     * @JMSSerializer\Groups({"user_read", "model_stat"})
+     * @JMSSerializer\Groups({"user_read", "model_stat", "chat_list", "message_list"})
      * @JMSSerializer\XmlAttribute()
      */
     private $id;
@@ -38,9 +45,11 @@ class Conversation
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User", inversedBy="clientConversations")
      * @ORM\JoinColumn(name="client_id", referencedColumnName="id", onDelete="CASCADE")
      *
-     * @JMSSerializer\Groups({"user_read", "user_write", "model_stat"})
+     * @JMSSerializer\Groups({"user_read", "user_write", "model_stat", "chat_list"})
      * @JMSSerializer\Type("AppBundle\Entity\User")
      * @JMSSerializer\MaxDepth(depth=1)
+     *
+     * @Assert\NotBlank(groups={"create"})
      */
     protected $client;
 
@@ -51,9 +60,11 @@ class Conversation
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User", inversedBy="modelConversations", cascade={"remove"})
      * @ORM\JoinColumn(name="model_id", referencedColumnName="id", onDelete="CASCADE")
      *
-     * @JMSSerializer\Groups({"user_read", "user_write"})
+     * @JMSSerializer\Groups({"user_read", "user_write", "chat_list"})
      * @JMSSerializer\Type("AppBundle\Entity\User")
-     * @JMSSerializer\MaxDepth(1)
+     * @JMSSerializer\MaxDepth(depth=1)
+     *
+     * @Assert\NotBlank(groups={"create"})
      */
     protected $model;
 
@@ -62,7 +73,7 @@ class Conversation
      * @ORM\Column(name="seconds", type="integer", options={"default": 0})
      * @JMSSerializer\Expose()
      * @JMSSerializer\XmlAttribute()
-     * @JMSSerializer\Groups({"user_read", "model_stat"})
+     * @JMSSerializer\Groups({"user_read", "model_stat", "chat_list"})
      */
     private $seconds = 0;
 
@@ -71,7 +82,7 @@ class Conversation
      * @ORM\Column(name="price", type="decimal", precision=18, scale=8, options={"default": 0.0})
      * @JMSSerializer\Expose()
      * @JMSSerializer\XmlAttribute()
-     * @JMSSerializer\Groups({"user_read"})
+     * @JMSSerializer\Groups({"client_read"})
      */
     private $price = 0.0;
 
@@ -79,7 +90,7 @@ class Conversation
      * @var float Total model earnings on this chat
      * @ORM\Column(name="model_earnings", type="decimal", precision=18, scale=8, options={"default": 0.0})
      * @JMSSerializer\XmlAttribute()
-     * @JMSSerializer\Groups({"user_read", "model_stat"})
+     * @JMSSerializer\Groups({"model_stat", "model_read"})
      */
     private $modelEarnings = 0.0;
 
@@ -88,7 +99,7 @@ class Conversation
      *
      * @ORM\Column(name="date_added", type="datetime", nullable=true)
      * @JMSSerializer\XmlAttribute()
-     * @JMSSerializer\Groups({"user_read", "admin_write"})
+     * @JMSSerializer\Groups({"user_read", "admin_write", "chat_list"})
      */
     private $dateAdded;
 
@@ -107,7 +118,7 @@ class Conversation
      * @ORM\Column(name="last_message_date", type="datetime", nullable=true)
      * @JMSSerializer\Expose()
      * @JMSSerializer\XmlAttribute()
-     * @JMSSerializer\Groups({"user_read", "admin_write"})
+     * @JMSSerializer\Groups({"user_read", "admin_write", "chat_list"})
      */
     private $lastMessageDate;
 
@@ -123,7 +134,7 @@ class Conversation
      * @ORM\Column(name="client_agree_to_pay", type="boolean", nullable=false, options={"default": 0})
      * @JMSSerializer\Expose()
      * @JMSSerializer\XmlAttribute()
-     * @JMSSerializer\Groups({"user_read", "admin_write"})
+     * @JMSSerializer\Groups({"user_read", "admin_write", "chat_list"})
      */
     private $clientAgreeToPay = false;
 
@@ -139,7 +150,7 @@ class Conversation
      * @ORM\Column(name="client_unseen_messages", type="integer", options={"default": 0})
      * @JMSSerializer\Expose()
      * @JMSSerializer\XmlAttribute()
-     * @JMSSerializer\Groups({"user_read"})
+     * @JMSSerializer\Groups({"user_read", "chat_list"})
      */
     private $clientUnseenMessages = 0;
 
@@ -148,7 +159,7 @@ class Conversation
      * @ORM\Column(name="model_unseen_messages", type="integer", options={"default": 0})
      * @JMSSerializer\Expose()
      * @JMSSerializer\XmlAttribute()
-     * @JMSSerializer\Groups({"user_read"})
+     * @JMSSerializer\Groups({"user_read", "chat_list"})
      */
     private $modelUnseenMessages = 0;
 
@@ -231,22 +242,6 @@ class Conversation
         $this->dateUpdated = $dateUpdated;
     }
 
-//    /**
-//     * @return array|Collection|Message[]
-//     */
-//    public function getMessages()
-//    {
-//        return $this->messages;
-//    }
-//
-//    /**
-//     * @param array|Collection|Message[] $messages
-//     */
-//    public function setMessages($messages)
-//    {
-//        $this->messages = $messages instanceof Collection ? $messages : new ArrayCollection($messages);
-//    }
-
     /**
      * @ORM\PreUpdate()
      */
@@ -281,22 +276,6 @@ class Conversation
         //$this->messages->removeElement($messages);
     }
 
-//    /**
-//     * Fetches current active interval or null
-//     *
-//     * @return ConversationInterval|mixed|null
-//     */
-//    public function getActiveInterval()
-//    {
-//        foreach ($this->getIntervals() as $interval) {
-//            if ($interval->getStatus() === ConversationInterval::STATUS_ACTIVE) {
-//                return $interval;
-//            }
-//        }
-//
-//        return null;
-//    }
-
     /**
      * Add intervals
      *
@@ -320,16 +299,6 @@ class Conversation
         $interval->setConversation(null);
     }
 
-//    /**
-//     * Get intervals
-//     *
-//     * @return \Doctrine\Common\Collections\Collection|ConversationInterval[]
-//     */
-//    public function getIntervals()
-//    {
-//        return $this->intervals;
-//    }
-
     /**
      * Set lastMessageDate
      *
@@ -352,156 +321,6 @@ class Conversation
     {
         return $this->lastMessageDate;
     }
-
-//    /**
-//     * Get total conversation time in seconds.
-//     *
-//     * @return int
-//     */
-//    public function getTotalTime()
-//    {
-//        $time = 0;
-//        foreach ($this->getIntervals() as $interval) {
-//            $time += $interval->getSeconds();
-//        }
-//
-//        return $time;
-//    }
-//
-//    /**
-//     * Get total conversation time as \DateInterval instance.
-//     *
-//     * @return bool|\DateInterval
-//     */
-//    public function getTotalTimeInterval()
-//    {
-//        return $this->convertSecondsToDateInterval($this->getTotalTime());
-//    }
-
-//    /**
-//     * Get conversation not paid time in seconds.
-//     *
-//     * @return int
-//     */
-//    public function getNotPaidTime()
-//    {
-//        $time = 0;
-//        foreach ($this->getIntervals() as $interval) {
-//            if ($interval->getStatus() !== ConversationInterval::STATUS_PAYED) {
-//                $time += $interval->getSeconds();
-//            }
-//        }
-//
-//        return $time;
-//    }
-
-//    /**
-//     * Get conversation paid time in seconds.
-//     *
-//     * @return int
-//     */
-//    public function getPaidTime()
-//    {
-//        $time = 0;
-//        foreach ($this->getIntervals() as $interval) {
-//            if ($interval->getStatus() === ConversationInterval::STATUS_PAYED) {
-//                $time += $interval->getSeconds();
-//            }
-//        }
-//
-//        return $time;
-//    }
-
-//    /**
-//     * Get conversation not paid time as \DateInterval instance.
-//     *
-//     * @return bool|\DateInterval
-//     */
-//    public function getNotPaidTimeInterval()
-//    {
-//        return $this->convertSecondsToDateInterval($this->getNotPaidTime());
-//    }
-//
-//    /**
-//     * Get conversation payed time as \DateInterval instance.
-//     *
-//     * @return bool|\DateInterval
-//     */
-//    public function getPaidTimeInterval()
-//    {
-//        return $this->convertSecondsToDateInterval($this->getPaidTime());
-//    }
-
-//    /**
-//     * @param $time
-//     * @return bool|\DateInterval
-//     */
-//    public function convertSecondsToDateInterval($time)
-//    {
-//        $now = new \DateTime();
-//        $before = new \DateTime('-' . $time . ' seconds');
-//        return $now->diff($before);
-//    }
-
-//    /**
-//     * @return float
-//     */
-//    public function getPaidPrice()
-//    {
-//        $price = 0.0;
-//
-//        foreach ($this->getIntervals() as $interval) {
-//            if ($interval->getStatus() === ConversationInterval::STATUS_PAYED) {
-//                $price += $interval->getPrice();
-//            }
-//        }
-//
-//        return $price;
-//    }
-
-//    /**
-//     * @return float
-//     */
-//    public function getPrice()
-//    {
-//        $price = 0.0;
-//
-//        foreach ($this->getIntervals() as $interval) {
-//           $price += $interval->getPrice();
-//        }
-//
-//        return $price;
-//    }
-
-//    /**
-//     * @return float
-//     */
-//    public function getCalculatedModelEarnings()
-//    {
-//        $earnings = 0.0;
-//
-//        foreach ($this->getIntervals() as $interval) {
-//            $earnings += $interval->getModelEarnings();
-//        }
-//
-//        return $earnings;
-//    }
-
-//    /**
-//     * @return float
-//     */
-//    public function getPaidModelEarnings()
-//    {
-//        $earnings = 0.0;
-//
-//        foreach ($this->getIntervals() as $interval) {
-//            if ($interval->getStatus() === ConversationInterval::STATUS_PAYED) {
-//                $earnings += $interval->getModelEarnings();
-//            }
-//        }
-//
-//        return $earnings;
-//    }
 
     /**
      * Set seconds
@@ -669,14 +488,34 @@ class Conversation
     /**
      * Returns a companion of the user.
      *
-     * @JMSSerializer\VirtualProperty()
-     * JMSSerializer\Groups({"Default", "user_read"})
-     *
      * @param User $user
      * @return User
      */
     public function getCompanion(User $user)
     {
         return $this->getClient() === $user ? $this->getModel() : $this->getClient();
+    }
+
+    /**
+     * @param ExecutionContextInterface $context
+     */
+    public function checkUserRoles(ExecutionContextInterface $context)
+    {
+        if (!$this->client || !$this->client->hasRole('ROLE_CLIENT')) {
+            $context->buildViolation("Client must be a client user.")->addViolation();
+        }
+
+        if (!$this->model || !$this->model->hasRole('ROLE_MODEL')) {
+            $context->buildViolation("Model must be a model user.")->addViolation();
+        }
+    }
+
+    /**
+     * @param User $user
+     * @return bool
+     */
+    public function isParticipant(User $user)
+    {
+        return $this->client === $user || $this->model === $user;
     }
 }

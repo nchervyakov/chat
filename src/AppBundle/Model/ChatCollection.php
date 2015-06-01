@@ -27,7 +27,7 @@ class ChatCollection extends AbstractRestCollection
      * @var ArrayCollection|ArrayCollection<AppBundle\Entity\Conversation>
      * @JMSSerializer\Type("array<AppBundle\Entity\Conversation>")
      * @JMSSerializer\XmlList("chat", inline=true)
-     * @JMSSerializer\Groups({"user_read"})
+     * @JMSSerializer\Groups({"chat_list", "essential_public"})
      */
     private $chats;
 

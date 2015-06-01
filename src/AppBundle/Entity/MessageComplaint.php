@@ -12,12 +12,15 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use JMS\Serializer\Annotation as JMSSerializer;
 
 /**
  * Class MessageComplaint
  * @package AppBundle\Entity
  * @ORM\Entity(repositoryClass="AppBundle\Entity\MessageComplaintRepository")
  * @ORM\Table(name="message_complaint")
+ *
+ * @JMSSerializer\ExclusionPolicy("ALL")
  */
 class MessageComplaint 
 {
@@ -30,12 +33,20 @@ class MessageComplaint
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(name="id", type="integer")
+     *
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Type("integer")
+     * @JMSSerializer\Groups({"user_read", "message_list"})
      */
     private $id;
 
     /**
      * @var string
      * @ORM\Column(name="status", type="string", length=16, options={"default": "open"})
+     *
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Type("string")
+     * @JMSSerializer\Groups({"user_read", "message_list"})
      */
     private $status = self::STATUS_OPEN;
 
@@ -65,6 +76,10 @@ class MessageComplaint
      *
      * @ORM\Column(name="date_added", type="datetime", nullable=true)
      * @Gedmo\Timestampable(on="create")
+     *
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Type("DateTime")
+     * @JMSSerializer\Groups({"user_read", "message_list"})
      */
     private $dateAdded;
 

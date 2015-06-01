@@ -42,7 +42,7 @@ class User extends BaseUser
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      * @JMSSerializer\Expose()
-     * @JMSSerializer\Groups({"user_read", "model_stat"})
+     * @JMSSerializer\Groups({"user_read", "model_stat", "chat_list", "message_list"})
      * @JMSSerializer\XmlAttribute()
      */
     protected $id;
@@ -57,7 +57,7 @@ class User extends BaseUser
      *      groups={"AppRegistration", "AppProfile"})
      * @Assert\Email(message="fos_user.email.invalid", groups={"AppRegistration", "AppProfile"})
      *
-     * @JMSSerializer\Groups({})
+     * @JMSSerializer\Groups({"profile"})
      * @JMSSerializer\Expose()
      * @JMSSerializer\XmlAttribute()
      */
@@ -163,6 +163,7 @@ class User extends BaseUser
      * @var UserPhoto
      * @ORM\OneToOne(targetEntity="AppBundle\Entity\UserPhoto", cascade={"remove", "persist", "merge"}, orphanRemoval=true)
      * @ORM\JoinColumn(name="thumbnail_id", referencedColumnName="id", onDelete="SET NULL")
+     *
      * @JMSSerializer\MaxDepth(depth=2)
      * @JMSSerializer\Expose()
      * @JMSSerializer\Groups({"Default", "user_read"})
@@ -172,8 +173,10 @@ class User extends BaseUser
     /**
      * @var Collection|UserPhoto[]
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\UserPhoto", mappedBy="owner", cascade={"merge", "persist", "remove"})
+     *
      * @JMSSerializer\Type("array<AppBundle\Entity\UserPhoto>")
      * @JMSSerializer\Expose()
+     * @JMSSerializer\Groups({"user_read"})
      */
     private $photos;
 
@@ -232,7 +235,7 @@ class User extends BaseUser
      * @var bool
      * @ORM\Column(name="is_online", type="boolean", options={"default": 0}, nullable=false)
      * @JMSSerializer\Expose()
-     * @JMSSerializer\Groups({"user_read", "admin_write", "model_stat"})
+     * @JMSSerializer\Groups({"user_read", "admin_write", "model_stat", "chat_list"})
      * @JMSSerializer\XmlAttribute()
      */
     private $online = false;
@@ -240,15 +243,17 @@ class User extends BaseUser
     /**
      * @var float
      * @ORM\Column(name="coins", type="decimal", precision=18, scale=8, nullable=false, options={"default": 0.0})
+     *
      * @JMSSerializer\XmlAttribute()
      */
     private $coins = 0.0;
 
     /**
      * @var string
+     *
      * @JMSSerializer\Expose()
      * @JMSSerializer\XmlAttribute()
-     * @JMSSerializer\Groups({"Default", "user_read", "admin_write", "model_stat"})
+     * @JMSSerializer\Groups({"Default", "user_read", "admin_write", "model_stat", "chat_list"})
      *
      * @Assert\NotBlank(groups={"Default", "AppRegistration", "AppProfile"}, message="Name cannot be blank")
      */
@@ -259,7 +264,7 @@ class User extends BaseUser
      *
      * @JMSSerializer\Expose()
      * @JMSSerializer\XmlAttribute()
-     * @JMSSerializer\Groups({"Default", "user_read", "admin_write", "model_stat"})
+     * @JMSSerializer\Groups({"Default", "user_read", "admin_write", "model_stat", "chat_list"})
      *
      * @Assert\NotBlank(groups={"Default", "AppRegistration", "AppProfile"}, message="Last name cannot be blank")
      */
@@ -291,6 +296,7 @@ class User extends BaseUser
     public function __construct()
     {
         parent::__construct();
+        $this->groups = new ArrayCollection();
         $this->photos = new ArrayCollection();
         $this->oauthRequests = new ArrayCollection();
         $this->modelConversations = new ArrayCollection();

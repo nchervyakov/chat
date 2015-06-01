@@ -50,7 +50,7 @@ class EmoticonController extends FOSRestController
      *
      * Cache(expires="+1 second", public=true, vary={"Content-Type"})
      * @param ParamFetcherInterface $paramFetcher
-     * @return \AppBundle\Entity\Emoticon[]|array
+     * @return \FOS\RestBundle\View\View
      */
     public function getEmoticonsAction(ParamFetcherInterface $paramFetcher)
     {
@@ -67,7 +67,8 @@ class EmoticonController extends FOSRestController
         $result = new EmoticonCollection($pagination->getItems(), $page, $perPage);
         $result->setPageCount($paginationData['pageCount']);
 
-        return $result;
+        $view = $this->view($result);
+        return $view;
     }
 
     /**
@@ -89,7 +90,8 @@ class EmoticonController extends FOSRestController
      *      vary={"Content-Type"}
      * )
      *
-     * @FOSRest\View()
+     * @FOSRest\View(serializerEnableMaxDepthChecks=true)
+     *
      * @param int $id Emoticon id
      * @return Emoticon
      */
@@ -98,7 +100,7 @@ class EmoticonController extends FOSRestController
         $emoticon = $this->getDoctrine()->getRepository('AppBundle:Emoticon')->find($id);
 
         if (!$emoticon) {
-            return $this->createNotFoundException("There is no emoticon with such id.");
+            throw $this->createNotFoundException("There is no emoticon with such id.");
         }
 
         return $emoticon;

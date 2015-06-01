@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as JMSSerializer;
 
 /**
  * NotificationMessage
@@ -17,22 +18,36 @@ class NotificationMessage extends Message
     /**
      * @var string
      * @ORM\Column(name="notification_type", type="string", length=16, options={"default": "info"})
+     *
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Type("string")
+     * @JMSSerializer\Groups({"user_read", "message_list"})
      */
-    private $type = self::TYPE_INFO;
+    private $notificationType = self::TYPE_INFO;
 
     /**
      * @return string
      */
-    public function getType()
+    public function getNotificationType()
     {
-        return $this->type;
+        return $this->notificationType;
     }
 
     /**
-     * @param string $type
+     * @param string $notificationType
      */
-    public function setType($type)
+    public function setNotificationType($notificationType)
     {
-        $this->type = $type;
+        $this->notificationType = $notificationType;
+    }
+
+    /**
+     * @return string
+     * @JMSSerializer\VirtualProperty()
+     * @JMSSerializer\Groups({"user_read", "message_list"})
+     */
+    public function getType()
+    {
+        return 'notification';
     }
 }

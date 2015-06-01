@@ -19,6 +19,7 @@ use AppBundle\Entity\ParticipantMessage;
 use AppBundle\Entity\User;
 use AppBundle\Exception\ClientNotAgreedToChatException;
 use AppBundle\Exception\NotEnoughMoneyException;
+use Doctrine\DBAL\ConnectionException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query;
 use Symfony\Component\DependencyInjection\ContainerAware;
@@ -110,7 +111,10 @@ class ConversationService extends ContainerAware
             }
 
         } catch (\Exception $e) {
-            $em->rollBack();
+            try {
+                $em->rollBack();
+            } catch (ConnectionException $conEx) {}
+
             throw $e; //\ErrorException("Cannot add new message", 0, 1, __FILE__, __LINE__, $e);
         }
     }

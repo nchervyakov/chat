@@ -89,9 +89,11 @@ class RestBodyListener
         $contentType = $request->headers->get('Content-Type');
         if ($contentType !== null) {
             $contentTypeParts = preg_split('/;\s+/', $contentType, -1, PREG_SPLIT_NO_EMPTY);
-            $contentType = $contentTypeParts[0];
+            $checkContentType = $contentTypeParts[0];
+        } else {
+            $checkContentType = $contentType;
         }
-        $isFormPostRequest = in_array($contentType, array('multipart/form-data', 'application/x-www-form-urlencoded'), true) && 'POST' === $method;
+        $isFormPostRequest = in_array($checkContentType, array('multipart/form-data', 'application/x-www-form-urlencoded'), true) && 'POST' === $method;
         $normalizeRequest = $this->normalizeForms && $isFormPostRequest;
 
         if (!$isFormPostRequest && in_array($method, array('POST', 'PUT', 'PATCH', 'DELETE'))) {

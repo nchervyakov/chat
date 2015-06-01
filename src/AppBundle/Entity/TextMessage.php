@@ -10,4 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class TextMessage extends ParticipantMessage
 {
+    public function getDiscriminator()
+    {
+        return 'text';
+    }
 }

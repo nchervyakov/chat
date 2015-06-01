@@ -24,7 +24,7 @@ class AbstractRestCollection
      * @var int
      * @Assert\NotBlank()
      * @JMSSerializer\XmlAttribute()
-     * @JMSSerializer\Groups({"model_read", "user_read", "admin_read"})
+     * @JMSSerializer\Groups({"model_read", "user_read", "admin_read", "essential_public"})
      */
     private $page = 1;
 
@@ -32,21 +32,21 @@ class AbstractRestCollection
      * @var int Limit
      * @Assert\NotBlank()
      * @JMSSerializer\XmlAttribute()
-     * @JMSSerializer\Groups({"model_read", "user_read", "admin_read"})
+     * @JMSSerializer\Groups({"model_read", "user_read", "admin_read", "essential_public"})
      */
     private $perPage = 10;
 
     /**
      * @var int
      * @JMSSerializer\XmlAttribute()
-     * @JMSSerializer\Groups({"model_read", "user_read", "admin_read"})
+     * @JMSSerializer\Groups({"model_read", "user_read", "admin_read", "essential_public"})
      */
     private $pageCount = 0;
 
     /**
      * @var int
      * @JMSSerializer\XmlAttribute()
-     * @JMSSerializer\Groups({"model_read", "user_read", "admin_read"})
+     * @JMSSerializer\Groups({"model_read", "user_read", "admin_read", "essential_public"})
      */
     private $totalItemsCount = 0;
 

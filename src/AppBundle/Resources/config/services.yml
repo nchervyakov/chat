@@ -71,6 +71,12 @@ services:
         tags:
             - {name: form.type, alias: oauth_request}
 
+    form.conversation:
+        class: AppBundle\Form\Type\ConversationType
+        scope: prototype
+        tags:
+            - {name: form.type, alias: conversation}
+
     app.event.profile_listener:
         class: AppBundle\Event\Listener\FOSProfileListener
         calls:
@@ -156,6 +162,14 @@ services:
         calls:
             - [setContainer, ["@service_container"]]
 
+    app.event.jms_serializer_subscriber:
+        class: AppBundle\Event\Listener\JMSSerializerSubscriber
+
+        tags:
+            - {name: jms_serializer.event_subscriber}
+        calls:
+            - [setContainer, ["@service_container"]]
+
     app.coins:
         class: AppBundle\Coins\CoinsService
         calls:
@@ -236,3 +250,11 @@ services:
 #            - {name: "kernel.event_listener", event: "kernel.request", method: "onKernelRequest", priority: 11}
 #        calls:
 #            - [setDefaultFormat, ["%fos_rest.body_default_format%"]]
+
+    validator.unique.your_validator_name:
+        class: AppBundle\Validator\Constraints\UserOwnConversationValidator
+        tags:
+            - { name: validator.constraint_validator, alias: user_own_conversation }
+        calls:
+            - [setContainer, ["@service_container"]]
+        scope: request

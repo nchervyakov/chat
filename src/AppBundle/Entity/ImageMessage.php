@@ -3,7 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use JMS\Serializer\Annotation as Serialize;
+use JMS\Serializer\Annotation as JMSSerializer;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -12,6 +12,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * TextMessage
  * @ORM\Entity()
  * @Vich\Uploadable()
+ *
+ * @JMSSerializer\ExclusionPolicy("ALL")
  */
 class ImageMessage extends ParticipantMessage
 {
@@ -25,7 +27,10 @@ class ImageMessage extends ParticipantMessage
      * @var string
      * @ORM\Column(name="image", type="string", length=255)
      * @Assert\NotBlank(message="Image file is required")
-     * @Serialize\Expose()
+     *
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Groups({"user_read", "message_list"})
+     * @JMSSerializer\Type("string")
      */
     private $image;
 
@@ -65,11 +70,6 @@ class ImageMessage extends ParticipantMessage
         $this->image = $image;
 
         return $this;
-    }
-
-    public function getDiscriminator()
-    {
-        return 'image';
     }
 
     function __toString()
