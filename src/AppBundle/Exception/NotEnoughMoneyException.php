@@ -13,5 +13,5 @@ namespace AppBundle\Exception;
 
 class NotEnoughMoneyException extends \Exception
 {
-
+    protected $message = 'There is no enough money to be able to send messages.';
 }

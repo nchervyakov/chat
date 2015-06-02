@@ -11,6 +11,7 @@
 namespace AppBundle\Notification;
 
 
+use AppBundle\Entity\Conversation;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\DependencyInjection\ContainerAware;
@@ -56,5 +57,24 @@ class MQNotificator extends ContainerAware
             'user_id' => $user->getId(),
             'token' => $socketIOToken
         ]));
+    }
+
+    /**
+     * @param Conversation $conversation
+     * @param User $companion
+     */
+    public function notifyConversationStatsChanged(Conversation $conversation, User $companion)
+    {
+        $producer = $this->container->get('old_sound_rabbit_mq.notifications_producer');
+        $producer->setContentType('application/json');
+
+        $producer->publish(json_encode(['type' => 'conversation-stats-changed', 'data' => [
+            'total_time' => $conversation->getSeconds(),
+            'stat_html' => $this->container->get('templating')->render(':Chat:_chat_stats.html.twig', [
+                'conversation' => $conversation,
+                'messages' => true,
+                'currentUser' => $companion
+            ])
+        ]]), 'user.' . $companion->getId());
     }
 }

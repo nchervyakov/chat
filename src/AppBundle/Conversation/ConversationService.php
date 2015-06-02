@@ -112,7 +112,7 @@ class ConversationService extends ContainerAware
 
         } catch (\Exception $e) {
             try {
-                $em->rollBack();
+               // $em->rollBack();
             } catch (ConnectionException $conEx) {}
 
             throw $e; //\ErrorException("Cannot add new message", 0, 1, __FILE__, __LINE__, $e);

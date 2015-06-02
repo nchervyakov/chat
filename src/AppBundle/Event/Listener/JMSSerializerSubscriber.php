@@ -14,6 +14,7 @@ namespace AppBundle\Event\Listener;
 use AppBundle\Entity\Emoticon;
 use AppBundle\Entity\ImageMessage;
 use AppBundle\Entity\Message;
+use AppBundle\Entity\TextMessage;
 use AppBundle\Entity\UserPhoto;
 use JMS\Serializer\EventDispatcher\EventSubscriberInterface;
 use JMS\Serializer\EventDispatcher\ObjectEvent;
@@ -23,6 +24,7 @@ use JMS\Serializer\Metadata\StaticPropertyMetadata;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Routing\Generator\UrlGenerator;
 
 class JMSSerializerSubscriber implements EventSubscriberInterface, ContainerAwareInterface
 {
@@ -52,7 +54,8 @@ class JMSSerializerSubscriber implements EventSubscriberInterface, ContainerAwar
             ['event' => 'serializer.post_serialize', 'method' => 'onPostSerializeEmoticon', 'class' => 'AppBundle\\Entity\\Emoticon'],
             ['event' => 'serializer.pre_serialize', 'method' => 'onPreSerializeMessage', 'class' => 'AppBundle\\Entity\\ImageMessage'],
             ['event' => 'serializer.pre_serialize', 'method' => 'onPreSerializeMessage', 'class' => 'AppBundle\\Entity\\TextMessage'],
-            ['event' => 'serializer.post_serialize', 'method' => 'onPostSerializeImageMessage', 'class' => 'AppBundle\\Entity\\ImageMessage']
+            ['event' => 'serializer.post_serialize', 'method' => 'onPostSerializeImageMessage', 'class' => 'AppBundle\\Entity\\ImageMessage'],
+            ['event' => 'serializer.post_serialize', 'method' => 'onPostSerializeTextMessage', 'class' => 'AppBundle\\Entity\\TextMessage']
         ];
     }
 
@@ -105,13 +108,31 @@ class JMSSerializerSubscriber implements EventSubscriberInterface, ContainerAwar
             $visitor = $event->getVisitor();
 
             $url = $this->container->get('vich_uploader.templating.helper.uploader_helper')->asset($message, 'imageFile', 'AppBundle\\Entity\\ImageMessage');
+            $thumbUrl = $this->container->get('vich_uploader.templating.helper.uploader_helper')->asset($message, 'imageFile', 'AppBundle\\Entity\\ImageMessage');
+            $thumbUrl = $this->container->get('liip_imagine.templating.helper')->filter($thumbUrl, 'user_message_image_thumb');
+
             $request = $this->container->get('request_stack')->getMasterRequest();
 
             if ($request) {
                 $url = $request->getSchemeAndHttpHost() . $url;
+                //$thumbUrl = $request->getSchemeAndHttpHost() . $thumbUrl;
             }
 
             $visitor->addData('image_url', $url);
+            $visitor->addData('thumb_url', $thumbUrl);
+        }
+    }
+
+    public function onPostSerializeTextMessage(ObjectEvent $event)
+    {
+        /** @var TextMessage $message */
+        $message = $event->getObject();
+
+        if ($message->getContent()) {
+            /** @var GenericSerializationVisitor $visitor */
+            $visitor = $event->getVisitor();
+
+            $visitor->addData('processed_content', $this->container->get('app.emoticon_manager')->convertEmoticons($message->getContent(), UrlGenerator::ABSOLUTE_URL));
         }
     }
 

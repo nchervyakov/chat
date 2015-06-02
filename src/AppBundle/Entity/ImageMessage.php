@@ -20,13 +20,13 @@ class ImageMessage extends ParticipantMessage
     /**
      * @var UploadedFile
      * @Vich\UploadableField(mapping="image_message", fileNameProperty="image")
+     * @Assert\NotBlank(message="Image file is required", groups={"Default", "create"})
      */
     private $imageFile;
 
     /**
      * @var string
      * @ORM\Column(name="image", type="string", length=255)
-     * @Assert\NotBlank(message="Image file is required")
      *
      * @JMSSerializer\Expose()
      * @JMSSerializer\Groups({"user_read", "message_list"})

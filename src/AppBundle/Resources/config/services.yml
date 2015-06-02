@@ -77,6 +77,12 @@ services:
         tags:
             - {name: form.type, alias: conversation}
 
+    form.message:
+        class: AppBundle\Form\Type\MessageType
+        scope: prototype
+        tags:
+            - {name: form.type, alias: message}
+
     app.event.profile_listener:
         class: AppBundle\Event\Listener\FOSProfileListener
         calls:

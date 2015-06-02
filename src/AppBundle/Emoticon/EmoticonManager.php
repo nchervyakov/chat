@@ -13,6 +13,7 @@ namespace AppBundle\Emoticon;
 use AppBundle\Entity\Emoticon;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\DependencyInjection\ContainerAware;
+use Symfony\Component\Routing\Generator\UrlGenerator;
 
 class EmoticonManager extends ContainerAware
 {
@@ -25,15 +26,26 @@ class EmoticonManager extends ContainerAware
 
     private $quotedMap;
 
-    public function convertEmoticons($string)
+    public function convertEmoticons($string, $urlType = UrlGenerator::ABSOLUTE_PATH)
     {
+        if ($urlType == UrlGenerator::ABSOLUTE_URL) {
+            $request = $this->container->get('request_stack')->getMasterRequest();
+            if ($request) {
+                $baseUrl = $request->getSchemeAndHttpHost();
+            } else {
+                $baseUrl = rtrim($this->container->getParameter('website'), '/ ');
+            }
+        } else {
+            $baseUrl = '';
+        }
+
         $quotedMap = $this->getQuotedMap();
         $map = $this->getEmoticonMap();
 
-        return preg_replace_callback(array_keys($quotedMap), function ($matches) use ($quotedMap, $map) {
+        return preg_replace_callback(array_keys($quotedMap), function ($matches) use ($quotedMap, $map, $baseUrl) {
             /** @var Emoticon $emoticon */
             $emoticon = $map[$matches[0]];
-            return '<img src="/images/emoticons/' . $emoticon->getIcon() . '" alt="" />';
+            return '<img src="' . $baseUrl . '/images/emoticons/' . $emoticon->getIcon() . '" alt="" />';
         }, $string);
     }
 

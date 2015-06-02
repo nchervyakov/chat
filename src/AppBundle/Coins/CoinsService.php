@@ -21,6 +21,7 @@ class CoinsService extends ContainerAware
 {
     /**
      * @param ConversationInterval $interval
+     * @throws \Exception
      * @throws NotEnoughMoneyException
      */
     public function payConversationInterval(ConversationInterval $interval)
@@ -55,7 +56,7 @@ class CoinsService extends ContainerAware
             $em->commit();
 
         } catch (\Exception $e) {
-            $em->rollback();
+            //$em->rollback();
             throw $e;
         }
 

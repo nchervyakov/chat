@@ -40,14 +40,4 @@ class NotificationMessage extends Message
     {
         $this->notificationType = $notificationType;
     }
-
-    /**
-     * @return string
-     * @JMSSerializer\VirtualProperty()
-     * @JMSSerializer\Groups({"user_read", "message_list"})
-     */
-    public function getType()
-    {
-        return 'notification';
-    }
 }

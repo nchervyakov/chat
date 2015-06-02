@@ -13,4 +13,5 @@ namespace AppBundle\Exception;
 
 class ClientNotAgreedToChatException extends \Exception
 {
+    protected $message = 'Client didn\'t agree to pay yet.';
 }

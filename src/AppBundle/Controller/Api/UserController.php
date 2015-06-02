@@ -68,6 +68,12 @@ class UserController extends FOSRestController
         $paginationData = $pagination->getPaginationData();
         $result = new UserCollection($pagination->getItems(), $page, $perPage);
         $result->setPageCount($paginationData['pageCount']);
+        $result->setTotalItemsCount($paginationData['totalCount']);
+
+        $view = $this->view($result);
+        $view->getSerializationContext()
+            ->enableMaxDepthChecks()
+            ->setGroups(['user_read', 'admin_read']);
 
         return $result;
     }
@@ -76,14 +82,47 @@ class UserController extends FOSRestController
      * @ApiDoc(
      *      resource=true,
      *      description="Returns a list of models",
-     *      section="Users"
+     *      section="Users",
+     *      authenticationRoles={"ROLE_CLIENT"},
+     *      authentication=true,
+     *      statusCodes={
+     *          200="Returned when successful"
+     *      }
      * )
      *
-     * @return User[]
+     * @FOSRest\QueryParam(name="page", requirements="\d+", nullable=true, description="Page from which to list users.")
+     * @FOSRest\QueryParam(name="per_page", requirements="\d+", default="10", description="How many users to return per page.")
+     *
+     * @Security("has_role('ROLE_CLIENT')")
+     *
+     * @param ParamFetcherInterface $paramFetcher
+     * @return \AppBundle\Entity\User[]
      */
-    public function getUsersModelsAction()
+    public function getUsersModelsAction(ParamFetcherInterface $paramFetcher)
     {
+        $page = $paramFetcher->get('page');
+        $page = null === $page ? 1 : $page;
+        $perPage = $paramFetcher->get('per_page');
 
+        $qb = $this->getDoctrine()->getRepository('AppBundle:User')->createQueryBuilder('u')
+            ->join('u.groups', 'g')
+            ->where('g.name = :group_name')->setParameter('group_name', 'Models')
+            ->orderBy('u.order', 'DESC');
+
+        $paginator = $this->get('knp_paginator');
+        /** @var SlidingPagination $pagination */
+        $pagination = $paginator->paginate($qb, $page, $perPage);
+        $paginationData = $pagination->getPaginationData();
+        $result = new UserCollection($pagination->getItems(), $page, $perPage);
+        $result->setPageCount($paginationData['pageCount']);
+        $result->setTotalItemsCount($paginationData['totalCount']);
+
+        $view = $this->view($result);
+        $view->getSerializationContext()
+            ->enableMaxDepthChecks()
+            ->setGroups(['user_read']);
+
+        return $view;
     }
 
     /**

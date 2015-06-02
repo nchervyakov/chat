@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * TextMessage
@@ -10,8 +11,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class TextMessage extends ParticipantMessage
 {
-    public function getDiscriminator()
-    {
-        return 'text';
-    }
+    /**
+     * @var string
+     * @Assert\NotBlank(groups={"Default", "create"})
+     */
+    protected $content;
 }

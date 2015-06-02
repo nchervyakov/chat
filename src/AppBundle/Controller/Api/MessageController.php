@@ -11,19 +11,26 @@
 namespace AppBundle\Controller\Api;
 
 
+use AppBundle\Entity\ImageMessage;
+use AppBundle\Entity\Message;
 use AppBundle\Entity\User;
 use AppBundle\Model\MessageCollection;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Query;
 use FOS\RestBundle\Controller\Annotations as FOSRest;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Request\ParamFetcherInterface;
 use Knp\Component\Pager\Pagination\SlidingPagination;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class MessageController
  * @package AppBundle\Controller\Api
  * @FOSRest\NamePrefix("api_v1_")
+ *
+ * @Security("has_role('ROLE_USER')")
  */
 class MessageController extends FOSRestController
 {
@@ -78,28 +85,110 @@ class MessageController extends FOSRestController
      *      description="Returns a chat message collection",
      *      section="Chats",
      *      authenticationRoles={"ROLE_USER"},
-     *      authentication=true
+     *      authentication=true,
+     *      output={
+     *          "class"="AppBundle\Entity\Message",
+     *          "groups"={"user_read"}
+     *      }
      * )
+     *
+     * @FOSRest\View()
      *
      * @param $chatId
      * @param int $id Message ID
+     * @return \FOS\RestBundle\View\View
      */
     public function getMessageAction($chatId, $id)
     {
+        $conversation = $this->getConversationForProcess($chatId);
 
+        $qb = $this->getDoctrine()->getRepository('AppBundle:Message')->createQueryBuilder('m');
+        $qb->where('m.conversation = :conversation AND m.id = :id')
+            ->setParameters(['conversation' => $conversation, 'id' => $id]);
+
+        $result = $qb->getQuery()->getSingleResult();
+
+        $view = $this->view($result);
+        $view->getSerializationContext()
+            ->enableMaxDepthChecks()
+            ->setGroups(['user_read']);
+
+        return $view;
     }
 
     /**
      * @ApiDoc(
      *      resource=true,
      *      description="Creates a new message in the chat",
-     *      section="Chats"
+     *      section="Chats",
+     *      authentication=true,
+     *      authenticationRoles={"ROLE_MODEL", "ROLE_CLIENT"},
+     *      parameters={
+     *          {"name"="discriminator", "dataType"="string", "required"=true, "format"="{'text', 'image'}"},
+     *          {"name"="image[file]", "dataType"="file", "required"=true, "description"="Image file in case of image message"},
+     *          {"name"="content", "dataType"="string", "required"=true, "description"="Content or text messages"}
+     *      },
+     *      output={
+     *          "class"="AppBundle\Entity\Message",
+     *          "groups"={"user_read"}
+     *      }
      * )
+     *
+     * @FOSRest\View()
+     *
+     * @param Request $request
      * @param int $chatId Chat ID
+     * @return \FOS\RestBundle\View\View
      */
-    public function postMessageAction($chatId)
+    public function postMessageAction(Request $request, $chatId)
     {
+        /** @var User $user */
+        $user = $this->getUser();
+        $conversation = $this->getConversationForProcess($chatId);
 
+        $form = $this->get('form.factory')->createNamed('', 'message', null, [
+            'method' => 'POST',
+            'validation_groups' => ['create'],
+            'api' => true,
+            'allow_extra_fields' => true
+        ]);
+
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            /** @var Message $message */
+            $message = $form->getData();
+            $message->setAuthor($user);
+
+            /** @var EntityManager $em */
+            $em = $this->getDoctrine()->getManager();
+
+            $em->persist($message);
+            $this->get('app.conversation')->addConversationMessage($conversation, $message);
+            $em->flush();
+
+            if ($message instanceof ImageMessage) {
+                /** @var ImageMessage $message */
+                $this->get('app.image')->fixOrientation($message->getImageFile());
+            }
+
+            $companion = $conversation->getCompanion($user);
+            if ($companion->isOnline()) {
+                $this->get('app.mq_notificator')->notifyConversationStatsChanged($conversation, $companion);
+            }
+
+            $view = $this->view($message);
+            $view->setStatusCode(201);
+            $view->getSerializationContext()
+                ->setGroups(['user_read'])
+                ->enableMaxDepthChecks();
+
+            return $view;
+        }
+
+        $view = $this->view($form);
+        $view->setStatusCode(400);
+        return $view;
     }
 
 //    /**
@@ -117,20 +206,20 @@ class MessageController extends FOSRestController
 //
 //    }
 
-    /**
-     * @ApiDoc(
-     *      resource=true,
-     *      description="Modifies some properties of the message in the chat",
-     *      section="Chats"
-     * )
-     *
-     * @param $chatId
-     * @param int $id Message ID
-     */
-    public function patchMessageAction($chatId, $id)
-    {
-
-    }
+//    /**
+//     * @ApiDoc(
+//     *      resource=true,
+//     *      description="Modifies some properties of the message in the chat",
+//     *      section="Chats"
+//     * )
+//     *
+//     * @param $chatId
+//     * @param int $id Message ID
+//     */
+//    public function patchMessageAction($chatId, $id)
+//    {
+//
+//    }
 
     /**
      * @ApiDoc(

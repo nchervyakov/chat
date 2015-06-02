@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use JMS\Serializer\Annotation as JMSSerializer;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Message
@@ -55,6 +56,8 @@ abstract class Message
      * @JMSSerializer\Type("AppBundle\Entity\Conversation")
      * @JMSSerializer\Expose()
      * @JMSSerializer\Groups({"user_read", "message_list"})
+     *
+     * @Assert\NotBlank(groups={"Default"})
      */
     private $conversation;
 
