@@ -31,6 +31,7 @@ class ImageMessage extends ParticipantMessage
      * @JMSSerializer\Expose()
      * @JMSSerializer\Groups({"user_read", "message_list"})
      * @JMSSerializer\Type("string")
+     * @JMSSerializer\Accessor(getter="getCheckedForDeletionImage")
      */
     private $image;
 
@@ -59,6 +60,11 @@ class ImageMessage extends ParticipantMessage
     public function getImage()
     {
         return $this->image;
+    }
+
+    public function getCheckedForDeletionImage()
+    {
+        return $this->isDeletedByUser() ? null : $this->image;
     }
 
     /**

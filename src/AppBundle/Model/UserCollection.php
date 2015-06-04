@@ -25,9 +25,11 @@ class UserCollection extends AbstractRestCollection
 {
     /**
      * @var ArrayCollection|ArrayCollection<AppBundle\Entity\User>
+     *
      * @JMSSerializer\Type("array<AppBundle\Entity\User>")
      * @JMSSerializer\XmlList("user", inline=true)
      * @JMSSerializer\Groups({"user_read"})
+     * @JMSSerializer\MaxDepth(1)
      */
     private $users;
 

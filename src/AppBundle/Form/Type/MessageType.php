@@ -18,10 +18,21 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class MessageType extends AbstractType
 {
+    /**
+     * @var AuthorizationChecker
+     */
+    protected $authChecker;
+
+    function __construct(AuthorizationChecker $checker)
+    {
+        $this->authChecker = $checker;
+    }
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -30,19 +41,49 @@ class MessageType extends AbstractType
     {
         $messageTypes = ['text', 'image'];
 
-        $builder->add('discriminator', 'choice', [
-            'mapped' => false,
-            'choices' => array_combine($messageTypes, $messageTypes),
-            'constraints' => [
-                new Assert\NotBlank(['groups' => ['create']])
-            ],
-            'error_bubbling' => false
-        ]);
+        if (!$options['patch']) {
+            $builder->add('discriminator', 'choice', [
+                'mapped' => false,
+                'choices' => array_combine($messageTypes, $messageTypes),
+                'constraints' => [
+                    new Assert\NotBlank(['groups' => ['create']])
+                ],
+                'error_bubbling' => false
+            ]);
+        }
 
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+        $checker = $this->authChecker;
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options, $checker) {
+            /** @var Message $message */
+            $message = $event->getData();
+
+            if (!$message) {
+                return;
+            }
+
+            $form = $event->getForm();
+            $form->add('deletedByUser', null, [
+                'disabled' => $message->isDeletedByUser()
+            ]);
+
+            $form->add('seenByClient', null, [
+                'disabled' => !$checker->isGranted('ROLE_CLIENT')
+            ]);
+
+            $form->add('seenByModel', null, [
+                'disabled' => !$checker->isGranted('ROLE_MODEL'),
+            ]);
+        });
+
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($options) {
             $data = $event->getData();
             $form = $event->getForm();
             $type = $data['discriminator'];
+
+            if ($options['patch']) {
+                return;
+            }
 
             if (!$form->getData()) {
                 if ($type == 'image') {
@@ -72,7 +113,8 @@ class MessageType extends AbstractType
         $resolver->setDefaults(array(
             'data_class' => 'AppBundle\Entity\Message',
             'required' => true,
-            'api' => false
+            'api' => false,
+            'patch' => false
         ));
     }
 

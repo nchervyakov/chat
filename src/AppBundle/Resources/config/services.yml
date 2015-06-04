@@ -77,9 +77,17 @@ services:
         tags:
             - {name: form.type, alias: conversation}
 
+    form.edit_conversation:
+        class: AppBundle\Form\Type\EditConversationType
+        scope: prototype
+        arguments: ["@security.authorization_checker"]
+        tags:
+            - {name: form.type, alias: edit_conversation}
+
     form.message:
         class: AppBundle\Form\Type\MessageType
         scope: prototype
+        arguments: ["@security.authorization_checker"]
         tags:
             - {name: form.type, alias: message}
 

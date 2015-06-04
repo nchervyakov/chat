@@ -45,14 +45,19 @@ class ProfileFormType extends BaseType
             ->remove('username')
             ->remove('current_password');
 
-        if (!$options['api']) {
+        if ($options['api']) {
+            $builder->add('thumbnail', 'entity_hidden', [
+                'required' => false,
+                'class' => 'AppBundle\Entity\UserPhoto'
+            ]);
+
+            $builder->remove('email');
+
+        } else {
             $builder->add('thumbnail', 'user_photo', [
                 'required' => false,
                 'title' => false
             ]);
-
-        } else {
-            $builder->remove('email');
         }
 
         $um = $this->userManager;

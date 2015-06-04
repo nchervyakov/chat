@@ -15,7 +15,6 @@ use AppBundle\Entity\Conversation;
 use AppBundle\Entity\User;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Controller\Annotations as FOSRest;
-use JMS\Serializer\Annotation\SerializedName;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,11 +33,13 @@ class ChatController extends FOSRestController
      *      resource=true,
      *      description="Returns a chat.",
      *      section="Chats",
-     *      output="AppBundle\Entity\Conversation"
+     *      output={
+     *          "class"="AppBundle\Entity\Conversation",
+     *          "groups"={"user_read", "model_read", "client_read"}
+     *      }
      * )
      *
      * @FOSRest\View(serializerEnableMaxDepthChecks=true)
-     * @SerializedName("chat")
      *
      * @param int $id Chat ID
      * @return \AppBundle\Entity\Conversation
@@ -50,7 +51,7 @@ class ChatController extends FOSRestController
         $conversation = $this->getDoctrine()->getRepository('AppBundle:Conversation')->find($id);
         $accessEvaluator = $this->get('app.request_access_evaluator');
 
-        if (!$conversation || !$accessEvaluator->canChatWith($conversation->getCompanion($user))) {
+        if (!$conversation || !$conversation->isParticipant($user) || !$accessEvaluator->canChatWith($conversation->getCompanion($user))) {
             throw $this->createNotFoundException('There is no chat with such ID.');
         }
 
@@ -112,9 +113,68 @@ class ChatController extends FOSRestController
             $em->flush();
 
             $view = $this->view($conversation);
+            $view->setStatusCode(201);
             $view->getSerializationContext()
                 ->setGroups(['user_read'])
                 ->enableMaxDepthChecks();
+            return $view;
+        }
+
+        $view = $this->view($form);
+        $view->setStatusCode(400);
+        return $view;
+    }
+
+    /**
+     * @ApiDoc(
+     *      resource=true,
+     *      description="Modifies the chat",
+     *      section="Chats",
+     *      authentication=true,
+     *      authenticationRoles={"ROLE_USER"},
+     *      parameters={
+     *          {"name"="client_agree_to_pay", "dataType"="boolean", "required"=false, "description"="Whether the client agreed to pay for this chat."}
+     *      },
+     *      output={
+     *          "class"="AppBundle\Entity\Chat",
+     *          "groups"={"user_read"}
+     *      }
+     * )
+     *
+     * @FOSRest\View()
+     *
+     * @param Request $request
+     * @param int $id Chat ID
+     * @return \FOS\RestBundle\View\View
+     */
+    public function patchChatAction(Request $request, $id)
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $conversation = $this->getDoctrine()->getRepository('AppBundle:Conversation')->find($id);
+        $accessEvaluator = $this->get('app.request_access_evaluator');
+
+        if (!$conversation || !$conversation->isParticipant($user) || !$accessEvaluator->canChatWith($conversation->getCompanion($user))) {
+            throw $this->createNotFoundException('There is no chat with such ID.');
+        }
+
+        $form = $this->get('form.factory')->createNamed('', 'edit_conversation', $conversation, [
+            'method' => 'PATCH',
+            'validation_groups' => ['update'],
+            'allow_extra_fields' => true
+        ]);
+
+        $form->submit($request->request->all(), false);
+
+        if ($form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->flush();
+
+            $view = $this->view($conversation);
+            $view->getSerializationContext()
+                ->setGroups(['user_read'])
+                ->enableMaxDepthChecks();
+
             return $view;
         }
 

@@ -10,6 +10,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation as JMSSerializer;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * User
@@ -29,6 +30,8 @@ use JMS\Serializer\Annotation as JMSSerializer;
  *
  * @JMSSerializer\ExclusionPolicy("ALL")
  * @JMSSerializer\XmlRoot("user")
+ *
+ * @Assert\Callback(methods={"checkUserOwnsTheThumbnail"}, groups={"AppProfile"})
  */
 class User extends BaseUser
 {
@@ -91,6 +94,7 @@ class User extends BaseUser
      * @JMSSerializer\XmlList("group")
      * @JMSSerializer\Type("array<AppBundle\Entity\Group>")
      * @JMSSerializer\MaxDepth(depth=1)
+     * @JMSSerializer\ReadOnly()
      */
     protected $groups;
 
@@ -137,6 +141,7 @@ class User extends BaseUser
      * @JMSSerializer\Expose()
      * @JMSSerializer\XmlAttribute()
      * @JMSSerializer\Groups({"Default", "user_read", "admin_write"})
+     * @JMSSerializer\ReadOnly()
      */
     private $dateAdded;
 
@@ -147,6 +152,7 @@ class User extends BaseUser
      * @JMSSerializer\Expose()
      * @JMSSerializer\XmlAttribute()
      * @JMSSerializer\Groups({"Default", "user_read", "admin_write"})
+     * @JMSSerializer\ReadOnly()
      */
     private $dateUpdated;
 
@@ -162,7 +168,7 @@ class User extends BaseUser
     /**
      * @var UserPhoto
      * @ORM\OneToOne(targetEntity="AppBundle\Entity\UserPhoto", cascade={"remove", "persist", "merge"}, orphanRemoval=true)
-     * @ORM\JoinColumn(name="thumbnail_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ORM\JoinColumn(name="thumbnail_id", referencedColumnName="id", onDelete="SET NULL", nullable=true)
      *
      * @JMSSerializer\MaxDepth(depth=2)
      * @JMSSerializer\Expose()
@@ -199,6 +205,7 @@ class User extends BaseUser
      * @JMSSerializer\XmlAttribute()
      * @JMSSerializer\Expose()
      * @JMSSerializer\Groups({"Default", "user_read", "admin_read", "admin_write"})
+     * @JMSSerializer\ReadOnly()
      */
     private $activated = true;
 
@@ -228,6 +235,7 @@ class User extends BaseUser
      * @JMSSerializer\Expose()
      * @JMSSerializer\Groups({"user_read", "admin_write"})
      * @JMSSerializer\XmlAttribute()
+     * @JMSSerializer\ReadOnly()
      */
     private $lastVisitedDate;
 
@@ -237,6 +245,7 @@ class User extends BaseUser
      * @JMSSerializer\Expose()
      * @JMSSerializer\Groups({"user_read", "admin_write", "model_stat", "chat_list"})
      * @JMSSerializer\XmlAttribute()
+     * @JMSSerializer\ReadOnly()
      */
     private $online = false;
 
@@ -571,6 +580,11 @@ class User extends BaseUser
             $this->thumbnail = $thumbnail;
             return;
         }
+
+        if ($thumbnail->getOwner()->getId() != $this->id) {
+            throw new \RuntimeException("Cannot use someone\\'s photo as thumbnail.");
+        }
+
         if (!$this->photos->contains($thumbnail)) {
             $this->addPhoto($thumbnail);
         }
@@ -850,5 +864,15 @@ class User extends BaseUser
     public function getRoles()
     {
         return parent::getRoles();
+    }
+
+    /**
+     * @param ExecutionContextInterface $context
+     */
+    public function checkUserOwnsTheThumbnail(ExecutionContextInterface $context)
+    {
+        if ($this->thumbnail && $this->thumbnail->getOwner()->getId() != $this->id) {
+            $context->buildViolation("You cannot set someone\\'s photo as a thumbnail")->addViolation();
+        }
     }
 }

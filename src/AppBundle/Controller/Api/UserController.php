@@ -14,6 +14,7 @@ namespace AppBundle\Controller\Api;
 use AppBundle\Entity\User;
 use AppBundle\Event\Event\UserRegisteredEvent;
 use AppBundle\Event\Events;
+use AppBundle\Model\ModelSearch;
 use AppBundle\Model\UserCollection;
 use AppBundle\Security\Core\Authentication\Token\ApiAnonymousToken;
 use Doctrine\ORM\EntityManager;
@@ -92,6 +93,8 @@ class UserController extends FOSRestController
      *
      * @FOSRest\QueryParam(name="page", requirements="\d+", nullable=true, description="Page from which to list users.")
      * @FOSRest\QueryParam(name="per_page", requirements="\d+", default="10", description="How many users to return per page.")
+     * @FOSRest\QueryParam(name="name", default="", description="Name filter.")
+     * @FOSRest\QueryParam(name="offline", requirements="0|1", default="0", description="Whether to search offline models.")
      *
      * @Security("has_role('ROLE_CLIENT')")
      *
@@ -103,11 +106,16 @@ class UserController extends FOSRestController
         $page = $paramFetcher->get('page');
         $page = null === $page ? 1 : $page;
         $perPage = $paramFetcher->get('per_page');
+        $name = $paramFetcher->get('name');
+        $searchOffline = $paramFetcher->get('offline');
 
-        $qb = $this->getDoctrine()->getRepository('AppBundle:User')->createQueryBuilder('u')
-            ->join('u.groups', 'g')
-            ->where('g.name = :group_name')->setParameter('group_name', 'Models')
-            ->orderBy('u.order', 'DESC');
+        $modelSearch = new ModelSearch();
+        $modelSearch->setName($name);
+        $modelSearch->setOffline($searchOffline);
+
+        $repo = $this->getDoctrine()->getRepository('AppBundle:User');
+        $qb = $repo->prepareQueryBuilderForModelSearch($modelSearch);
+        $qb->leftJoin('u.thumbnail', 'tn')->addSelect('tn');  // prefetch user thumbnails
 
         $paginator = $this->get('knp_paginator');
         /** @var SlidingPagination $pagination */
@@ -249,6 +257,7 @@ class UserController extends FOSRestController
             }
 
             $view = $this->view($user);
+            $view->setStatusCode(201);
             $view->getSerializationContext()
                 ->setGroups(['user_read'])
                 ->enableMaxDepthChecks();
@@ -271,6 +280,7 @@ class UserController extends FOSRestController
      *      parameters={
      *          {"name"="firstname", "dataType"="string", "required"=true},
      *          {"name"="lastname", "dataType"="string", "required"=true},
+     *          {"name"="thumbnail", "dataType"="AppBundle\Entity\UserPhoto", "required"=false, "description"="User thumb (one of user photos)"}
      *      }
      * )
      *

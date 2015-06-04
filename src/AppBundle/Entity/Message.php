@@ -87,6 +87,7 @@ abstract class Message
      * @JMSSerializer\Expose()
      * @JMSSerializer\Groups({"user_read", "message_list"})
      * @JMSSerializer\Type("string")
+     * @JMSSerializer\Accessor(getter="getCheckedForDeletionContent", setter="setCheckedForDeletionContent")
      */
     protected $content;
 
@@ -129,7 +130,7 @@ abstract class Message
      *
      * @JMSSerializer\Expose()
      * @JMSSerializer\Type("boolean")
-     * @JMSSerializer\Groups({"user_read"})
+     * @JMSSerializer\Groups({"user_read", "message_list"})
      */
     private $seenByModel = false;
 
@@ -348,6 +349,14 @@ abstract class Message
     }
 
     /**
+     * @return bool
+     */
+    public function isSeenByAuthor()
+    {
+        return $this->isSeenByUser($this->author);
+    }
+
+    /**
      * @param User $user
      * @param bool $seen
      * @return $this
@@ -433,5 +442,17 @@ abstract class Message
     function __toString()
     {
         return $this->content;
+    }
+
+    public function getCheckedForDeletionContent()
+    {
+        return $this->isDeletedByUser() ? null : $this->content;
+    }
+
+    public function setCheckedForDeletionContent($content)
+    {
+        if (!$this->isDeletedByUser()) {
+            $this->content = $content;
+        }
     }
 }
