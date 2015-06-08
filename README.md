@@ -4,6 +4,8 @@ Chat application
 * [**Инструкция по обновлению и обслуживанию**](app/Resources/docs/maintenance.md).
 * [**Интервалы сообщений**](app/Resources/docs/message_intervals.md).
 * [**Конфигурирование push-сервера для чата**](app/Resources/docs/push_server_config.md).
+* [**Информация о REST API**](app/Resources/docs/rest.md).
+* [**Предложения по платежам**](app/Resources/docs/payments.md).
 
 
 Symfony Standard Edition
