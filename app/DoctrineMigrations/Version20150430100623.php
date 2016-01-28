@@ -19,7 +19,7 @@ class Version20150430100623 extends AbstractMigration
         $conn = $this->connection;
 
         $groupNames = [
-            'Admins' => ['role' => 'ROLE_ADMIN'],
+            'Admins' => ['role' => 'ROLE_SUPER_ADMIN'],
             'Models' => ['role' => 'ROLE_MODEL'],
             'Clients' => ['role' => 'ROLE_CLIENT'],
         ];

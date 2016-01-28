@@ -73,7 +73,8 @@
                                 <a href="{{ path('chat_show', {"companion_id": companion.id}) }}" class="clearfix">
                                     <span class="photo">
                                         {% if companion.hasThumbnail %}
-                                            <img src="{{ vich_uploader_asset(companion.thumbnail, 'file', 'AppBundle\\Entity\\UserPhoto')|imagine_filter('user_message_thumb') }}" alt="{{ companion.fullName }}"/>
+                                            <img src="{{ vich_uploader_asset(companion.thumbnail, 'file', 'AppBundle\\Entity\\UserPhoto')|imagine_filter('user_message_thumb') }}"
+                                                 alt="{{ companion.fullName }}"/>
                                         {% endif %}
                                         {% if companionConversation is defined %}
                                             {% set companionUnreadMessageCount = companionConversation.getUserUnseenMessageCount(app.user) %}

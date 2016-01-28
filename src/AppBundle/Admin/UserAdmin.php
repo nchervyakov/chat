@@ -21,6 +21,8 @@ use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Route\RouteCollection;
 use Sonata\AdminBundle\Show\ShowMapper;
 use Sonata\UserBundle\Admin\Entity\UserAdmin as BaseUserAdmin;
+use Sonata\UserBundle\Form\Type\SecurityRolesType;
+use Sonata\UserBundle\Form\Type\UserGenderListType;
 
 class UserAdmin extends BaseUserAdmin
 {
@@ -79,7 +81,7 @@ class UserAdmin extends BaseUserAdmin
                     ->add('lastname', null, array('required' => false))
                     //->add('website', 'url', array('required' => false))
                     //->add('biography', 'text', array('required' => false))
-                    ->add('gender', 'sonata_user_gender', array(
+                    ->add('gender', UserGenderListType::class, array(
                         'required' => true,
                         'translation_domain' => $this->getTranslationDomain()
                     ))
@@ -123,11 +125,12 @@ class UserAdmin extends BaseUserAdmin
                         ))
                     ->end()
                     ->with('Roles')
-                        ->add('realRoles', 'sonata_security_roles', array(
+                        ->add('realRoles', SecurityRolesType::class, array(
                             'label'    => 'form.label_roles',
                             'expanded' => true,
                             'multiple' => true,
-                            'required' => false
+                            'required' => false,
+                            'choices_as_values' => true
                         ))
                     ->end()
                 ->end()

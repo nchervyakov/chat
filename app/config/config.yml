@@ -99,6 +99,9 @@ doctrine:
 #        entity_managers:
 #            default:
 #                mappings:
+#                    AppBundle: ~
+#                    SonataUserBundle: ~
+#                    FOSUserBundle: ~
 
 sensio_framework_extra:
     request:

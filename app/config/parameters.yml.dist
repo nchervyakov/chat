@@ -46,3 +46,5 @@ parameters:
 
     socket_io.host:                 "http://192.168.1.206:4397"
 
+    hwi_oauth.firewall_name:        secured_area
+

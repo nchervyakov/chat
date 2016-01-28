@@ -12,7 +12,8 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as JMSSerializer;
-use Sonata\UserBundle\Model\BaseGroup;
+//use Sonata\UserBundle\Model\BaseGroup;
+use Sonata\UserBundle\Entity\BaseGroup;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
