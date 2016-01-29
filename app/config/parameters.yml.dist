@@ -48,3 +48,4 @@ parameters:
 
     hwi_oauth.firewall_name:        secured_area
 
+    payments.paypal_express_sandbox: true

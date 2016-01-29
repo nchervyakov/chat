@@ -51,7 +51,11 @@
         "stof/doctrine-extensions-bundle": "~1.1@dev",
         "oldsound/rabbitmq-bundle": "1.*",
         "nelmio/api-doc-bundle": "~2.9",
-        "nelmio/cors-bundle": "~1.4"
+        "nelmio/cors-bundle": "~1.4",
+        "payum/payum-bundle": "^1.0",
+        "payum/paypal-rest": "^1.0",
+        "payum/core": "~1.0.0",
+        "payum/paypal-express-checkout-nvp": "^1.1"
     },
     "require-dev": {
     },
