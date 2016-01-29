@@ -216,9 +216,11 @@ can.Control('ChatWidget', {
     },
 
     onAddedMessage: function (data) {
-         if (this.hasMessageWithId(data.message.id)) {
-             return;
-         }
+        var sameUserInChat = parseInt(this.companionId, 10) == parseInt(data.companionId, 10);
+
+        if (!sameUserInChat || this.hasMessageWithId(data.message.id)) {
+            return;
+        }
 
         if (this.latestMessageId < data.message.id) {
             this.latestMessageId = data.message.id;
@@ -241,7 +243,7 @@ can.Control('ChatWidget', {
         //console.log('Bound chat page');
         var widget = this;
         this.socket.on('new-message', function (data) {
-            //console.log(['new-message', data]);
+            console.log(['new-message', data]);
             widget.onAddedMessage(data);
         });
 
