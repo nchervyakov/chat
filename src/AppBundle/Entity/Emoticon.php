@@ -92,7 +92,7 @@ class Emoticon
      */
     private $dateUpdated;
 
-    function __construct()
+    public function __construct()
     {
         $this->setDateAdded(new \DateTime());
     }

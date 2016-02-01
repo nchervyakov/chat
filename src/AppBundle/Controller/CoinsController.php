@@ -36,7 +36,7 @@ class CoinsController extends Controller
         $amount = (int) $request->request->get('amount', 0);
 
         if (!is_numeric($amount) || $amount <= 0) {
-            throw new BadRequestHttpException("Invalid amount.");
+            throw new BadRequestHttpException('Invalid amount.');
         }
 
         /** @var User $user */

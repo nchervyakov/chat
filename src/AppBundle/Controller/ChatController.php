@@ -127,7 +127,7 @@ class ChatController extends Controller
 
         $content = trim($request->request->get('message'));
         if (!$content) {
-            throw new BadRequestHttpException("add_message.empty_message");
+            throw new BadRequestHttpException('add_message.empty_message');
         }
 
         $message = new TextMessage($content);
@@ -241,8 +241,8 @@ class ChatController extends Controller
         $message = new ImageMessage();
         $message->setAuthor($user);
 
-        if ($request->files->count() == 0 || !($request->files->get('Filedata') instanceof UploadedFile)) {
-            throw new BadRequestHttpException("Image is missing");
+        if ($request->files->count() === 0 || !($request->files->get('Filedata') instanceof UploadedFile)) {
+            throw new BadRequestHttpException('Image is missing');
         }
 
         $uploadedFile = null;
@@ -253,14 +253,15 @@ class ChatController extends Controller
         if ($file->isValid()) {
             $allowedFormats = ['jpg', 'jpeg', 'png', 'gif'];
 
-            if (!in_array(strtolower($file->getClientOriginalExtension()), $allowedFormats)) {
-                throw new BadRequestHttpException("Invalid file format. The following formats are allowed: " . implode(', ', $allowedFormats));
+            if (!in_array(strtolower($file->getClientOriginalExtension()), $allowedFormats, false)) {
+                throw new BadRequestHttpException('Invalid file format. The following formats are allowed: '
+                    . implode(', ', $allowedFormats));
             }
             $uploadedFile = $file;
         }
 
         if ($uploadedFile === null) {
-            throw new BadRequestHttpException("Image is missing");
+            throw new BadRequestHttpException('Image is missing');
         }
 
         $message->setImageFile($uploadedFile);
@@ -385,7 +386,7 @@ class ChatController extends Controller
 
         $beforeMessageId = $request->query->get('before_message_id');
         if (!is_numeric($beforeMessageId) || $beforeMessageId <= 0) {
-            throw new BadRequestHttpException("Invalid before message id");
+            throw new BadRequestHttpException('Invalid before message id');
         }
 
         $params = [];
@@ -434,7 +435,7 @@ class ChatController extends Controller
         $messageIds = $request->request->get('messageIds');
 
         if (!is_array($messageIds) || empty($messageIds)) {
-            throw new BadRequestHttpException("Empty Ids");
+            throw new BadRequestHttpException('Empty Ids');
         }
 
         /** @var User $user */

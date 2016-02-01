@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityRepository;
  */
 class EmoticonRepository extends EntityRepository
 {
-    public function findAllOrdered($orderBy = "sortOrder", $orderDirection = "ASC")
+    public function findAllOrdered($orderBy = 'sortOrder', $orderDirection = 'ASC')
     {
         return $this->findBy([], [$orderBy => $orderDirection]);
     }

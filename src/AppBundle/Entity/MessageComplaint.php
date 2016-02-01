@@ -110,7 +110,7 @@ class MessageComplaint
      */
     public function reject()
     {
-        if ($this->status != self::STATUS_ACCEPTED) {
+        if ($this->status !== self::STATUS_ACCEPTED) {
             $this->status = self::STATUS_REJECTED;
         }
 
@@ -122,7 +122,7 @@ class MessageComplaint
      */
     public function accept()
     {
-        if ($this->status != self::STATUS_REJECTED) {
+        if ($this->status !== self::STATUS_REJECTED) {
             $this->status = self::STATUS_ACCEPTED;
         }
 
@@ -275,16 +275,16 @@ class MessageComplaint
 
     public function isAccepted()
     {
-        return $this->status == self::STATUS_ACCEPTED;
+        return $this->status === self::STATUS_ACCEPTED;
     }
 
     public function isRejected()
     {
-        return $this->status == self::STATUS_REJECTED;
+        return $this->status === self::STATUS_REJECTED;
     }
 
     public function isOpen()
     {
-        return $this->status == self::STATUS_OPEN;
+        return $this->status === self::STATUS_OPEN;
     }
 }

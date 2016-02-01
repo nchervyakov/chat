@@ -25,7 +25,7 @@ class ComplaintsService extends ContainerAware
 
     public function acceptComplaint(MessageComplaint $complaint)
     {
-        if ($complaint->getStatus() == MessageComplaint::STATUS_REJECTED) {
+        if ($complaint->getStatus() === MessageComplaint::STATUS_REJECTED) {
             throw new AccessDeniedException;
         }
 
@@ -36,7 +36,7 @@ class ComplaintsService extends ContainerAware
 
     public function rejectComplaint(MessageComplaint $complaint)
     {
-        if ($complaint->getStatus() == MessageComplaint::STATUS_ACCEPTED) {
+        if ($complaint->getStatus() === MessageComplaint::STATUS_ACCEPTED) {
             throw new AccessDeniedException;
         }
 

@@ -26,7 +26,7 @@ class MessageComplaintAdminController extends CRUDController
         $complaint = $this->admin->getSubject();
 
         if ($complaint) {
-            if ($complaint->getStatus() != MessageComplaint::STATUS_REJECTED) {
+            if ($complaint->getStatus() !== MessageComplaint::STATUS_REJECTED) {
                 $this->get('app.complaints')->acceptComplaint($complaint);
 
                 $this->addFlash(
@@ -55,7 +55,7 @@ class MessageComplaintAdminController extends CRUDController
         $complaint = $this->admin->getSubject();
 
         if ($complaint) {
-            if ($complaint->getStatus() != MessageComplaint::STATUS_ACCEPTED) {
+            if ($complaint->getStatus() !== MessageComplaint::STATUS_ACCEPTED) {
                 $this->get('app.complaints')->rejectComplaint($complaint);
                 $this->addFlash(
                     'sonata_flash_success',

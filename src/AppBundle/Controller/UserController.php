@@ -46,7 +46,7 @@ class UserController extends Controller
         }
 
         if (!$user->needToActivate()) {
-            throw new HttpException(400, "The user is already activated.");
+            throw new HttpException(400, 'The user is already activated.');
         }
 
         return $this->redirectToRoute('oauth_service_redirect', [

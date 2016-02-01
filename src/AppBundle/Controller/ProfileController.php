@@ -111,7 +111,7 @@ class ProfileController extends Controller
     {
         /** @var User $user */
         $user = $this->getUser();
-        if ($photo->getOwner()->getId() != $user->getId()) {
+        if ($photo->getOwner()->getId() !== $user->getId()) {
             throw new AccessDeniedException;
         }
 
@@ -145,7 +145,7 @@ class ProfileController extends Controller
 
             try {
                 $conn->beginTransaction();
-                $em->createQuery("DELETE FROM AppBundle:Conversation c WHERE c.model = :user OR c.client = :user")
+                $em->createQuery('DELETE FROM AppBundle:Conversation c WHERE c.model = :user OR c.client = :user')
                     ->execute(['user' => $user]);
                 $em->remove($user);
                 $em->flush();

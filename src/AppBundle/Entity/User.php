@@ -35,8 +35,8 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  */
 class User extends BaseUser
 {
-    const ROLE_CLIENT = "ROLE_CLIENT";
-    const ROLE_MODEL = "ROLE_MODEL";
+    const ROLE_CLIENT = 'ROLE_CLIENT';
+    const ROLE_MODEL = 'ROLE_MODEL';
 
     /**
      * @var integer
@@ -331,9 +331,11 @@ class User extends BaseUser
      */
     public function getFullName()
     {
-        return $this->getFirstname() || $this->getLastname()
-            ? trim($this->getFirstName() . ' ' . $this->getLastname())
-            : ($this->getUserName() ? $this->getUserName() : 'Visitor');
+        if ($this->getFirstname() || $this->getLastname()) {
+            return trim($this->getFirstname() . ' ' . $this->getLastname());
+        } else {
+            return $this->getUsername() ?: 'Visitor';
+        }
     }
 
     /**
@@ -469,7 +471,7 @@ class User extends BaseUser
 
     public function getGenderLabel()
     {
-        $labels = $this->getGendersLabels();
+        $labels = self::getGendersLabels();
         return $labels[$this->gender];
     }
 
@@ -581,7 +583,7 @@ class User extends BaseUser
             return;
         }
 
-        if ($thumbnail->getOwner()->getId() != $this->id) {
+        if ($thumbnail->getOwner()->getId() !== $this->id) {
             throw new \RuntimeException("Cannot use someone\\'s photo as thumbnail.");
         }
 
@@ -631,7 +633,7 @@ class User extends BaseUser
      */
     public function removePhoto(UserPhoto $photo)
     {
-        if ($this->thumbnail && $this->thumbnail == $photo) {
+        if ($this->thumbnail && $this->thumbnail === $photo) {
             $this->photos->removeElement($photo);
             $this->thumbnail = $this->photos[0] ?: null;
 
@@ -660,7 +662,8 @@ class User extends BaseUser
     public function hasThumbnail()
     {
         return (boolean) ($this->thumbnail
-            && ($this->thumbnail->getFile() && $this->thumbnail->getFile() instanceof UploadedFile && $this->thumbnail->getFile()->isValid()
+            && ($this->thumbnail->getFile() && $this->thumbnail->getFile() instanceof UploadedFile
+                && $this->thumbnail->getFile()->isValid()
                 || $this->thumbnail->getFileName()));
     }
 
@@ -871,7 +874,7 @@ class User extends BaseUser
      */
     public function checkUserOwnsTheThumbnail(ExecutionContextInterface $context)
     {
-        if ($this->thumbnail && $this->thumbnail->getOwner()->getId() != $this->id) {
+        if ($this->thumbnail && $this->thumbnail->getOwner()->getId() !== $this->id) {
             $context->buildViolation("You cannot set someone\\'s photo as a thumbnail")->addViolation();
         }
     }

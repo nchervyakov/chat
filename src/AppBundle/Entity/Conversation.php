@@ -163,7 +163,7 @@ class Conversation
      */
     private $modelUnseenMessages = 0;
 
-    function __construct()
+    public function __construct()
     {
         $this->setDateAdded(new \DateTime());
     }
@@ -502,11 +502,11 @@ class Conversation
     public function checkUserRoles(ExecutionContextInterface $context)
     {
         if (!$this->client || !$this->client->hasRole('ROLE_CLIENT')) {
-            $context->buildViolation("Client must be a client user.")->addViolation();
+            $context->buildViolation('Client must be a client user.')->addViolation();
         }
 
         if (!$this->model || !$this->model->hasRole('ROLE_MODEL')) {
-            $context->buildViolation("Model must be a model user.")->addViolation();
+            $context->buildViolation('Model must be a model user.')->addViolation();
         }
     }
 

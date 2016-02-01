@@ -132,7 +132,7 @@ class ConversationService extends ContainerAware
         $modelEarnings = 0.0;
 
         foreach ($this->getConversationIntervals($conversation) as $interval) {
-            if ($interval->getStatus() != ConversationInterval::STATUS_PAYED) {
+            if ($interval->getStatus() !== ConversationInterval::STATUS_PAYED) {
                 $this->estimateInterval($interval);
             }
             $seconds += (int) $interval->getSeconds();
@@ -157,7 +157,7 @@ class ConversationService extends ContainerAware
         $rate = (float) $this->container->getParameter('payment.minute_rate');
         $modelShare = (float) $this->container->getParameter('payment.model_share');
 
-        if ($interval->getStatus() != ConversationInterval::STATUS_PAYED) {
+        if ($interval->getStatus() !== ConversationInterval::STATUS_PAYED) {
             $interval->setPrice($interval->getSeconds() / 60 * $rate);
             $interval->setMinuteRate($rate);
             $interval->setModelShare($modelShare);
@@ -201,10 +201,10 @@ class ConversationService extends ContainerAware
      */
     public function getConversationIntervals(Conversation $conversation)
     {
-        $result = $this->getManager()->createQuery("SELECT ci, sm, em FROM AppBundle:ConversationInterval ci "
-                . "JOIN ci.startMessage sm "
-                . "JOIN ci.endMessage em "
-                . "WHERE ci.conversation = :conversation ORDER BY sm.dateAdded")
+        $result = $this->getManager()->createQuery('SELECT ci, sm, em FROM AppBundle:ConversationInterval ci '
+                . 'JOIN ci.startMessage sm '
+                . 'JOIN ci.endMessage em '
+                . 'WHERE ci.conversation = :conversation ORDER BY sm.dateAdded')
             ->setHint(Query::HINT_INCLUDE_META_COLUMNS, true)
             ->execute(['conversation' => $conversation]);
 
@@ -218,9 +218,9 @@ class ConversationService extends ContainerAware
     protected function getNotCalculatedMessages(Conversation $conversation)
     {
         /** @var Message[] $result */
-        $result = $this->getManager()->createQuery("SELECT m FROM AppBundle:Message m JOIN m.conversation c "
-            . "WHERE (m.author = c.client OR m.author = c.model) AND c = :conversation "
-            . "ORDER BY m.dateAdded ASC")
+        $result = $this->getManager()->createQuery('SELECT m FROM AppBundle:Message m JOIN m.conversation c '
+            . 'WHERE (m.author = c.client OR m.author = c.model) AND c = :conversation '
+            . 'ORDER BY m.dateAdded ASC')
             ->execute(['conversation' => $conversation]);
 
         return $result;
@@ -290,10 +290,10 @@ class ConversationService extends ContainerAware
         }
 
         /** @var Message[] $result */
-        $result = $em->createQuery("SELECT m FROM AppBundle:Message m JOIN m.conversation c "
-                . "WHERE (m.author = c.client OR m.author = c.model) AND c = :conversation "
+        $result = $em->createQuery('SELECT m FROM AppBundle:Message m JOIN m.conversation c '
+                . 'WHERE (m.author = c.client OR m.author = c.model) AND c = :conversation '
                 . $messageCondition
-                . "ORDER BY m.dateAdded DESC, m.id DESC")
+                . 'ORDER BY m.dateAdded DESC, m.id DESC')
             ->setMaxResults(1)
             ->execute($params);
 
@@ -328,7 +328,7 @@ class ConversationService extends ContainerAware
     public function complainMessage(ParticipantMessage $message)
     {
         if ($message->getComplaint()) {
-            throw new \InvalidArgumentException("The message has already been complained.");
+            throw new \InvalidArgumentException('The message has already been complained.');
         }
         $complaint = new MessageComplaint();
         $complaint->setMessage($message);
@@ -345,7 +345,7 @@ class ConversationService extends ContainerAware
     {
         $user = $this->getUser();
 
-        if ($message->getAuthor()->getId() != $user->getId()) {
+        if ($message->getAuthor()->getId() !== $user->getId()) {
             throw new AccessDeniedException();
         }
 
@@ -364,8 +364,8 @@ class ConversationService extends ContainerAware
     protected function getConversationPersonalMessagesCount(Conversation $conversation)
     {
         $em = $this->getManager();
-        $result = $em->createQuery("SELECT COUNT(m) cnt FROM AppBundle:Message m JOIN m.conversation c "
-            . "WHERE (m.author = c.client OR m.author = c.model) AND c = :conversation")
+        $result = $em->createQuery('SELECT COUNT(m) cnt FROM AppBundle:Message m JOIN m.conversation c '
+            . 'WHERE (m.author = c.client OR m.author = c.model) AND c = :conversation')
             ->setMaxResults(1)
             ->execute(['conversation' => $conversation]);
 
@@ -379,8 +379,8 @@ class ConversationService extends ContainerAware
     protected function getConversationModelMessagesCount(Conversation $conversation)
     {
         $em = $this->getManager();
-        $result = $em->createQuery("SELECT COUNT(m) cnt FROM AppBundle:Message m JOIN m.conversation c "
-            . "WHERE m.author = c.model AND c = :conversation")
+        $result = $em->createQuery('SELECT COUNT(m) cnt FROM AppBundle:Message m JOIN m.conversation c '
+            . 'WHERE m.author = c.model AND c = :conversation')
             ->setMaxResults(1)
             ->execute(['conversation' => $conversation]);
 
@@ -402,8 +402,8 @@ class ConversationService extends ContainerAware
     {
         $em = $this->getManager();
 
-        $result = $em->createQuery("SELECT ci FROM AppBundle:ConversationInterval ci "
-                . "WHERE ci.conversation = :conversation AND ci.status != :status")
+        $result = $em->createQuery('SELECT ci FROM AppBundle:ConversationInterval ci '
+                . 'WHERE ci.conversation = :conversation AND ci.status != :status')
             ->execute([
                 'conversation' => $conversation,
                 'status' => ConversationInterval::STATUS_PAYED
@@ -423,12 +423,12 @@ class ConversationService extends ContainerAware
     public function calculateWhoSeen(Conversation $conversation, $flush = true)
     {
         $em = $this->getManager();
-        $notSeenByClientResult = $em->createQuery("SELECT COUNT(m) s FROM AppBundle:Message m JOIN m.conversation c "
-                . "WHERE c = :conversation AND m.seenByClient = FALSE")
+        $notSeenByClientResult = $em->createQuery('SELECT COUNT(m) s FROM AppBundle:Message m JOIN m.conversation c '
+                . 'WHERE c = :conversation AND m.seenByClient = FALSE')
             ->execute(['conversation' => $conversation], Query::HYDRATE_SCALAR);
 
-        $notSeenByModelResult = $em->createQuery("SELECT COUNT(m) s FROM AppBundle:Message m JOIN m.conversation c "
-                . "WHERE c = :conversation AND m.seenByModel = FALSE")
+        $notSeenByModelResult = $em->createQuery('SELECT COUNT(m) s FROM AppBundle:Message m JOIN m.conversation c '
+                . 'WHERE c = :conversation AND m.seenByModel = FALSE')
             ->execute(['conversation' => $conversation], Query::HYDRATE_SCALAR);
 
         $notSeenByClient = (int) $notSeenByClientResult[0]['s'];
@@ -475,8 +475,7 @@ class ConversationService extends ContainerAware
         $securityChecker = $this->container->get('security.authorization_checker');
 
         // If client has many messages, but did not agreed to pay for chat, rise the exception.
-        $shouldPay = $securityChecker->isGranted('ROLE_CLIENT')
-            && $modelMessagesCount >= $maxFirstMessages ? true : false;
+        $shouldPay = $securityChecker->isGranted('ROLE_CLIENT') && $modelMessagesCount >= $maxFirstMessages;
 
         return $shouldPay;
     }
