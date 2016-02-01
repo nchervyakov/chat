@@ -11,8 +11,10 @@ namespace PaymentBundle\Controller;
 
 
 use Payum\Core\Request\GetHumanStatus;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class PaymentController
@@ -20,11 +22,20 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  */
 class PaymentController extends Controller
 {
-    public function prepareAction()
+    /**
+     * @param Request $request
+     * @Route("/prepare-coin", name="payments_prepare_coin")
+     */
+    public function prepareCoinAction(Request $request)
     {
 
     }
 
+    /**
+     * @param $request
+     * @return JsonResponse
+     * @Route("/done", name="payments_done")
+     */
     public function doneAction($request)
     {
         $token = $this->get('payum.security.http_request_verifier')->verify($request);

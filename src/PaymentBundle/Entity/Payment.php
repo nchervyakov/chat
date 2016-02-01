@@ -18,6 +18,8 @@ use Payum\Core\Model\Payment as BasePayment;
  *
  * @ORM\Entity()
  * @ORM\Table(name="payments")
+ *
+ * @ORM\HasLifecycleCallbacks()
  */
 class Payment extends BasePayment
 {
@@ -31,6 +33,26 @@ class Payment extends BasePayment
     protected $id;
 
     /**
+     * @ORM\OneToOne(targetEntity="PaymentBundle\Entity\AbstractOrder", mappedBy="payment")
+     * @var AbstractOrder
+     */
+    protected $order;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="date_added", type="datetime", nullable=true)
+     */
+    private $dateAdded;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="date_updated", type="datetime", nullable=true)
+     */
+    private $dateUpdated;
+
+    /**
      * Get id
      *
      * @return integer
@@ -38,5 +60,45 @@ class Payment extends BasePayment
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDateAdded()
+    {
+        return $this->dateAdded;
+    }
+
+    /**
+     * @param \DateTime $dateAdded
+     */
+    public function setDateAdded($dateAdded)
+    {
+        $this->dateAdded = $dateAdded;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDateUpdated()
+    {
+        return $this->dateUpdated;
+    }
+
+    /**
+     * @param \DateTime $dateUpdated
+     */
+    public function setDateUpdated($dateUpdated)
+    {
+        $this->dateUpdated = $dateUpdated;
+    }
+
+    /**
+     * @return AbstractOrder
+     */
+    public function getOrder()
+    {
+        return $this->order;
     }
 }

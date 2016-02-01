@@ -1,7 +1,7 @@
 payment:
     resource: "@PaymentBundle/Controller/"
     type:     annotation
-    prefix:   /
+    prefix:   /payment
 
 user_photo:
     pattern: /uploads/photo/{file_name}

@@ -24,5 +24,37 @@ class CoinOrder extends AbstractOrder
      * @var float
      */
     private $amount = 0.0;
+
+    /**
+     * @return float
+     */
+    public function getCoins()
+    {
+        return $this->coins;
+    }
+
+    /**
+     * @param float $coins
+     */
+    public function setCoins($coins)
+    {
+        $this->coins = $coins;
+    }
+
+    /**
+     * @return float
+     */
+    public function getAmount()
+    {
+        return $this->amount;
+    }
+
+    /**
+     * @param float $amount
+     */
+    public function setAmount($amount)
+    {
+        $this->amount = $amount;
+    }
 }
 
