@@ -78,7 +78,7 @@ class ImageMessage extends ParticipantMessage
         return $this;
     }
 
-    function __toString()
+    public function __toString()
     {
         return $this->image;
     }

@@ -38,7 +38,7 @@ class MessageController extends Controller
     public function complainAction(ParticipantMessage $message)
     {
         if ($message->getComplaint()) {
-            throw new BadRequestHttpException("The message has already been complained.");
+            throw new BadRequestHttpException('The message has already been complained.');
         }
 
         $this->container->get('app.conversation')->complainMessage($message);
@@ -64,7 +64,7 @@ class MessageController extends Controller
         }
 
         if ($message->isDeletedByUser()) {
-            throw new BadRequestHttpException("The message has already been deleted.");
+            throw new BadRequestHttpException('The message has already been deleted.');
         }
 
         $this->container->get('app.conversation')->markMessageDeletedByUser($message);

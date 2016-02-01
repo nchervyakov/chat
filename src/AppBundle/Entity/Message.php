@@ -152,7 +152,7 @@ abstract class Message
      */
     private $complaint;
 
-    function __construct($content = null)
+    public function __construct($content = null)
     {
         $this->content = $content;
         $this->setDateAdded(new \DateTime());
@@ -439,9 +439,9 @@ abstract class Message
         $this->complaint = $complaint;
     }
 
-    function __toString()
+    public function __toString()
     {
-        return $this->content;
+        return (string) $this->content;
     }
 
     public function getCheckedForDeletionContent()

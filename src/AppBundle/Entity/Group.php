@@ -76,7 +76,7 @@ class Group extends BaseGroup
      */
     protected $roles;
 
-    function __construct($name, $roles = array())
+    public function __construct($name, $roles = array())
     {
         parent::__construct($name, $roles);
         $this->setDateAdded(new \DateTime());

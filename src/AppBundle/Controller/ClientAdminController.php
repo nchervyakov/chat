@@ -43,7 +43,7 @@ class ClientAdminController extends UserAdminController
         $form = $this->admin->getForm();
         $form->setData($object);
 
-        if ($this->getRestMethod($request) == 'POST') {
+        if ($this->getRestMethod($request) === 'POST') {
             $form->submit($request);
 
             $isFormValid = $form->isValid();

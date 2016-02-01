@@ -138,3 +138,4 @@ message_complaint:
     flash_complaint_is_rejected: 'The complaint is accepted already.'
 action_accept_complaint: 'Accept'
 action_reject_complaint: 'Reject'
+Name: 'Name'

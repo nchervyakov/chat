@@ -108,7 +108,7 @@ class ConversationInterval
      */
     private $dateUpdated;
 
-    function __construct(Conversation $conversation = null, Message $startMessage = null, Message $endMessage = null)
+    public function __construct(Conversation $conversation = null, Message $startMessage = null, Message $endMessage = null)
     {
         $this->conversation = $conversation;
         $this->startMessage = $startMessage;
@@ -207,8 +207,8 @@ class ConversationInterval
      */
     public function setStartMessage(Message $message = null)
     {
-        if ($this->status != self::STATUS_ACTIVE) {
-            throw new \ErrorException("Cannot add a message to closed interval");
+        if ($this->status !== self::STATUS_ACTIVE) {
+            throw new \ErrorException('Cannot add a message to closed interval');
         }
 
         $this->startMessage = $message;
@@ -240,8 +240,8 @@ class ConversationInterval
      */
     public function setEndMessage(Message $message = null)
     {
-        if ($this->status != self::STATUS_ACTIVE) {
-            throw new \ErrorException("Cannot change a closed interval");
+        if ($this->status !== self::STATUS_ACTIVE) {
+            throw new \ErrorException('Cannot change a closed interval');
         }
 
         $this->endMessage = $message;
@@ -336,8 +336,8 @@ class ConversationInterval
      */
     public function setPrice($price)
     {
-        if ($this->status == self::STATUS_PAYED) {
-            throw new \ErrorException("Cannot modify the price if interval is already paid.");
+        if ($this->status === self::STATUS_PAYED) {
+            throw new \ErrorException('Cannot modify the price if interval is already paid.');
         }
 
         $this->price = $price;

@@ -10,7 +10,6 @@
 namespace AppBundle\Form\Type;
 
 
-use AppBundle\Model\ModelSearch;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;

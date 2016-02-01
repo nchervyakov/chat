@@ -101,7 +101,7 @@ class UserPhoto
      */
     private $dateUpdated;
 
-    function __construct()
+    public function __construct()
     {
         $this->dateAdded = new \DateTime();
     }

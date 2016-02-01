@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\AppBundle;
 use AppBundle\Entity\User;
 use AppBundle\Event\Event\UserRegisteredEvent;
 use AppBundle\Event\Events;
@@ -40,7 +41,7 @@ class ConnectController extends \HWI\Bundle\OAuthBundle\Controller\ConnectContro
             $session = $request->getSession();
             $session->set('_hwi_oauth.registration_error.'.$key, $error);
 
-            return new RedirectResponse($this->generate('hwi_oauth_connect_registration', array('key' => $key)));
+            return new RedirectResponse($this->generateUrl('hwi_oauth_connect_registration', array('key' => $key)));
         }
 
         if ($error) {
@@ -81,7 +82,7 @@ class ConnectController extends \HWI\Bundle\OAuthBundle\Controller\ConnectContro
 
         if (!($error instanceof AccountNotLinkedException) || (time() - $key > 600)) {
             $this->container->get('session')->getFlashBag()->add('warning', 'registration.timeout_message');
-            return new RedirectResponse($this->generate('fos_user_security_login'));
+            return new RedirectResponse($this->generateUrl('fos_user_security_login'));
             //throw new \Exception('Cannot register an account.');
         }
 
@@ -93,7 +94,7 @@ class ConnectController extends \HWI\Bundle\OAuthBundle\Controller\ConnectContro
         ;
 
         $factory = $this->container->get('app.registration.form.factory');
-        if ($registrationType == 'model_registration') {
+        if ($registrationType === 'model_registration') {
             $factory->setOption('choose_gender', false);
         }
 
@@ -107,17 +108,17 @@ class ConnectController extends \HWI\Bundle\OAuthBundle\Controller\ConnectContro
             $user = $form->getData();
             $groupManager = $this->container->get('sonata.user.group_manager');
 
-            if ($registrationType == 'model_registration') {
+            if ($registrationType === 'model_registration') {
                 $modelsGroup = $groupManager->findGroupByName('Models');
                 $user->addGroup($modelsGroup);
                 $user->setActivated(false);
                 $user->setGender(User::GENDER_FEMALE);
-                $redirectUrl = $this->generate('homepage');
+                $redirectUrl = $this->generateUrl('homepage');
 
             } else {
                 $clientsGroup = $groupManager->findGroupByName('Clients');
                 $user->addGroup($clientsGroup);
-                $redirectUrl = $this->generate('search_index');
+                $redirectUrl = $this->generateUrl('search_index');
             }
 
             $event = new UserRegisteredEvent($user, $userInformation);
@@ -125,7 +126,7 @@ class ConnectController extends \HWI\Bundle\OAuthBundle\Controller\ConnectContro
 
             $this->container->get('doctrine')->getManager()->flush();
 
-            if ($registrationType == 'model_registration') {
+            if ($registrationType === 'model_registration') {
                 $this->container->get('session')->getFlashBag()->add('success',
                     $this->container->get('translator')->trans('header.model_registration_success', ['%username%' => $user->getFullName()], 'HWIOAuthBundle'));
 
@@ -163,22 +164,23 @@ class ConnectController extends \HWI\Bundle\OAuthBundle\Controller\ConnectContro
         //return parent::redirectToServiceAction($request, $service);
         $authorizationUrl = $this->container->get('hwi_oauth.security.oauth_utils')->getAuthorizationUrl($request, $service);
 
-        if ($service == 'facebook') {
+        if ($service === 'facebook') {
             $state = '';
 
             if ($activationToken = $request->query->get('activation_token')) {
+                /** @var User $model */
                 $model = $this->container->get('doctrine')->getRepository('AppBundle:User')->findOneBy(['activationToken' => $activationToken]);
                 if (!$model) {
                     throw new NotFoundHttpException();
                 }
 
                 if (!$model->needToActivate()) {
-                    throw new HttpException(400, "The model is already activated.");
+                    throw new HttpException(400, 'The model is already activated.');
                 }
 
                 $state = http_build_query(['state' => json_encode(['activation_token' => $activationToken])]);
 
-            } else if (($fbRequestType = $request->query->get('type')) && $fbRequestType == 'model_registration') {
+            } else if (($fbRequestType = $request->query->get('type')) && $fbRequestType === 'model_registration') {
                 $state = http_build_query(['state' => json_encode(['type' => 'model_registration'])]);
             }
 

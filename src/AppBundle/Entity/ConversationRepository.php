@@ -136,7 +136,7 @@ class ConversationRepository extends EntityRepository
             $oppositeField = 'c.client';
 
         } else {
-            throw new \InvalidArgumentException("The user must be either client or model.");
+            throw new \InvalidArgumentException('The user must be either client or model.');
         }
 
         $qb = $this->createQueryBuilder('c');

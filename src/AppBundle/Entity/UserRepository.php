@@ -104,9 +104,8 @@ class UserRepository extends EntityRepository
         /** @var User[] $result */
         $result = $qb->getQuery()->execute();
         foreach ($result as $key => $item) {
-            if ($item->getId() == $user->getId()) {
+            if ($item->getId() === $user->getId()) {
                 unset($result[$key]);
-                //break;
             }
         }
         return $result;
@@ -116,7 +115,7 @@ class UserRepository extends EntityRepository
      * @param User $user
      * @param User $companion
      * @param bool $withUsers
-     * @return User[]
+     * @return Conversation[]
      */
     public function findUserConversations(User $user, User $companion = null, $withUsers = false)
     {
@@ -127,10 +126,7 @@ class UserRepository extends EntityRepository
                 ->addSelect('model');
         }
 
-        /** @var Conversation[] $result */
-        $result = $qb->getQuery()->execute();
-
-        return $result;
+        return $qb->getQuery()->execute();
     }
 
     /**
@@ -209,7 +205,7 @@ class UserRepository extends EntityRepository
             $oppositeField = 'u.clientConversations';
 
         } else {
-            throw new \InvalidArgumentException("The user must be either client or model.");
+            throw new \InvalidArgumentException('The user must be either client or model.');
         }
 
         $qb = $this->createQueryBuilder('u');

@@ -44,7 +44,7 @@ class UserAdminController extends CRUDController
             $this->adjustClient($object);
         }
 
-        if (in_array($request->query->get('type'), ['model', 'client'])) {
+        if (in_array($request->query->get('type'), ['model', 'client'], false)) {
             $object->setEnabled(true);
         }
 
@@ -54,7 +54,7 @@ class UserAdminController extends CRUDController
         $form = $this->admin->getForm();
         $form->setData($object);
 
-        if ($this->getRestMethod($request) == 'POST') {
+        if ($this->getRestMethod($request) === 'POST') {
             $form->submit($request);
 
             $isFormValid = $form->isValid();
@@ -152,7 +152,7 @@ class UserAdminController extends CRUDController
         }
 
         if ($object->isActivated()) {
-            throw new AccessDeniedHttpException("Model is already activated.");
+            throw new AccessDeniedHttpException('Model is already activated.');
         }
 
         $this->admin->setSubject($object);
@@ -184,7 +184,7 @@ class UserAdminController extends CRUDController
         }
 
         if ($model->isActivated()) {
-            throw new AccessDeniedHttpException("Model is already activated.");
+            throw new AccessDeniedHttpException('Model is already activated.');
         }
 
         $this->admin->setSubject($model);
