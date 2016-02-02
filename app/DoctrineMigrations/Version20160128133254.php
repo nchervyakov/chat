@@ -16,7 +16,7 @@ class Version20160128133254 extends AbstractMigration
     public function up(Schema $schema)
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE queue_messages DROP FOREIGN KEY FK_1A8181A66C066AFE');
         $this->addSql('DROP INDEX idx_a2e31f516c066afe ON queue_messages');
@@ -30,7 +30,7 @@ class Version20160128133254 extends AbstractMigration
     public function down(Schema $schema)
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE queue_messages DROP FOREIGN KEY FK_1A8181A66C066AFE');
         $this->addSql('DROP INDEX idx_1a8181a66c066afe ON queue_messages');

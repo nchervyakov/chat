@@ -289,7 +289,8 @@ can.Control('ChatWidget', {
                     if (res.need_to_agree_to_pay) {
                         widget.showAgreeToPayDialog(res.message, request);
                     } else if (res.not_enough_money) {
-                        App.showAddCoinsDialog(request);
+                        //App.showAddCoinsDialog(request);
+                        App.showBuyCoinsDialog(request);
                     }
                 }
 

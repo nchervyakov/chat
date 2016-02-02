@@ -835,6 +835,17 @@ class User extends BaseUser
 
     /**
      * @param float $coins
+     * @return $this
+     */
+    public function addCoins($coins)
+    {
+        $this->coins += $coins;
+
+        return $this;
+    }
+
+    /**
+     * @param float $coins
      */
     public function setCoins($coins)
     {

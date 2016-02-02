@@ -1,0 +1,18 @@
+parameters:
+    payment.variants:
+        20: 10
+        40: 23
+
+services:
+    payment.form.type.payment_selection:
+        class: PaymentBundle\Form\Type\PaymentSelectionFormType
+        #arguments: ["@doctrine.orm.entity_manager"]
+        tags:
+            - { name: form.type, alias: payment_selection }
+        calls:
+            - [setVariants, ["%payment.variants%"]]
+
+    payment.coin_money_estimator:
+        class: PaymentBundle\CoinMoneyEstimator
+        calls:
+            - [setContainer, ["@service_container"]]

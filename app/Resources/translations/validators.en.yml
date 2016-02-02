@@ -1,0 +1,3 @@
+payment_selection:
+    min_error: 'The minimum amount is ${{ limit }}'
+    max_error: 'The maximum amount is ${{ limit }}'

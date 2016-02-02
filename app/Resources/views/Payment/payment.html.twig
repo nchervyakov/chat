@@ -1,0 +1,11 @@
+{%  extends ':Payment:index.html.twig' %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('js/payment.js') }}"></script>
+{% endblock %}
+
+{% block payment_content %}
+    {{ include(':Payment:_payment_form.html.twig', { "form": form }) }}
+{% endblock %}
+

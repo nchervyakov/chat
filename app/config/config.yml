@@ -60,6 +60,7 @@ twig:
     form_themes:
         # other form themes
         - 'VichUploaderBundle:Form:fields.html.twig'
+    exception_controller:  twig.controller.exception:showAction
 
 # Assetic Configuration
 assetic:
@@ -237,7 +238,7 @@ fos_js_routing:
         - user_show
         - search_index
         - chat_agree_to_pay
-        - coins_add
+#        - coins_add
         - profile_delete_photo
         - profile_add_photo
         - profile_show
@@ -246,6 +247,8 @@ fos_js_routing:
         - complain_message
         - delete_own_message
 #        - fos_user_registration_register
+        - payments_prepare_coin
+        - payments_estimate_coins
 
 fos_rest:
     view:
@@ -560,7 +563,7 @@ payum:
         PaymentBundle\Entity\Payment: { doctrine: orm }
 
     gateways:
-        aName:
+        paypal_express_checkout_with_ipn_enabled:
             paypal_express_checkout_nvp:
                 username:  %payments.paypal_username%
                 password:  %payments.paypal_password%

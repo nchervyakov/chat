@@ -1,0 +1,12 @@
+{%  extends ':Payment:index.html.twig' %}
+
+{% block payment_content %}
+    {% if status.captured %}
+        <p>{{ 'payment.success_payment_message'|trans({'%coins%': payment.order.coins}) }}</p>
+    {% else %}
+
+    {% endif %}
+    <p><a href="{{ path('chat') }}">{{ 'return_to_chats'|trans|raw }}</a>
+        {% if not status.captured %} or <a href="{{ path('payments_prepare_coin') }}">{{ 'payment.try_again_add_coins'|trans }}</a> {% endif %}
+    </p>
+{% endblock %}

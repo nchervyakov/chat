@@ -53,6 +53,15 @@ class Payment extends BasePayment
     private $dateUpdated;
 
     /**
+     * Payment constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->setDateAdded(new \DateTime());
+    }
+
+    /**
      * Get id
      *
      * @return integer
@@ -95,10 +104,18 @@ class Payment extends BasePayment
     }
 
     /**
-     * @return AbstractOrder
+     * @return AbstractOrder|CoinOrder
      */
     public function getOrder()
     {
         return $this->order;
+    }
+
+    /**
+     * @ORM\PreUpdate()
+     */
+    public function preUpdate()
+    {
+        $this->setDateUpdated(new \DateTime());
     }
 }

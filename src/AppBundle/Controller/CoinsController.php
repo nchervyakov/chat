@@ -14,9 +14,12 @@ use AppBundle\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Class CoinsController
@@ -33,6 +36,8 @@ class CoinsController extends Controller
      */
     public function addCoinsAction(Request $request)
     {
+        throw new NotFoundHttpException();
+
         $amount = (int) $request->request->get('amount', 0);
 
         if (!is_numeric($amount) || $amount <= 0) {

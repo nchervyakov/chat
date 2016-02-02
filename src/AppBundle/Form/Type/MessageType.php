@@ -28,7 +28,7 @@ class MessageType extends AbstractType
      */
     protected $authChecker;
 
-    function __construct(AuthorizationChecker $checker)
+    public function __construct(AuthorizationChecker $checker)
     {
         $this->authChecker = $checker;
     }
@@ -86,7 +86,7 @@ class MessageType extends AbstractType
             }
 
             if (!$form->getData()) {
-                if ($type == 'image') {
+                if ($type === 'image') {
                     $message = new ImageMessage();
                     $form->add('imageFile', 'vich_image', [
                         'required' => true,

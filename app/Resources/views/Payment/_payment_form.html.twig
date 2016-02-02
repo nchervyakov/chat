@@ -1,0 +1,31 @@
+{% form_theme form ':Form:bootstrap3_theme.html.twig' _self %}
+
+{{ form_start(form, { "attr": { "class": "payment-form js-payment-form" } }) }}
+    {{ form_errors(form, { "attr": { "class": "alert alert-danger" } }) }}
+
+    {% set customVar = null %}
+    {% for variant in form.amount %}
+        {% if variant.vars.value != "custom" %}
+        <div class="row variant-row">
+            <div class="col-lg-4 col-sm-9 variant-field">{{ form_widget(variant, { "attr": { "class": "js-payment-variant" } }) }}
+                {{ form_label(variant) }}</div>
+            <div class="col-lg-3 col-sm-3"><img src="{{ asset("images/paypal_logo.png") }}" alt="PayPal" /> </div>
+        </div>
+        {% else %}
+            {% set customVar = variant %}
+        {% endif %}
+    {% endfor %}
+    <div class="row variant-row">
+        <div class="col-lg-4 col-sm-9 variant-field">{{ form_widget(customVar, { "attr": { "class": "js-payment-variant" } }) }}
+            {{ form_label(customVar, "Pay") }} ${{ form_widget(form.custom, { "attr": { "size": 6, "class": "custom-value" } }) }}
+            <span class="coin-estimation-block hidden">for <span class="coin-estimation"></span> minutes chat</span> with </div>
+        <div class="col-lg-3 col-sm-3"><img src="{{ asset("images/paypal_logo.png") }}" alt="PayPal" /> </div>
+    </div>
+
+    <div class="form-buttons row">
+        <div class="col-lg-5 col-sm-12">
+            {{ form_widget(form.submit, {'attr': {'class': 'btn btn-primary'} }) }}
+            {{ form_rest(form) }}
+        </div>
+    </div>
+{{ form_end(form) }}

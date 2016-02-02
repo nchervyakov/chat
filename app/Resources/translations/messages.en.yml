@@ -113,8 +113,8 @@ action_activate_model: 'Activate'
 link_action_activate_model: 'Activate'
 offline_models_found: 'Other models: %count%'
 coins:
-    user_coins: 'Coins'
-    how_many_coins_to_add: 'How many coins do you want to add?'
+    user_coins: 'Minutes'
+    how_many_coins_to_add: 'How many minutes do you want to add?'
 chatting:
     need_to_pay: 'To be able to chat with %model% you must agree to pay. Do you agree to pay?'
     not_enough_money: 'You do not have enough money to '
@@ -139,3 +139,14 @@ message_complaint:
 action_accept_complaint: 'Accept'
 action_reject_complaint: 'Reject'
 Name: 'Name'
+payment_selection:
+    amount: Amount
+    custom: Custom
+
+
+payment_page:
+    title: 'Top Up'
+payment:
+    success_payment_message: 'You have successfully topped up %coins% minutes of chat.'
+    try_again_add_coins: 'try again'
+return_to_chats: '&larr; Return to chats'

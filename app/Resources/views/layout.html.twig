@@ -112,6 +112,7 @@
                     <ul class="nav navbar-nav">
                         {% if is_granted('ROLE_MODEL') or is_granted('ROLE_CLIENT') %}
                             <li><a href="#" class="js-user-coins user-coins">{{ 'coins.user_coins'|trans }}: <span class="js-header-coins">{{ app.user.coins|number_format(2) }}</span></a></li>
+                            <li><a href="{{ path('payments_prepare_coin') }}">Top Up</a></li>
                         {% endif %}
                         <li>
                             <a href="{{ path("fos_user_profile_show") }}" title="{{ 'menu.go_to_account'|trans }}">
@@ -186,6 +187,7 @@
         {% block hidden_templates %}
             {% if is_granted('ROLE_USER') %}
                 {{ include(':Coins:_add_coins_dialog.html.twig') }}
+                {{ include(':Coins:_buy_coins_dialog.html.twig') }}
             {% endif %}
         {% endblock %}
     </div>

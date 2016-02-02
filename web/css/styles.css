@@ -423,3 +423,33 @@ body {
 .chat-widget .message.complained .notice.notice-success {
     color: darkgreen;
 }
+
+.payment-page {
+    padding-top: 30px;
+}
+
+.payment-page .variant-field {
+    padding-top: 6px;
+}
+
+.payment-form .form-buttons {
+    margin-top: 20px;
+    text-align: right;
+}
+
+.payment-form .variant-row {
+    margin-bottom: 30px;
+}
+
+.payment-form .alert {
+    list-style-type: none;
+}
+
+.payment-form .custom-value {
+    width: 20%;
+    display: inline-block;
+}
+
+.payment-form .variant-field .radio {
+    display: inline-block;
+}

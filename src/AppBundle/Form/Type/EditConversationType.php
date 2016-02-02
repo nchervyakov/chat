@@ -14,7 +14,7 @@ class EditConversationType extends AbstractType
      */
     protected $authChecker;
 
-    function __construct(AuthorizationChecker $checker)
+    public function __construct(AuthorizationChecker $checker)
     {
         $this->authChecker = $checker;
     }

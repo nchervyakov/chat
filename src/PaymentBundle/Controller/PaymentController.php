@@ -10,59 +10,173 @@
 namespace PaymentBundle\Controller;
 
 
+use AppBundle\Entity\User;
+use Doctrine\DBAL\Driver\Connection;
+use PaymentBundle\Entity\AbstractOrder;
+use PaymentBundle\Entity\CoinOrder;
+use PaymentBundle\Entity\Payment;
+use Payum\Bundle\PayumBundle\Controller\PayumController;
+use Payum\Core\Exception\RequestNotSupportedException;
 use Payum\Core\Request\GetHumanStatus;
+use Payum\Core\Request\Sync;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Class PaymentController
  * @package PaymentBundle\Controller
+ *
+ * @Security("has_role('ROLE_USER')")
  */
-class PaymentController extends Controller
+class PaymentController extends PayumController
 {
     /**
      * @param Request $request
-     * @Route("/prepare-coin", name="payments_prepare_coin")
+     * @Route("/buy-coins", name="payments_prepare_coin")
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function prepareCoinAction(Request $request)
     {
+        $form = $this->createPaymentForm();
+        $form->handleRequest($request);
 
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+
+            $data = $form->getData();
+            $amount = $data['amount'] === 'custom' ? $data['custom'] : $data['amount'];
+                 dump($data);
+            $estimatedCoins = round($this->get('payment.coin_money_estimator')->estimateCoins($amount), 2);
+            /** @var User $user */
+            $user = $this->getUser();
+
+            $order = new CoinOrder();
+            $order->setCoins($estimatedCoins);
+            $order->setAmount($amount);
+            $order->setUser($user);
+            $em->persist($order);
+            $em->flush();
+
+            $payment = new Payment();
+            $payment->setCurrencyCode('USD');
+            $payment->setTotalAmount($amount * 100);
+            $payment->setClientId($user->getId());
+            $payment->setClientEmail($user->getEmail());
+            $payment->setNumber($order->getId());
+
+            $storage = $this->getPayum()->getStorage($payment);
+            $storage->update($payment);
+
+            $order->setPayment($payment);
+            $em->flush();
+
+            $captureToken = $this->getTokenFactory()->createCaptureToken(
+                'paypal_express_checkout_with_ipn_enabled',
+                $payment,
+                'payments_done'
+            );
+
+            return $this->redirect($captureToken->getTargetUrl());
+        }
+
+        return $this->render(':Payment:payment.html.twig', ['form' => $form->createView()]);
     }
 
     /**
      * @param $request
      * @return JsonResponse
-     * @Route("/done", name="payments_done")
+     * @Route("/done", name="payments_done", methods={"GET"})
      */
-    public function doneAction($request)
+    public function doneAction(Request $request)
     {
-        $token = $this->get('payum.security.http_request_verifier')->verify($request);
+        $token = $this->getHttpRequestVerifier()->verify($request);
+        $gateway = $this->getPayum()->getGateway($token->getGatewayName());
 
-        $gateway = $this->get('payum')->getGateway($token->getGatewayName());
+        try {
+            $gateway->execute(new Sync($token));
+        } catch (RequestNotSupportedException $e) {}
 
-        // you can invalidate the token. The url could not be requested any more.
-        // $this->get('payum.security.http_request_verifier')->invalidate($token);
-
-        // Once you have token you can get the model from the storage directly.
-        //$identity = $token->getDetails();
-        //$payment = $payum->getStorage($identity->getClass())->find($identity);
-
-        // or Payum can fetch the model for you while executing a request (Preferred).
         $gateway->execute($status = new GetHumanStatus($token));
+        /** @var Payment $payment */
         $payment = $status->getFirstModel();
 
-        // you have order and payment status
-        // so you can do whatever you want for example you can just print status and payment details.
+        if (!$payment) {
+            throw new NotFoundHttpException('Unknown or missing payment token');
+        }
 
-        return new JsonResponse(array(
-            'status' => $status->getValue(),
-            'payment' => array(
-                'total_amount' => $payment->getTotalAmount(),
-                'currency_code' => $payment->getCurrencyCode(),
-                'details' => $payment->getDetails(),
-            ),
-        ));
+        $order = $payment->getOrder();
+
+        if ($order->getStatus() === AbstractOrder::STATUS_PAYED) {
+            return $this->render(':Payment:done.html.twig', ['payment' => $payment]);
+        }
+
+        $formView = null;
+
+        if ($status->isCaptured()) {
+            $em = $this->getDoctrine()->getManager();
+
+            /** @var Connection $conn */
+            $conn = $this->getDoctrine()->getConnection();
+
+            try {
+                $conn->beginTransaction();
+
+                /** @var User $user */
+                $user = $this->getUser();
+                $user->addCoins($order->getCoins());
+
+                $order->setStatus(AbstractOrder::STATUS_PAYED);
+                $em->flush();
+                $conn->commit();
+
+            } catch (\Exception $e) {
+                $conn->rollBack();
+                throw new HttpException(500, 'Error while writing data to DB.');
+            }
+        } else {
+            $this->get('session')->getFlashBag()
+                ->add('warning', 'Error while payment. Please try again.');
+            $formView = $this->createPaymentForm()->createView();
+        }
+
+        return $this->render(':Payment:done.html.twig', [
+            'status' => $status,
+            'payment' => $payment,
+            'form' => $formView
+        ]);
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     * @Route("/estimate-coins", name="payments_estimate_coins", methods={"GET"})
+     */
+    public function estimateAction(Request $request)
+    {
+        $amount = $request->query->get('amount');
+
+        if (!$amount || !is_numeric($amount)) {
+            $coins = '';
+        } else {
+            $coins = $this->get('payment.coin_money_estimator')->estimateCoins($amount);
+        }
+
+        return new JsonResponse(['coins' => $coins]);
+    }
+
+    protected function createPaymentForm()
+    {
+        $form = $this->createForm('payment_selection', ['amount' => 20, 'custom' => 20], [
+            'method' => 'POST',
+            'action' => $this->generateUrl('payments_prepare_coin')
+        ]);
+
+        $form->add('submit', 'submit');
+
+        return $form;
     }
 }
