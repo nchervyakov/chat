@@ -1,0 +1,9 @@
+{% extends 'SonataAdminBundle:CRUD:list.html.twig' %}
+
+{% block actions %}
+    {#% spaceless %}
+        {% if admin.hasRoute('create') and admin.isGranted('CREATE')%}
+            <li>{% include 'SonataAdminBundle:Core:create_button.html.twig' %}</li>
+        {% endif %}
+    {% endspaceless %#}
+{% endblock %}

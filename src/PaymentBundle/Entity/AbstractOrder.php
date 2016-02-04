@@ -48,6 +48,13 @@ abstract class AbstractOrder
     protected $status = self::STATUS_NEW;
 
     /**
+     * @ORM\Column(name="amount", type="decimal")
+     *
+     * @var float
+     */
+    private $amount = 0.0;
+
+    /**
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=true)
      *
@@ -171,4 +178,23 @@ abstract class AbstractOrder
     {
         $this->setDateUpdated(new \DateTime());
     }
+
+
+    /**
+     * @return float
+     */
+    public function getAmount()
+    {
+        return $this->amount;
+    }
+
+    /**
+     * @param float $amount
+     */
+    public function setAmount($amount)
+    {
+        $this->amount = $amount;
+    }
+
+    abstract public function getDescription();
 }

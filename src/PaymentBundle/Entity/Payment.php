@@ -118,4 +118,14 @@ class Payment extends BasePayment
     {
         $this->setDateUpdated(new \DateTime());
     }
+
+    public function getDetailsFormatted()
+    {
+        return json_encode($this->details, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    }
+
+    public function __toString()
+    {
+        return (string) $this->id;
+    }
 }

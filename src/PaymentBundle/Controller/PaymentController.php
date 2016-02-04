@@ -15,6 +15,8 @@ use Doctrine\DBAL\Driver\Connection;
 use PaymentBundle\Entity\AbstractOrder;
 use PaymentBundle\Entity\CoinOrder;
 use PaymentBundle\Entity\Payment;
+use PaymentBundle\Event\OrderPayedEvent;
+use PaymentBundle\PaymentEvents;
 use Payum\Bundle\PayumBundle\Controller\PayumController;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Payum\Core\Request\GetHumanStatus;
@@ -49,7 +51,7 @@ class PaymentController extends PayumController
 
             $data = $form->getData();
             $amount = $data['amount'] === 'custom' ? $data['custom'] : $data['amount'];
-                 dump($data);
+
             $estimatedCoins = round($this->get('payment.coin_money_estimator')->estimateCoins($amount), 2);
             /** @var User $user */
             $user = $this->getUser();
@@ -67,6 +69,14 @@ class PaymentController extends PayumController
             $payment->setClientId($user->getId());
             $payment->setClientEmail($user->getEmail());
             $payment->setNumber($order->getId());
+            $payment->setDescription("Purchase $estimatedCoins coins");
+
+            $details = [
+                'REQCONFIRMSHIPPING' => 0,
+                'NOSHIPPING' => 1,              // We do not need shipping
+            ];
+
+            $payment->setDetails($details);
 
             $storage = $this->getPayum()->getStorage($payment);
             $storage->update($payment);
@@ -109,9 +119,15 @@ class PaymentController extends PayumController
         }
 
         $order = $payment->getOrder();
+        /** @var User $user */
+        $user = $this->getUser();
 
         if ($order->getStatus() === AbstractOrder::STATUS_PAYED) {
-            return $this->render(':Payment:done.html.twig', ['payment' => $payment]);
+            return $this->render(':Payment:done.html.twig', [
+                'payment' => $payment,
+                'remainingCoins' => $user->getCoins(),
+                'status' => $status,
+            ]);
         }
 
         $formView = null;
@@ -125,8 +141,6 @@ class PaymentController extends PayumController
             try {
                 $conn->beginTransaction();
 
-                /** @var User $user */
-                $user = $this->getUser();
                 $user->addCoins($order->getCoins());
 
                 $order->setStatus(AbstractOrder::STATUS_PAYED);
@@ -137,6 +151,10 @@ class PaymentController extends PayumController
                 $conn->rollBack();
                 throw new HttpException(500, 'Error while writing data to DB.');
             }
+
+            $this->get('event_dispatcher')->dispatch(PaymentEvents::ORDER_PAYED, new OrderPayedEvent($order, $payment));
+            //$this->getHttpRequestVerifier()->invalidate($token);
+
         } else {
             $this->get('session')->getFlashBag()
                 ->add('warning', 'Error while payment. Please try again.');
@@ -146,7 +164,8 @@ class PaymentController extends PayumController
         return $this->render(':Payment:done.html.twig', [
             'status' => $status,
             'payment' => $payment,
-            'form' => $formView
+            'form' => $formView,
+            'remainingCoins' => $user->getCoins()
         ]);
     }
 

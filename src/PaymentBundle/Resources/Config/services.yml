@@ -16,3 +16,10 @@ services:
         class: PaymentBundle\CoinMoneyEstimator
         calls:
             - [setContainer, ["@service_container"]]
+
+    payment.event.payment_subscriber:
+        class: PaymentBundle\Event\PaymentSubscriber
+        tags:
+            - {name: kernel.event_subscriber}
+        calls:
+            - [setContainer, ["@service_container"]]

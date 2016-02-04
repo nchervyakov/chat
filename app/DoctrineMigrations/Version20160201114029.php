@@ -26,6 +26,7 @@ class Version20160201114029 extends AbstractMigration
         $this->addSql('ALTER TABLE orders ADD user_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE orders ADD CONSTRAINT FK_E52FFDEEA76ED395 FOREIGN KEY (user_id) REFERENCES users (id)');
         $this->addSql('CREATE INDEX IDX_E52FFDEEA76ED395 ON orders (user_id)');
+        $this->addSql('ALTER TABLE orders CHANGE amount amount NUMERIC(10, 0) NOT NULL');
     }
 
     /**
@@ -36,6 +37,7 @@ class Version20160201114029 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
+        $this->addSql('ALTER TABLE orders CHANGE amount amount NUMERIC(10, 0) DEFAULT NULL');
         $this->addSql('ALTER TABLE orders DROP FOREIGN KEY FK_E52FFDEEA76ED395');
         $this->addSql('DROP INDEX IDX_E52FFDEEA76ED395 ON orders');
         $this->addSql('ALTER TABLE orders DROP user_id');

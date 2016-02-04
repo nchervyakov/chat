@@ -1,0 +1,9 @@
+{% extends 'SonataAdminBundle:CRUD:base_show_field.html.twig' %}
+
+{% block field %}
+    {%- if value is empty -%}
+        &nbsp;
+    {%- else -%}
+        <span class="label label-default order-status status-{{ value }}">{{ value }}</span>
+    {%- endif -%}
+{% endblock %}

@@ -39,8 +39,8 @@ parameters:
     payment.model_share:            0.7
     payment.coin_price:             2
 
-    website_robot_email: robot@kukik.co
-    website: http://kukik.co
+    website_robot_email: robot@beauties.chat
+    website: http://beauties.chat
 
     chat.first_messages_limit:      2   # The number of messages from a model after which a client must pay for the chatting
     user.online_status.update_probability:  0.01

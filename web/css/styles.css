@@ -453,3 +453,7 @@ body {
 .payment-form .variant-field .radio {
     display: inline-block;
 }
+
+b.large {
+    font-size: 150%;
+}

@@ -19,13 +19,6 @@ class CoinOrder extends AbstractOrder
     private $coins = 0.0;
 
     /**
-     * @ORM\Column(name="amount", type="decimal")
-     *
-     * @var float
-     */
-    private $amount = 0.0;
-
-    /**
      * @return float
      */
     public function getCoins()
@@ -41,20 +34,9 @@ class CoinOrder extends AbstractOrder
         $this->coins = $coins;
     }
 
-    /**
-     * @return float
-     */
-    public function getAmount()
+    public function getDescription()
     {
-        return $this->amount;
-    }
-
-    /**
-     * @param float $amount
-     */
-    public function setAmount($amount)
-    {
-        $this->amount = $amount;
+        return 'Purchase of ' . $this->coins . ' coins';
     }
 }
 

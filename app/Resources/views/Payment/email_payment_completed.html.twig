@@ -1,0 +1,22 @@
+{% extends ':Email:email_base.html.twig' %}
+
+{% block content_html %}
+    <p>Hi, {{ user.fullName }}!</p>
+
+    {% if order.coins is defined %}
+        <p>You have successfully topped up {{ order.coins|round(2) }} chat minutes.</p>
+    {% endif %}
+
+    <h3>Payment details:</h3>
+
+    {% set payment = order.payment %}
+    <ul>
+        <li>ID: {{ payment.id }}</li>
+        <li>Client ID: {{ payment.clientId }}</li>
+        <li>Amount: ${{ payment.totalAmount / 100 }}</li>
+        <li>Currency: {{ payment.currencyCode }}</li>
+        <li>Date: {{ payment.dateAdded|date('Y.m.d H:i:s') }}</li>
+    </ul>
+
+    <p>Best regards <span class="br"><a href="{{ website }}">{{ website }}</a> team.</span></p>
+{% endblock %}

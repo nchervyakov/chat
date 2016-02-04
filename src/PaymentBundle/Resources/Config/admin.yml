@@ -1,0 +1,24 @@
+services:
+    app.admin.payment:
+        class: PaymentBundle\Admin\PaymentAdmin
+        arguments: [~, PaymentBundle\Entity\Payment, ~]
+        tags:
+            - {name: sonata.admin, manager_type: orm, group: Payments, label: Payments}
+
+    app.admin.orders:
+        class: PaymentBundle\Admin\OrderAdmin
+        arguments: [~, PaymentBundle\Entity\AbstractOrder, ~]
+        tags:
+            - {name: sonata.admin, manager_type: orm, group: Payments, label: Orders}
+#        calls:
+#            - [setUserManager, ["@fos_user.user_manager"]]
+#            - [setTemplate, [list, SonataUserBundle:UserAdmin:list.html.twig]]
+#            - [setTemplate, [edit, SonataUserBundle:UserAdmin:edit.html.twig]]
+#            - [setTranslationDomain, [SonataUserBundle]]
+
+#    app.admin.conversation:
+#        class: AppBundle\Admin\ConversationAdmin
+#        arguments: [~, AppBundle\Entity\Conversation, ~]
+#        tags:
+#            - {name: sonata.admin, manager_type: orm, group: Chat, label: Conversations}
+

@@ -4,6 +4,7 @@ imports:
     - { resource: services.yml }
     - { resource: sonata_core.yml }
     - { resource: @AppBundle/Resources/config/admin.yml }
+    - { resource: @PaymentBundle/Resources/config/admin.yml }
 
 parameters:
     hwi_oauth.registration.form.handler.fosub_bridge.class: AppBundle\Form\FOSUBRegistrationFormHandler
@@ -60,7 +61,8 @@ twig:
     form_themes:
         # other form themes
         - 'VichUploaderBundle:Form:fields.html.twig'
-    exception_controller:  twig.controller.exception:showAction
+#    exception_controller:  twig.controller.exception:showAction
+#    exception_controller: 'fos_rest.controller.exception:showAction'
 
 # Assetic Configuration
 assetic:
@@ -281,8 +283,9 @@ fos_rest:
         enabled: true
         validate: true
         validation_errors_argument: validationErrors # This is the default value
-    exception:
-        enabled: true
+#    exception:
+#        enabled: true
+#        exception_controller: 'FOS\RestBundle\Controller\ExceptionController::showAction'
 #        codes:
 #            'Symfony\Component\Security\Core\Exception\InsufficientAuthenticationException': 401
     routing_loader:

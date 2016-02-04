@@ -147,6 +147,8 @@ payment_selection:
 payment_page:
     title: 'Top Up'
 payment:
-    success_payment_message: 'You have successfully topped up %coins% minutes of chat.'
+    success_payment_message: 'You have successfully topped up <b class="large">%coins%</b> minutes of chat. Now you have <b class="large">%remainingCoins%</b> minutes.'
     try_again_add_coins: 'try again'
+    order_payed:
+        email_title: 'Your payment №%payment_id% has been completed successfully - %website%'
 return_to_chats: '&larr; Return to chats'

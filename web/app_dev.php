@@ -17,7 +17,11 @@ if (isset($_SERVER['HTTP_CLIENT_IP'])
 //    exit('You are not allowed to access this file. Check '.basename(__FILE__).' for more information.');
 }
 
-$loader = require_once __DIR__.'/../app/bootstrap.php.cache';
+//$loader = require_once __DIR__.'/../app/bootstrap.php.cache';
+/**
+ * @var Composer\Autoload\ClassLoader $loader
+ */
+$loader = require __DIR__.'/../app/autoload.php';
 Debug::enable((E_ALL | E_STRICT | E_DEPRECATED) & ~E_NOTICE);
 
 require_once __DIR__.'/../app/AppKernel.php';

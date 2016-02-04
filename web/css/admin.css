@@ -21,3 +21,11 @@
 .sonata-ba-list .image-message {
     width: 128px;
 }
+
+.order-status.status-new {
+    background-color: lightblue;
+}
+
+.order-status.status-payed {
+    background-color: lawngreen;
+}
