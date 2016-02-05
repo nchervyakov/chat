@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "8b323eedc342e7e4414baca7dbd55833",
-    "content-hash": "8835553f02a5e7c6d6468fc3be869e98",
+    "hash": "35a794d3ea970d0bc507d6b5916bea31",
+    "content-hash": "a043992460216ea5846f13ddd7557fff",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -1270,7 +1270,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/8f1fc2273b37c61ddcc1620abf4500320a23763e",
+                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/140cc28026304d3023c880f441689986f99b913b",
                 "reference": "d5b28c367d393f9d9fbc48c4138b2a74d51c0c83",
                 "shasum": ""
             },
@@ -4741,7 +4741,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sonata-project/SonataAdminBundle/zipball/e01d962f8eadad5c7571ca52ba9f7815661c5496",
+                "url": "https://api.github.com/repos/sonata-project/SonataAdminBundle/zipball/ee5098f6115380ee4e4ccccd76a6e564045e0e1c",
                 "reference": "fba67eeacd1c549bc209a3c5416d1594d30bcb58",
                 "shasum": ""
             },
@@ -5374,13 +5374,13 @@
             "version": "dev-add_support_for_fos_user2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/sonata-project/SonataUserBundle.git",
-                "reference": "e119e8ef87e9440e4110c08e0e47fd4ffe4b6575"
+                "url": "https://github.com/nchervyakov/SonataUserBundle.git",
+                "reference": "fe8f82a17fd2b717fd4b322fb34d135c5a1cc536"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sonata-project/SonataUserBundle/zipball/e119e8ef87e9440e4110c08e0e47fd4ffe4b6575",
-                "reference": "e119e8ef87e9440e4110c08e0e47fd4ffe4b6575",
+                "url": "https://api.github.com/repos/nchervyakov/SonataUserBundle/zipball/fe8f82a17fd2b717fd4b322fb34d135c5a1cc536",
+                "reference": "fe8f82a17fd2b717fd4b322fb34d135c5a1cc536",
                 "shasum": ""
             },
             "require": {
@@ -5424,19 +5424,18 @@
                     "Sonata\\UserBundle\\": ""
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "authors": [
                 {
-                    "name": "Sonata Community",
-                    "homepage": "https://github.com/sonata-project/SonataUserBundle/contributors"
-                },
-                {
                     "name": "Thomas Rabaix",
                     "email": "thomas.rabaix@sonata-project.org",
                     "homepage": "https://sonata-project.org"
+                },
+                {
+                    "name": "Sonata Community",
+                    "homepage": "https://github.com/sonata-project/SonataUserBundle/contributors"
                 }
             ],
             "description": "Symfony SonataUserBundle",
@@ -5446,7 +5445,10 @@
                 "sonata",
                 "user"
             ],
-            "time": "2016-01-17 09:53:50"
+            "support": {
+                "source": "https://github.com/nchervyakov/SonataUserBundle/tree/add_support_for_fos_user2"
+            },
+            "time": "2016-02-04 09:57:40"
         },
         {
             "name": "stof/doctrine-extensions-bundle",
