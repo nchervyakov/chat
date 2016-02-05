@@ -31,7 +31,7 @@ can.Control('ChatWidget', {
 
         this.bindSocket();
 
-        //var widget = this;
+        var widget = this;
 
         this.emoticonLink.popover({
             container: 'body',
@@ -77,7 +77,9 @@ can.Control('ChatWidget', {
 
         this.fetchingPrevMessages = false;
 
-        this.scrollChatToBottom();
+        setTimeout(function () {
+            widget.scrollChatToBottom();
+        }, 50);
         this.markMessagesSeen(5000);
     },
 
@@ -451,14 +453,15 @@ can.Control('ChatWidget', {
     },
 
     scrollChatToBottom: function () {
-        var list, messageContainer, containerHeight, listHeight;
-        list = this.element.find('.chat');
-        messageContainer = this.element.find('.chat-messages');
-        listHeight = list.outerHeight();
-        containerHeight = messageContainer.height();
-        if (listHeight > containerHeight) {
-            messageContainer.scrollTop(listHeight - containerHeight);
-        }
+        //var list, messageContainer, containerHeight, listHeight;
+        //list = this.element.find('.chat');
+        //messageContainer = this.element.find('.chat-messages');
+        //listHeight = list.outerHeight();
+        //containerHeight = messageContainer.height();
+        //if (listHeight > containerHeight) {
+        //    messageContainer.scrollTop(listHeight - containerHeight);
+        //}
+        $(document).scrollTop(document.documentElement.scrollHeight);
     },
 
     fetchNewMessages: function () {

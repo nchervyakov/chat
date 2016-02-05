@@ -457,6 +457,7 @@ body {
 
 .payment-form .custom-value {
     width: 20%;
+    min-width: 50px;
     display: inline-block;
 }
 
@@ -558,13 +559,13 @@ b.large {
     }
 
     .first-in-row-item {
-        width: 40%;
+        width: 50%;
         margin-right: 0;
         display: inline-block !important;
     }
 
     .second-menu-item {
-        width: 50%;
+        width: 45%;
         display: inline-block !important;
     }
 }
@@ -588,11 +589,11 @@ b.large {
 
 .model-list .thumbnail .img-wrapper {
     display: inline-block;
-    width: 128px;
-    height: 128px;
+    width: 96px;
+    height: 96px;
     max-width: 100%;
     text-align: center;
-    line-height: 128px;
+    line-height: 96px;
     float: left;
 }
 
@@ -606,8 +607,12 @@ b.large {
 }
 
 .model-list .caption {
-    margin-left: 160px;
-    margin-top: 0;
+    margin-left: 120px;
+    margin-top: -10px;
+}
+
+.model-list .caption h3 {
+    font-size: 150%;
 }
 
 .model-list-online {
@@ -620,4 +625,8 @@ b.large {
 
 .hidden-on-start {
     display: none;
+}
+
+.main-content.chat-page {
+    min-height: 100px;
 }

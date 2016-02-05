@@ -191,7 +191,7 @@
         {# % embed ':Default:header.html.twig' %}{% endembed %#}
     </div>
 
-    <div class="container main-content">
+    <div class="container main-content {% block page_class %}{% endblock %}">
         {% block breadcrumbs %}
             {#<!--breadcumb here  -->
             <div class="breadcrumbs">

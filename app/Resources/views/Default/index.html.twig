@@ -1,7 +1,9 @@
 {% extends '::layout.html.twig' %}
 
 {% block header_title %}<a href="{{ path('homepage') }}">Chat with models</a>{% endblock %}
-{% block prev_title %}{% endblock %}
+{% block prev_title %}
+    <a href="{{ path('page_about') }}">{{ 'about_site'|trans }}</a>
+{% endblock %}
 
 {% block page %}
     <h3>Models available for chat:</h3>
@@ -10,6 +12,8 @@
 
         {% for model in online_models %}
             {{ include(':Default:_model_online_item.html.twig') }}
+        {% else %}
+            <p>There is no online models.</p>
         {% endfor %}
 
     </div>
@@ -20,6 +24,8 @@
 
         {% for model in offline_models %}
             {{ include(':Default:_model_offline_item.html.twig') }}
+        {% else %}
+            <p>There is no models.</p>
         {% endfor %}
 
     </div>
