@@ -134,7 +134,7 @@ class ConversationService extends ContainerAware
         $modelEarnings = 0.0;
 
         foreach ($this->getConversationIntervals($conversation) as $interval) {
-            if ($interval->getStatus() !== ConversationInterval::STATUS_PAYED) {dump($interval);
+            if ($interval->getStatus() !== ConversationInterval::STATUS_PAYED) {
                 $this->estimateInterval($interval);
             }
             $seconds += (int) $interval->getSeconds();

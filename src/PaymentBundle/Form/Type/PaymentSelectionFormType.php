@@ -63,7 +63,7 @@ class PaymentSelectionFormType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
             $form = $event->getForm();
             $data = $event->getData();
-            dump($data);
+
             if ($data === null) {
                 $data = [];
             }
