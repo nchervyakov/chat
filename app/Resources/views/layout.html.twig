@@ -107,14 +107,62 @@
 
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
+
+
+            <div class="navbar-header pull-left nav-left-block">
+                <ul class="nav navbar-nav pull-left">
+                    <li class="navbar-text pull-left">{% block prev_title %}
+                            {%- if is_granted('ROLE_USER') -%}
+                                <a href="{{ path('homepage') }}">{{ sitename }}</a>
+                            {%- else -%}
+                                <a href="{{ path('page_about') }}">{{ 'about_site'|trans }}</a>
+                            {%- endif -%}
+                        {% endblock %}</li>
+                </ul>
+            </div>
+
+            <div class="navbar-header pull-right nav-right-block">
+                <ul class="nav navbar-nav pull-left">
+                    {% if app.user is null %}
+                        <li class="navbar-text"><a href="{{ path('fos_user_security_login') }}">SIGN UP</a></li>
+                    {% endif %}
+
+                    {% block top_menu_stats %}
+
+                    {% endblock %}
+                </ul>
+
+                <button type="button" class="navbar-toggle invisible hidden-on-start" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+
+            <div class="collapse navbar-collapse navbar-left large-screen-block">
+                {% block top_menu_items %}{{ knp_menu_render('main', {currentClass: 'active', 'allow_safe_labels': true}) }}{% endblock %}
+            </div><!--/.nav-collapse -->
+
+            <div class="navbar-center small-screen-block">
+                <ul class="nav navbar-nav navbar-title-menu">
+                    <li class="navbar-text navbar-title">{% block header_title %}<a>{{ block('page_title_text') }}</a>{% endblock %}</li>
+                </ul>
+            </div>
+
+            <div class="collapse navbar-collapse navbar-left small-screen-block">
+                {{ block('top_menu_items') }}
+            </div><!--/.nav-collapse -->
+
             {% if app.user is not null %}
-                <div class="collapse navbar-collapse pull-right">
+                <div class="collapse navbar-collapse navbar-right">
                     <ul class="nav navbar-nav">
+                        <li class="navbar-text large-screen-block"><a><span class="js-chat-stats">{{ include(':Chat:_chat_stats.html.twig') }}</span></a></li>
+
                         {% if is_granted('ROLE_MODEL') or is_granted('ROLE_CLIENT') %}
-                            <li><a href="#" class="js-user-coins user-coins">{{ 'coins.user_coins'|trans }}: <span class="js-header-coins">{{ app.user.coins|number_format(2) }}</span></a></li>
-                            <li><a href="{{ path('payments_prepare_coin') }}">Top Up</a></li>
+                            <li class="coins-menu-item first-in-row-item"><a href="#" class="js-user-coins user-coins">{{ 'coins.user_coins'|trans }}: <span class="js-header-coins">{{ app.user.coins|number_format(2) }}</span></a></li>
+                            <li class="top-up-menu-item second-menu-item"><a href="{{ path('payments_prepare_coin') }}">Top Up</a></li>
                         {% endif %}
-                        <li>
+                        <li class="first-in-row-item">
                             <a href="{{ path("fos_user_profile_show") }}" title="{{ 'menu.go_to_account'|trans }}">
                                 {% if app.user.thumbnail is not null and app.user.thumbnail.fileName %}
                                     <span class="user-photo-link">
@@ -124,25 +172,21 @@
                                 {% endif %}
                                 {{ app.user.fullName }}</a>
                         </li>
+                        <li class="second-menu-item small-screen-block"><a href="{{ path('fos_user_profile_edit') }}">Edit</a></li>
+
                         {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
-                            <li><a href="{{ path('sonata_admin_dashboard', {'_switch_user': '_exit'}) }}">Exit impersonation</a></li>
+                            <li class="small-screen-block first-in-row-item">&nbsp;</li>
+                            <li class="second-menu-item"><a href="{{ path('sonata_admin_dashboard', {'_switch_user': '_exit'}) }}">Exit impersonation</a></li>
                         {% endif %}
-                        <li class="last"><a href="{{ path('fos_user_security_logout') }}" title="{{ 'menu.logout_from_the_app'|trans }}">{{ 'Logout'|trans }}</a></li>
+                        <li class="small-screen-block first-in-row-item">&nbsp;</li>
+                        <li class="last second-menu-item"><a href="{{ path('fos_user_security_logout') }}" title="{{ 'menu.logout_from_the_app'|trans }}">{{ 'Logout'|trans }}</a></li>
                     </ul>
                 </div>
             {% endif %}
 
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="{{ path('homepage') }}">Chat with models</a>
-            </div>
-            <div class="collapse navbar-collapse">
-                {{ knp_menu_render('main', {currentClass: 'active', 'allow_safe_labels': true}) }}
-            </div><!--/.nav-collapse -->
+
+
+
         </div>
         {# % embed ':Default:header.html.twig' %}{% endembed %#}
     </div>

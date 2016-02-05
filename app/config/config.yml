@@ -409,6 +409,10 @@ liip_imagine:
             quality: 75
             filters:
                 thumbnail: { size: [348, 348], mode: inset, allow_upscale: true }
+        search_user_photo_small:
+            quality: 75
+            filters:
+                thumbnail: { size: [128, 128], mode: inset, allow_upscale: true }
         admin_message_image:
             quality: 75
             filters:

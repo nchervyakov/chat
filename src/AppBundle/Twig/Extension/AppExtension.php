@@ -31,6 +31,13 @@ class AppExtension extends \Twig_Extension implements ContainerAwareInterface
         ];
     }
 
+    public function getFunctions()
+    {
+        return [
+            new \Twig_SimpleFunction('unread_messages', [$this, 'getUserUnreadMessages'])
+        ];
+    }
+
     public function getTests()
     {
         return [
@@ -72,6 +79,18 @@ class AppExtension extends \Twig_Extension implements ContainerAwareInterface
         }
 
         return twig_date_converter($this->container->get('twig'), $date, null)->format($format);
+    }
+
+    public function getUserUnreadMessages()
+    {
+        $checker = $this->container->get('security.authorization_checker');
+
+        if ($checker->isGranted('ROLE_MODEL') || $checker->isGranted('ROLE_CLIENT')) {
+            $user = $this->container->get('security.token_storage')->getToken()->getUser();
+            return $this->container->get('app.conversation')->countUserTotalUnreadMessages($user);
+        }
+
+        return 0;
     }
 
     /**

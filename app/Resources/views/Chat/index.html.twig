@@ -16,6 +16,24 @@
     {% endif %}
 {%  endblock %}
 
+{% block prev_title %}
+    {% if companion is defined and companion is not null %}
+        <a href="{{ path('chat') }}">{{ 'chat_page.title'|trans }}</a>
+    {% else %}
+        {{ parent() }}
+    {% endif %}
+{% endblock %}
+
+{% block header_title %}
+    {% if companion is defined and companion is not null %}
+        <a>{{ 'chat_with_companion'|trans({'%companion%': companion.firstname}) }}</a>
+    {% else %}
+        {% set user_unread_messages = unread_messages() %}
+        <a>{{ 'chat_page.title'|trans }} <span class="js-total-unread-messages label label-default {% if user_unread_messages == 0 %}hidden{% endif %}">
+                        {{ user_unread_messages }}</span></a>
+    {% endif %}
+{% endblock %}
+
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('css/uploadify.css') }}"/>
@@ -54,60 +72,63 @@
     {% endjavascripts %}
 {% endblock %}
 
+{% block top_menu_stats %}
+    <li class="navbar-text small-screen-block" style="margin-right: 20px;"><a><span class="js-chat-stats">{{ include(':Chat:_chat_stats.html.twig') }}</span></a></li>
+{% endblock %}
+
 {% block page %}
     {{ parent() }}
 
     <div class="row js-chat-page">
-        <div class="col-lg-3">
-            <div class="well bs-component chat-friends">
-                <h3>{{ 'chat_page.title'|trans }}</h3>
-                <div class="friends-container">
-                    {% if companions %}
-                        <ul class="friend-list">
-                        {% for companion in companions %}
-                            {% if companions_conversations is defined and companions_conversations[companion.id] is defined %}
-                                {% set companionConversation = companions_conversations[companion.id] %}
-                            {% endif %}
-                            <li class="friend {% if companionConversation is defined and conversation is defined and companionConversation == conversation %}current{% endif %}"
-                                    data-companion-id="{{ companion.id }}">
-                                <a href="{{ path('chat_show', {"companion_id": companion.id}) }}" class="clearfix">
-                                    <span class="photo">
-                                        {% if companion.hasThumbnail %}
-                                            <img src="{{ vich_uploader_asset(companion.thumbnail, 'file', 'AppBundle\\Entity\\UserPhoto')|imagine_filter('user_message_thumb') }}"
-                                                 alt="{{ companion.fullName }}"/>
-                                        {% endif %}
-                                        {% if companionConversation is defined %}
-                                            {% set companionUnreadMessageCount = companionConversation.getUserUnseenMessageCount(app.user) %}
-                                            {% if companionUnreadMessageCount > 0 %}
-                                                <span class="label label-primary unread-messages-label">{{ companionUnreadMessageCount }}</span>
+        {% if companion is not defined or companion is null %}
+            <div class="col-lg-12">
+                <div class="bs-component chat-friends">
+                    <div class="friends-container">
+                        {% if companions %}
+                            <ul class="friend-list">
+                            {% for companion in companions %}
+                                {% if companions_conversations is defined and companions_conversations[companion.id] is defined %}
+                                    {% set companionConversation = companions_conversations[companion.id] %}
+                                {% endif %}
+                                <li class="friend {% if companionConversation is defined and conversation is defined and companionConversation == conversation %}current{% endif %}"
+                                        data-companion-id="{{ companion.id }}">
+                                    <a href="{{ path('chat_show', {"companion_id": companion.id}) }}" class="clearfix">
+                                        <span class="photo">
+                                            {% if companion.hasThumbnail %}
+                                                <img src="{{ vich_uploader_asset(companion.thumbnail, 'file', 'AppBundle\\Entity\\UserPhoto')|imagine_filter('search_user_photo_small') }}"
+                                                     alt="{{ companion.fullName }}"/>
                                             {% endif %}
-                                        {% endif %}
-                                        {% if companion.online %}
-                                            <span class="user-status user-status-online"></span>
-                                        {% endif %}
-                                    </span>
-                                    <span class="description">{{ companion.fullName }}, {{ companion.age }}</span>
-                                </a>
-                            </li>
-                        {% endfor %}
-                        </ul>
-                    {% else %}
-                        <p>{{ 'chat_page.no_companions'|trans }}</p>
-                    {% endif %}
+                                            {% if companionConversation is defined %}
+                                                {% set companionUnreadMessageCount = companionConversation.getUserUnseenMessageCount(app.user) %}
+                                                {% if companionUnreadMessageCount > 0 %}
+                                                    <span class="label label-primary unread-messages-label">{{ companionUnreadMessageCount }}</span>
+                                                {% endif %}
+                                            {% endif %}
+                                            {% if companion.online %}
+                                                <span class="user-status user-status-online"></span>
+                                            {% endif %}
+                                        </span>
+                                        <span class="description">{{ companion.fullName }}</span>
+                                    </a>
+                                </li>
+                            {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>{{ 'chat_page.no_companions'|trans }}</p>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <div class="col-lg-9">
-            {% if companion is defined and companion is not null %}
-                <div class="panel panel-primary chat-widget" data-companion-id="{{ companion.id }}">
-                    <div class="panel-heading">
-                        <span class="glyphicon glyphicon-comment"></span> {{ 'chat_with_companion'|trans({'%companion%': companion.firstname}) }}
+        {% else %}
+            <div class="col-lg-9">
+                <div class="chat-widget" data-companion-id="{{ companion.id }}">
+                    <!--div class="panel-heading">
+                        <span class="glyphicon glyphicon-comment"></span> {#{ 'chat_with_companion'|trans({'%companion%': companion.firstname}) }#}
                         <span class="js-chat-stats pull-right">{{ include(':Chat:_chat_stats.html.twig') }}</span>
                         {#{{ include('Chat/_optional_chat_menu.html.twig') }}#}
-                    </div>
-                    <div class="panel-footer">
-                        <div class="panel-body chat-messages">
+                    </div-->
+                    <div class="">
+                        <div class="chat-messages">
                             <ul class="chat">
                                 {% if messages is defined %}
                                     {{ include(':Chat:_messages.html.twig') }}
@@ -151,11 +172,9 @@
                         </form>
                     </div>
                 </div>
-            {% else %}
+            </div>
+        {% endif %}
 
-                <p>{{ 'please_select_companion'|trans }}</p>
-            {% endif %}
-        </div>
     </div>
 {% endblock %}
 

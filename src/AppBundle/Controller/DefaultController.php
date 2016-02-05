@@ -22,12 +22,23 @@ class DefaultController extends Controller
                 return $this->redirect($this->generateUrl('stat_index'));
 
             } else if ($checker->isGranted('ROLE_CLIENT')) {
-                return $this->redirect($this->generateUrl('chat'));
+//                return $this->redirect($this->generateUrl('homepage'));
             } else {
                 return $this->redirect($this->generateUrl('profile_show'));
             }
         }
 
-        return $this->render(':Default:index.html.twig');
+
+        $repo = $this->getDoctrine()->getRepository('AppBundle:User');
+
+        $onlineModels = $repo->getRandomModels(9, true);
+        $offlineModels = $repo->getRandomModels(12, false);
+
+        return $this->render(':Default:index.html.twig', [
+            'online_models' => $onlineModels,
+            'offline_models' => $offlineModels
+        ]);
     }
+
+
 }

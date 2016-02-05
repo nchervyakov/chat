@@ -67,6 +67,7 @@ class ConversationService extends ContainerAware
             if ($prevMessage/* && !$prevMessage->getFollowingInterval()*/) {
                 $conversation->setStalePaymentInfo(true);
                 $interval = $this->createConversationInterval($conversation, $message, $prevMessage);
+
                 if (!$shouldPay && !$conversation->isClientAgreeToPay()) {
                     $interval->setPrice(0.0);
                     $interval->setModelEarnings(0.0);
@@ -111,8 +112,9 @@ class ConversationService extends ContainerAware
             }
 
         } catch (\Exception $e) {
+            $em->rollback();
             try {
-               // $em->rollBack();
+
             } catch (ConnectionException $conEx) {}
 
             throw $e; //\ErrorException("Cannot add new message", 0, 1, __FILE__, __LINE__, $e);
@@ -132,7 +134,7 @@ class ConversationService extends ContainerAware
         $modelEarnings = 0.0;
 
         foreach ($this->getConversationIntervals($conversation) as $interval) {
-            if ($interval->getStatus() !== ConversationInterval::STATUS_PAYED) {
+            if ($interval->getStatus() !== ConversationInterval::STATUS_PAYED) {dump($interval);
                 $this->estimateInterval($interval);
             }
             $seconds += (int) $interval->getSeconds();
@@ -158,7 +160,7 @@ class ConversationService extends ContainerAware
         $modelShare = (float) $this->container->getParameter('payment.model_share');
 
         if ($interval->getStatus() !== ConversationInterval::STATUS_PAYED) {
-            $interval->setPrice($interval->getSeconds() / 60 * $rate);
+            $interval->setPrice($interval->getSeconds() / 60.0 * $rate);
             $interval->setMinuteRate($rate);
             $interval->setModelShare($modelShare);
             $interval->setModelEarnings($interval->getPrice() * $modelShare);
@@ -260,6 +262,8 @@ class ConversationService extends ContainerAware
             }
 
             $conversation->setRecalculated(true);
+            $this->estimateConversation($conversation);
+
             $em->flush();
             $em->commit();
 
@@ -318,7 +322,7 @@ class ConversationService extends ContainerAware
         $interval->setSeconds($interval->calculateIntervalSeconds());
         $this->estimateInterval($interval);
         $em->flush();
-        $this->estimateConversation($conversation);
+        //$this->estimateConversation($conversation);
         return $interval;
     }
 

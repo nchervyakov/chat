@@ -2,6 +2,7 @@
 
 {% block title 'profile.photos.edit_photos'|trans %}
 {% block page_title_text 'profile.photos.edit_photos'|trans %}
+{% block prev_title %}<a href="{{ path('profile_show') }}">{{ 'profile.title'|trans }}</a>{% endblock %}
 
 {% block plugin_css %}
     {{ parent() }}

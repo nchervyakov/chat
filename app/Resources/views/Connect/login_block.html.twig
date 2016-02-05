@@ -2,8 +2,9 @@
     {% if error is defined and error %}
         <span class="alert alert-danger">{{ error }}</span>  <br/><br/><br/>
     {% endif %}
-    <h3>Log in with:</h3>
-    {% for owner in hwi_oauth_resource_owners() %}
-        <a href="{{ hwi_oauth_login_url(owner) }}">{{ owner | trans({}, 'HWIOAuthBundle') }}</a> <br />
-    {% endfor %}
+    <div class="login-container">
+        {% for owner in hwi_oauth_resource_owners() %}
+            <a class="btn btn-login-{{ owner | trans({}, 'HWIOAuthBundle') }}" href="{{ hwi_oauth_login_url(owner) }}">{{ owner | trans({}, 'HWIOAuthBundle') }}</a>
+        {% endfor %}
+    </div>
 {% endblock hwi_oauth_content %}

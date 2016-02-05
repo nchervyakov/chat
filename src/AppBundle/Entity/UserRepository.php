@@ -218,4 +218,53 @@ class UserRepository extends EntityRepository
 
         return $qb;
     }
+
+    /**
+     * @param int $n
+     * @param bool $online
+     * @return array|User[]
+     */
+    public function getRandomModels($n = 3, $online = true)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $qb->select('u')
+            ->from('AppBundle:User', 'u')
+            ->join('u.groups', 'g')
+            ->where('g.name LIKE :models_group')->setParameter('models_group', 'Models');
+
+        if ($online) {
+            $qb->andWhere(
+                $qb->expr()->orX('u.online = TRUE')
+            );
+        } else {
+            $qb->andWhere('u.online = FALSE');
+        }
+
+        $count = clone $qb;
+        $count = (int) $count->select('COUNT(u)')->getQuery()->getSingleScalarResult();
+
+        $qb->setMaxResults(1);
+        $n =  min($n, $count);
+        $usedShifts = [];
+        $shift = 0;
+        $models = [];
+
+        for ($i = 0; $i < $n; $i++) {
+            $qbx = clone $qb;
+
+            while (true) {
+                $shift = mt_rand(0, $count - 1);
+                if (!in_array($shift, $usedShifts, true)) {
+                    $usedShifts[] = $shift;
+                    break;
+                }
+            }
+
+            $qbx->setFirstResult($shift);
+            $models[] = $qbx->getQuery()->getSingleResult();
+        }
+
+        return $models;
+    }
 }

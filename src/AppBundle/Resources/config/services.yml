@@ -272,3 +272,11 @@ services:
         calls:
             - [setContainer, ["@service_container"]]
         scope: request
+
+    security.authentication.success_handler:
+        class:  AppBundle\Security\Http\Authentication\AuthenticationSuccessHandler
+        arguments:  ["@security.http_utils", {}]
+        calls:
+            - [setContainer, ["@service_container"]]
+#        tags:
+#            - { name: 'monolog.logger', channel: 'security' }

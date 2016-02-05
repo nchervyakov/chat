@@ -152,3 +152,4 @@ payment:
     order_payed:
         email_title: 'Your payment №%payment_id% has been completed successfully - %website%'
 return_to_chats: '&larr; Return to chats'
+about_site: 'About'

@@ -21,7 +21,7 @@ can.Control('ChatWidget', {
         this.form = this.element.find('.js-message-form');
         this.inputElement = this.form.find('.js-message-input');
         this.submitButton = this.form.find('.js-submit-button');
-        this.statsBlock = this.element.find('.js-chat-stats');
+        this.statsBlock = $('.js-chat-stats');
         this.companionId = this.element.data('companion-id');
         this.list = this.element.find('.chat');
         this.emoticons =  this.element.find('.js-emoticons');

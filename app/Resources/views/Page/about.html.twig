@@ -1,0 +1,13 @@
+{% extends "::layout.html.twig" %}
+
+{% block title -%}About{%- endblock %}
+
+{% block page_title_text %}About Us{%  endblock %}
+
+{% block header_title %}<a>About</a>{% endblock %}
+
+{% block prev_title %}<a href="{{ path('homepage') }}">{{ sitename }}</a>{% endblock %}
+
+{% block page %}
+    <p>Here is the information about us.</p>
+{% endblock %}

@@ -2379,7 +2379,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/schmittjoh/JMSSecurityExtraBundle/zipball/bbd5eb78da4d510478f1bb60959feefac083d474",
+                "url": "https://api.github.com/repos/schmittjoh/JMSSecurityExtraBundle/zipball/d70399b25f41afd8277335cedc3c9b3acdc3759d",
                 "reference": "bbd5eb78da4d510478f1bb60959feefac083d474",
                 "shasum": ""
             },
@@ -4741,7 +4741,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sonata-project/SonataAdminBundle/zipball/750b26988c90a1004710a3d950a4caa755d55b39",
+                "url": "https://api.github.com/repos/sonata-project/SonataAdminBundle/zipball/e01d962f8eadad5c7571ca52ba9f7815661c5496",
                 "reference": "fba67eeacd1c549bc209a3c5416d1594d30bcb58",
                 "shasum": ""
             },

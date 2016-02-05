@@ -33,9 +33,9 @@ class LoginListener extends ContainerAware
             return;
         }
 
-        if (($type = $state['type']) && $type == 'model_registration') {
-
-        }
+//        if (($type = $state['type']) && $type == 'model_registration') {
+//
+//        }
 
         if ($state['activation_token']) {
             $activationToken = $state['activation_token'];
@@ -57,7 +57,7 @@ class LoginListener extends ContainerAware
     protected function logout()
     {
         $this->container->get('session')->invalidate();
-        $this->container->get('security.context')->setToken(null);
+        $this->container->get('security.token_storage')->setToken(null);
     }
 
     protected function activateModel(User $model)

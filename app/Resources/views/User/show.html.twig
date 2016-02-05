@@ -3,7 +3,7 @@
 {% block title user.fullName %}
 {% block page_title_text %}
     {{ user.fullName }}
-    <small>(<a href="{{ path('chat_show', {'companion_id': user.id}) }}">chat</a>)</small>
+    <small class="large-screen-block">(<a href="{{ path('chat_show', {'companion_id': user.id}) }}">chat</a>)</small>
 {% endblock %}
 
 {% block plugin_css %}
@@ -34,6 +34,8 @@
 
 {% block page %}
     {{ parent() }}
+
+    <h1 class="small-screen-block">{{ user.fullName }} <a class="btn btn-sm btn-primary" href="{{ path('chat_show', {'companion_id': user.id}) }}">chat</a></h1>
 
     {% if user.hasRole('ROLE_USER') %}
         <div class="row user-photos">

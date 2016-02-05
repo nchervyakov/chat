@@ -2,6 +2,8 @@
 
 {% block title 'profile.edit.title'|trans %}
 
+{% block header_title %}<a>{{ 'profile.edit.title'|trans }}</a>{% endblock %}
+
 {% block fos_user_content %}
     {% include "FOSUserBundle:Profile:edit_content.html.twig" %}
 {% endblock fos_user_content %}

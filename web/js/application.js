@@ -186,12 +186,45 @@ can.Control('ApplicationControl', {
     //}
 });
 
+
+can.Control('NavbarControl', {
+    pluginName: 'navbarControl'
+}, {
+    init: function () {
+        this.toggle = this.element.find('.navbar-toggle');
+        this.title = this.element.find('.navbar-title');
+        this.toggle.removeClass('hidden-on-start');
+
+        this.fixLayout();
+    },
+
+    '{window} resize': function (el, ev) {
+        this.fixLayout();
+    },
+
+    fixLayout: function () {
+        var collapsible = this.element.find('.navbar-collapse > *');
+        console.log(collapsible.length);
+        if (collapsible.length == 0 ) {
+            this.toggle.addClass('hidden');
+        }
+
+        this.toggle.removeClass('invisible');
+        this.toggle.removeClass('hidden-on-start');
+
+       // var width = this.title.outerWidth();
+        //this.title.closest('.navbar-center').width(width);
+    }
+});
+
+
 jQuery(function ($) {
     var socket = App.socket;
 
     $('input[type="file"]').bootstrapFileInput();
     $('body').applicationControl({socket: socket});
     //$('#addCoinsDialog').addCoinsDialogControl();
+    $('.navbar').navbarControl();
 
     $('.js-header-coins').on('click', function (ev) {
         //App.showAddCoinsDialog();

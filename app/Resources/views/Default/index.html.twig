@@ -1,8 +1,31 @@
 {% extends '::layout.html.twig' %}
 
+{% block header_title %}<a href="{{ path('homepage') }}">Chat with models</a>{% endblock %}
+{% block prev_title %}{% endblock %}
+
 {% block page %}
-    <br/><br/><br/><br/>
-    {% if not is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+    <h3>Models available for chat:</h3>
+
+    <div class="row model-list model-list-online">
+
+        {% for model in online_models %}
+            {{ include(':Default:_model_online_item.html.twig') }}
+        {% endfor %}
+
+    </div>
+
+    <h3>Models available later:</h3>
+
+    <div class="row model-list">
+
+        {% for model in offline_models %}
+            {{ include(':Default:_model_offline_item.html.twig') }}
+        {% endfor %}
+
+    </div>
+
+    {#<br/><br/><br/><br/>
+    {#% if not is_granted('IS_AUTHENTICATED_REMEMBERED') %}
         <div class="row">
             <div class="col-lg-6">
                 <div class="well text-center">
@@ -19,5 +42,5 @@
             </div>
         </div>
 
-    {% endif %}
+    {% endif %#}
 {% endblock %}

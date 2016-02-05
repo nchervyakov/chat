@@ -125,10 +125,10 @@ body {
 	box-shadow: none;
 }
 .chat-widget .chat-messages {
-    max-height: 500px;
-    overflow: scroll;
-    overflow-y: auto;
-    overflow-x: hidden;
+    /*max-height: 500px;*/
+    /*overflow: scroll;*/
+    /*overflow-y: auto;*/
+    /*overflow-x: hidden;*/
     padding: 5px;
 }
 
@@ -143,25 +143,32 @@ body {
 
 .chat-friends .friend-list li {
     list-style: none;
-    margin-bottom: 10px;
+    margin-bottom: 30px;
 }
 
 .chat-friends .friend-list .photo {
     display: block;
-    width: 48px;
-    height: 48px;
+    width: 96px;
+    height: 96px;
     text-align: center;
     float: left;
 }
 
 .chat-friends .friend-list .photo img {
-    max-width: 48px;
-    max-height: 48px;
+    max-width: 96px;
+    max-height: 96px;
 }
 
 .chat-friends .friend-list .description {
     display: block;
-    margin-left: 60px;
+    margin-left: 130px;
+    font-size: 150%;
+    color: black;
+    margin-top: 10px;
+}
+
+.chat-friends .friend-list a:hover {
+    text-decoration: none;
 }
 
 .chat .message-avatar {
@@ -189,6 +196,7 @@ body {
 
 .user-photos .thumbnail {
     height: 238px;
+    text-align: center;
 }
 
 .user-photos .thumbnail .caption {
@@ -198,9 +206,10 @@ body {
 
 .user-photos .thumbnail .img-wrapper {
     text-align: center;
-    width: 252px;
+    width: 100%;
     height: 196px;
     line-height: 196px;
+    max-width: 100%;
 }
 
 .user-photos .thumbnail img {
@@ -322,8 +331,9 @@ body {
 }
 
 .chat-friends .friends-container {
-    max-height: 500px;
-    overflow-y: auto;
+    /*max-height: 500px;*/
+    /*overflow-y: auto;*/
+    padding-top: 30px;
 }
 
 .chat-widget .message {
@@ -456,4 +466,158 @@ body {
 
 b.large {
     font-size: 150%;
+}
+
+.login-container .btn {
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+.login-container .btn-login-facebook {
+    color: white;
+    background: #0000bb linear-gradient(rgba(0, 0, 187, 0.87), rgba(0, 0, 226, 0.83) 6%, rgba(0, 0, 255, 0.81));
+}
+
+.login-container .btn-login-twitter {
+    color: white;
+    background: #5ed7e6 linear-gradient(rgb(89, 184, 202), rgba(94, 215, 230, 1) 6%, rgba(104, 239, 255, 0.81));
+}
+
+.nav-left-block {
+    padding-left: 15px;
+}
+
+.nav-right-block {
+    padding-right: 15px;
+}
+
+.navbar-text {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.navbar-title {
+    font-weight: bold;
+    /*float: none !important;*/
+}
+
+.navbar-title-menu {
+    /*float: none !important;*/
+}
+
+.navbar-center {
+    margin: 5px auto 0;
+    width: 40%;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.navbar-toggle {
+    margin-top: 7px;
+    margin-right: 0;
+}
+
+.page_title {
+    overflow: hidden;
+    visibility: hidden;
+    height: 0px;
+}
+
+@media (min-width: 768px) {
+    .navbar-center {
+        margin-top: 0;
+    }
+
+    .navbar-title-menu {
+        display: none;
+    }
+
+    .nav-left-block {
+        padding-left: 0;
+    }
+
+    .nav-right-block {
+        padding-right: 0;
+    }
+
+    .page_title {
+        visibility: visible;
+        height: auto;
+    }
+
+    .small-screen-block.collapse,
+    .small-screen-block {
+        display: none !important;
+    }
+}
+
+@media (max-width: 767px) {
+    .large-screen-block.collapse,
+    .large-screen-block {
+        display: none !important;
+    }
+
+    .first-in-row-item {
+        width: 40%;
+        margin-right: 0;
+        display: inline-block !important;
+    }
+
+    .second-menu-item {
+        width: 50%;
+        display: inline-block !important;
+    }
+}
+
+.navbar-center .nav {
+    margin-top: 0;
+}
+
+.navbar-center ul {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.model-list .model-item {
+    position: relative
+}
+
+.model-list .thumbnail {
+    border: 0 none;
+}
+
+.model-list .thumbnail .img-wrapper {
+    display: inline-block;
+    width: 128px;
+    height: 128px;
+    max-width: 100%;
+    text-align: center;
+    line-height: 128px;
+    float: left;
+}
+
+.model-list .thumbnail .img-wrapper img {
+    max-width: 100%;
+}
+
+.model-list .user-status {
+    right: auto;
+    left: 30px;
+}
+
+.model-list .caption {
+    margin-left: 160px;
+    margin-top: 0;
+}
+
+.model-list-online {
+    margin-bottom: 4em;
+}
+
+.model-list a:hover {
+    color: black;
+}
+
+.hidden-on-start {
+    display: none;
 }
