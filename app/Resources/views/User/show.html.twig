@@ -3,7 +3,7 @@
 {% block title user.fullName %}
 {% block page_title_text %}
     {{ user.fullName }}
-    <small class="large-screen-block">(<a href="{{ path('chat_show', {'companion_id': user.id}) }}">chat</a>)</small>
+    <a class="btn btn-sm btn-primary" href="{{ path('chat_show', {'companion_id': user.id}) }}">chat</a>
 {% endblock %}
 
 {% block plugin_css %}
