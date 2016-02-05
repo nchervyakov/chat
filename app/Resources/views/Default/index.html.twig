@@ -13,7 +13,9 @@
         {% for model in online_models %}
             {{ include(':Default:_model_online_item.html.twig') }}
         {% else %}
-            <p>There is no online models.</p>
+            <div class="col-lg-12 col-md-12 col-xs-12">
+                <p>There is no online models.</p>
+            </div>
         {% endfor %}
 
     </div>
@@ -25,7 +27,9 @@
         {% for model in offline_models %}
             {{ include(':Default:_model_offline_item.html.twig') }}
         {% else %}
-            <p>There is no models.</p>
+            <div class="col-lg-12 col-md-12 col-xs-12">
+                <p>There is no models.</p>
+            </div>
         {% endfor %}
 
     </div>
