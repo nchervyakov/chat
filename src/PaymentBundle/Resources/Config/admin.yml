@@ -21,4 +21,4 @@ services:
 #        arguments: [~, AppBundle\Entity\Conversation, ~]
 #        tags:
 #            - {name: sonata.admin, manager_type: orm, group: Chat, label: Conversations}
-
+#changed
