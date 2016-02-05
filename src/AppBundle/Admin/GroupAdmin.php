@@ -29,7 +29,7 @@ class GroupAdmin extends BaseGroupAdmin
             ->end()
             ->tab('Security')
             ->with('Roles', array('class' => 'col-md-12'))
-            ->add('roles', SecurityRolesType::class, array(
+            ->add('roles', 'Sonata\UserBundle\Form\Type\SecurityRolesType', array(
                 'expanded' => true,
                 'multiple' => true,
                 'required' => false,

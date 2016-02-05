@@ -81,7 +81,7 @@ class UserAdmin extends BaseUserAdmin
                     ->add('lastname', null, array('required' => false))
                     //->add('website', 'url', array('required' => false))
                     //->add('biography', 'text', array('required' => false))
-                    ->add('gender', UserGenderListType::class, array(
+                    ->add('gender', 'Sonata\UserBundle\Form\Type\UserGenderListType', array(
                         'required' => true,
                         'translation_domain' => $this->getTranslationDomain()
                     ))
@@ -125,7 +125,7 @@ class UserAdmin extends BaseUserAdmin
                         ))
                     ->end()
                     ->with('Roles')
-                        ->add('realRoles', SecurityRolesType::class, array(
+                        ->add('realRoles', 'Sonata\UserBundle\Form\Type\SecurityRolesType', array(
                             'label'    => 'form.label_roles',
                             'expanded' => true,
                             'multiple' => true,

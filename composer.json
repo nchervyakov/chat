@@ -13,7 +13,7 @@
         }
     ],
     "require": {
-        "php": ">=5.3.3",
+        "php": ">=5.3.3,<=5.4.50",
         "symfony/symfony": "2.8.*",
         "doctrine/orm": "~2.2,>=2.2.3,<2.6",
         "doctrine/dbal": "<2.6",
@@ -58,10 +58,9 @@
         "oldsound/rabbitmq-bundle": "1.*",
         "nelmio/api-doc-bundle": "~2.9",
         "nelmio/cors-bundle": "~1.4",
-        "payum/payum-bundle": "^1.0",
-        "payum/paypal-rest": "^1.0",
-        "payum/core": "~1.0.0",
-        "payum/paypal-express-checkout-nvp": "^1.1"
+        "payum/payum-bundle": "^0.15",
+        "payum/core": "~0.15",
+        "payum/paypal-express-checkout-nvp": "^0.15"
     },
     "require-dev": {
     },
