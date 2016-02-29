@@ -13,7 +13,7 @@
         }
     ],
     "require": {
-        "php": ">=5.3.3,<=5.4.50",
+        "php": ">=5.3.3,<=5.5.10",
         "symfony/symfony": "2.8.*",
         "doctrine/orm": "~2.2,>=2.2.3,<2.6",
         "doctrine/dbal": "<2.6",

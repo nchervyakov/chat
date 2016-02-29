@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "f5c1cd0846731c904b87a811eccce4f0",
-    "content-hash": "a1f9e66bb5262ab291bced9950a361e0",
+    "hash": "609e595e6b9fda9e3693df6a95abd621",
+    "content-hash": "d954b6375613cd54f2b890a5577ee8dd",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -1269,7 +1269,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/140cc28026304d3023c880f441689986f99b913b",
+                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/e770bfa2fd0fc665f55cd7cfeb34bddeffb892f4",
                 "reference": "d5b28c367d393f9d9fbc48c4138b2a74d51c0c83",
                 "shasum": ""
             },
@@ -2206,7 +2206,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/schmittjoh/JMSSecurityExtraBundle/zipball/d70399b25f41afd8277335cedc3c9b3acdc3759d",
+                "url": "https://api.github.com/repos/schmittjoh/JMSSecurityExtraBundle/zipball/f04ab951e35087e7d9a6cbbc4b3e8f4e5593f8b4",
                 "reference": "d70399b25f41afd8277335cedc3c9b3acdc3759d",
                 "shasum": ""
             },
@@ -2630,7 +2630,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/KnpLabs/KnpMenuBundle/zipball/96a6b9630e0f150f38ae167b3ef22955d8cdfab5",
+                "url": "https://api.github.com/repos/KnpLabs/KnpMenuBundle/zipball/20e7a0f492c6d94a63bffc14105c5b748c00e3ae",
                 "reference": "96a6b9630e0f150f38ae167b3ef22955d8cdfab5",
                 "shasum": ""
             },
@@ -2992,7 +2992,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lexik/LexikMaintenanceBundle/zipball/2c72cc54e7156f2bf6a67a763d416d4e85201d57",
+                "url": "https://api.github.com/repos/lexik/LexikMaintenanceBundle/zipball/722b5be3f5d97c3f482a15d70f7a3eacd212a36d",
                 "reference": "2c72cc54e7156f2bf6a67a763d416d4e85201d57",
                 "shasum": ""
             },
@@ -4341,7 +4341,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sonata-project/SonataAdminBundle/zipball/ee5098f6115380ee4e4ccccd76a6e564045e0e1c",
+                "url": "https://api.github.com/repos/sonata-project/SonataAdminBundle/zipball/1080c7bf8b1acebe612bbca35faea084eb365c88",
                 "reference": "ee5098f6115380ee4e4ccccd76a6e564045e0e1c",
                 "shasum": ""
             },
@@ -6173,12 +6173,12 @@
             "version": "v2.6.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/videlalvaro/php-amqplib.git",
+                "url": "https://github.com/php-amqplib/php-amqplib.git",
                 "reference": "8a6e89ad46130eb365b7f57d313f2a795f5e3269"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/videlalvaro/php-amqplib/zipball/8a6e89ad46130eb365b7f57d313f2a795f5e3269",
+                "url": "https://api.github.com/repos/php-amqplib/php-amqplib/zipball/8a6e89ad46130eb365b7f57d313f2a795f5e3269",
                 "reference": "8a6e89ad46130eb365b7f57d313f2a795f5e3269",
                 "shasum": ""
             },
@@ -6332,7 +6332,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.3.3,<=5.4.50"
+        "php": ">=5.3.3,<=5.5.10"
     },
     "platform-dev": []
 }
