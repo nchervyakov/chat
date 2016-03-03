@@ -15,8 +15,8 @@
     "require": {
         "php": ">=5.3.3,<=5.5.10",
         "symfony/symfony": "2.8.*",
-        "doctrine/orm": "~2.2,>=2.2.3,<2.6",
-        "doctrine/dbal": "<2.6",
+        "doctrine/orm": "~2.2,>=2.2.3",
+        "doctrine/dbal": "~2.5",
         "doctrine/common": "~2.5.0",
         "doctrine/cache": "~1.5.0",
         "doctrine/doctrine-bundle": "~1.2",
