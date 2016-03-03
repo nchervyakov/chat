@@ -36,7 +36,7 @@
         "twig/twig": "~1.0",
         "knplabs/knp-menu-bundle": "~2.0@dev",
         "friendsofsymfony/rest-bundle": "~1.5",
-        "jms/serializer-bundle": "~0.13",
+        "jms/serializer-bundle": "~1.0",
         "jms/di-extra-bundle": "~1.5",
         "jms/security-extra-bundle": "dev-master",
         "sonata-project/admin-bundle": "~2.3@dev",
