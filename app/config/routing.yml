@@ -4,10 +4,10 @@ payment:
     prefix:   /payment
 
 user_photo:
-    pattern: /uploads/photo/{file_name}
+    path: /uploads/photo/{file_name}
 
 hwi_oauth_register_custom:
-    pattern: /login/registration/{key}
+    path: /login/registration/{key}
     defaults: {_controller: AppBundle:Connect:registration}
 
 #hwi_oauth_login_custom:
@@ -15,11 +15,11 @@ hwi_oauth_register_custom:
 #    defaults: {_controller: AppBundle:Connect:redirectToService}
 
 hwi_oauth_service_redirect:
-    pattern: /connect/{service}
+    path: /connect/{service}
     defaults: {_controller: AppBundle:Connect:redirectToService}
 
 hwi_oauth_connect:
-    pattern: /login/
+    path: /login/
     defaults: {_controller: AppBundle:Connect:connect}
 
 #hwi_oauth_redirect:
@@ -35,13 +35,13 @@ hwi_oauth_register:
     prefix:   /login
 
 facebook_login:
-    pattern: /login/check-facebook
+    path: /login/check-facebook
 
 #vkontakte_login:
 #    pattern: /login/check-vkontakte
 
 twitter_login:
-    pattern: /login/check-twitter
+    path: /login/check-twitter
 
 #google_login:
 #    pattern: /login/check-google
@@ -60,7 +60,7 @@ sonata_user_resetting:
     prefix: /resetting
 
 user_profile_show:
-    pattern: /profile/
+    path: /profile/
     defaults: {_controller: AppBundle:Profile:show}
 
 sonata_user_profile:
