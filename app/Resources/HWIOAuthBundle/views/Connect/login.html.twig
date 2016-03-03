@@ -12,4 +12,11 @@
         <p>Register with your account</p><br>
         {% embed ':Connect:login_block.html.twig' %}{% endembed %}
     </div>
+
+    <div class="text-center">
+        <br><br>
+        <p>Or register as a model via Facebook:</p>
+        <p><a href="{{ path('hwi_oauth_service_redirect', {'service': 'facebook', 'type': 'model_registration'}) }}"
+              class="btn btn-login-facebook">{{ 'index.register_as_a_model_vie_fb'|trans }}</a></p>
+    </div>
 {% endblock %}

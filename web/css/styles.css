@@ -474,11 +474,13 @@ b.large {
     margin-left: 10px;
 }
 
+.btn-login-facebook,
 .login-container .btn-login-facebook {
     color: white;
     background: #0000bb linear-gradient(rgba(0, 0, 187, 0.87), rgba(0, 0, 226, 0.83) 6%, rgba(0, 0, 255, 0.81));
 }
 
+.btn-login-twitter,
 .login-container .btn-login-twitter {
     color: white;
     background: #5ed7e6 linear-gradient(rgb(89, 184, 202), rgba(94, 215, 230, 1) 6%, rgba(104, 239, 255, 0.81));
