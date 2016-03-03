@@ -24,7 +24,7 @@ services:
         class: %app.registration.form.class%
         arguments:
             - %fos_user.model.user.class%
-            - @fos_user.user_manager
+            - "@fos_user.user_manager"
         tags:
             - {name: form.type, alias: user_registration}
 
@@ -32,7 +32,7 @@ services:
         class: %app.profile.form.class%
         arguments:
             - %fos_user.model.user.class%
-            - @fos_user.user_manager
+            - "@fos_user.user_manager"
         tags:
             - {name: form.type, alias: user_profile}
 
@@ -246,7 +246,7 @@ services:
             - "%fos_rest.access_denied_listener.formats%"
             - "%fos_rest.access_denied_listener.unauthorized_challenge%"
             - "%twig.exception_listener.controller%"
-            - @?logger
+            - "@?logger"
         tags:
             - {name: "kernel.event_subscriber"}
             - {name: "monolog.logger", channel: "request"}
