@@ -152,7 +152,7 @@ hwi_oauth:
             type:               facebook
             client_id:          "%oauth.facebook.client_id%"
             client_secret:      "%oauth.facebook.client_secret%"
-            scope:              "email public_profile user_photos"
+            scope:              "email,public_profile,user_photos"
 #            options:
 #                display: popup #dialog is optimized for popup window
 
