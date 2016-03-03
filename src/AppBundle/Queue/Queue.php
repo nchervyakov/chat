@@ -49,15 +49,20 @@ class Queue extends ContainerAware
         ];
         $qm->setData($messageData);
 
-        $producer = $this->container->get('old_sound_rabbit_mq.notifications_producer');
-        $producer->setContentType('application/json');
-        $producer->publish(json_encode(['type' => 'new-message', 'data' => $messageData]), 'user.' . $targetUser->getId());
-        $producer->publish(json_encode(['type' => 'new-message', 'data' => array_merge($messageData, [
-            'conversationUnreadMessages' => $conversation->getUserUnseenMessageCount($author),
-            'html' => $templating->render(':Chat:_message.html.twig', ['message' => $message, 'currentUser' => $author]),
-            'companionId' => $targetUser->getId(),
-            'totalUnreadMessages' => $conversationService->countUserTotalUnreadMessages($author),
-        ])]), 'user.' . $author->getId());
+        try {
+            $producer = $this->container->get('old_sound_rabbit_mq.notifications_producer');
+            $producer->setContentType('application/json');
+            $producer->publish(json_encode(['type' => 'new-message', 'data' => $messageData]), 'user.' . $targetUser->getId());
+            $producer->publish(json_encode(['type' => 'new-message', 'data' => array_merge($messageData, [
+                'conversationUnreadMessages' => $conversation->getUserUnseenMessageCount($author),
+                'html' => $templating->render(':Chat:_message.html.twig', ['message' => $message, 'currentUser' => $author]),
+                'companionId' => $targetUser->getId(),
+                'totalUnreadMessages' => $conversationService->countUserTotalUnreadMessages($author),
+            ])]), 'user.' . $author->getId());
+
+        } catch (\ErrorException $e){
+            $this->container->get('logger')->addCritical($e->getMessage());
+        }
 
 //        $em->persist($qm);
 //        $em->flush();
@@ -90,9 +95,14 @@ class Queue extends ContainerAware
         ];
         $qm->setData($messageData);
 
-        $producer = $this->container->get('old_sound_rabbit_mq.notifications_producer');
-        $producer->setContentType('application/json');
-        $producer->publish(json_encode(['type' => 'messages-marked-read', 'data' => $messageData]), 'user.' . $targetUser->getId());
+        try {
+            $producer = $this->container->get('old_sound_rabbit_mq.notifications_producer');
+            $producer->setContentType('application/json');
+            $producer->publish(json_encode(['type' => 'messages-marked-read', 'data' => $messageData]), 'user.' . $targetUser->getId());
+
+        } catch (\ErrorException $e){
+            $this->container->get('logger')->addCritical($e->getMessage());
+        }
 
 //        $em->persist($qm);
 //        $em->flush();

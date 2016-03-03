@@ -63,16 +63,21 @@ class CoinsService extends ContainerAware
         $producer = $this->container->get('old_sound_rabbit_mq.notifications_producer');
         $producer->setContentType('application/json');
 
-        if ($model->isOnline()) {
-            $producer->publish(json_encode(['type' => 'coins-changed', 'data' => [
-                'coins' => number_format($model->getCoins(), 2, '.', '')
-            ]]), 'user.' . $model->getId());
-        }
+        try {
+            if ($model->isOnline()) {
+                $producer->publish(json_encode(['type' => 'coins-changed', 'data' => [
+                    'coins' => number_format($model->getCoins(), 2, '.', '')
+                ]]), 'user.' . $model->getId());
+            }
 
-        if ($client->isOnline()) {
-            $producer->publish(json_encode(['type' => 'coins-changed', 'data' => [
-                'coins' => number_format($client->getCoins(), 2, '.', '')
-            ]]), 'user.' . $client->getId());
+            if ($client->isOnline()) {
+                $producer->publish(json_encode(['type' => 'coins-changed', 'data' => [
+                    'coins' => number_format($client->getCoins(), 2, '.', '')
+                ]]), 'user.' . $client->getId());
+            }
+
+        } catch (\ErrorException $e){
+            $this->container->get('logger')->addCritical($e->getMessage());
         }
     }
 

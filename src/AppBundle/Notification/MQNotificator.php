@@ -36,11 +36,16 @@ class MQNotificator extends ContainerAware
 
         $companions = $em->getRepository('AppBundle:User')->findUserCompanions($user, null, false, true);
 
-        foreach ($companions as $companion) {
-            $producer->publish(json_encode(['type' => 'user-online-status-changed', 'data' => [
-                'user_id' => $user->getId(),
-                'is_online' => $isOnline
-            ]]), 'user.' . $companion->getId());
+        try {
+            foreach ($companions as $companion) {
+                $producer->publish(json_encode(['type' => 'user-online-status-changed', 'data' => [
+                    'user_id' => $user->getId(),
+                    'is_online' => $isOnline
+                ]]), 'user.' . $companion->getId());
+            }
+
+        } catch (\ErrorException $e){
+            $this->container->get('logger')->addCritical($e->getMessage());
         }
     }
 
@@ -53,10 +58,15 @@ class MQNotificator extends ContainerAware
         $producer = $this->container->get('old_sound_rabbit_mq.user_info_producer');
         $producer->setContentType('application/json');
 
-        $producer->publish(json_encode([
-            'user_id' => $user->getId(),
-            'token' => $socketIOToken
-        ]));
+        try {
+            $producer->publish(json_encode([
+                'user_id' => $user->getId(),
+                'token' => $socketIOToken
+            ]));
+
+        } catch (\ErrorException $e){
+            $this->container->get('logger')->addCritical($e->getMessage());
+        }
     }
 
     /**
@@ -68,13 +78,18 @@ class MQNotificator extends ContainerAware
         $producer = $this->container->get('old_sound_rabbit_mq.notifications_producer');
         $producer->setContentType('application/json');
 
-        $producer->publish(json_encode(['type' => 'conversation-stats-changed', 'data' => [
-            'total_time' => $conversation->getSeconds(),
-            'stat_html' => $this->container->get('templating')->render(':Chat:_chat_stats.html.twig', [
-                'conversation' => $conversation,
-                'messages' => true,
-                'currentUser' => $companion
-            ])
-        ]]), 'user.' . $companion->getId());
+        try {
+            $producer->publish(json_encode(['type' => 'conversation-stats-changed', 'data' => [
+                'total_time' => $conversation->getSeconds(),
+                'stat_html' => $this->container->get('templating')->render(':Chat:_chat_stats.html.twig', [
+                    'conversation' => $conversation,
+                    'messages' => true,
+                    'currentUser' => $companion
+                ])
+            ]]), 'user.' . $companion->getId());
+
+        } catch (\ErrorException $e){
+            $this->container->get('logger')->addCritical($e->getMessage());
+        }
     }
 }
