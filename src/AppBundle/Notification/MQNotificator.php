@@ -45,6 +45,7 @@ class MQNotificator extends ContainerAware
             }
 
         } catch (\ErrorException $e){
+            restore_error_handler();
             $this->container->get('logger')->addCritical($e->getMessage());
         }
     }
@@ -65,6 +66,7 @@ class MQNotificator extends ContainerAware
             ]));
 
         } catch (\ErrorException $e){
+            restore_error_handler();
             $this->container->get('logger')->addCritical($e->getMessage());
         }
     }
@@ -89,6 +91,7 @@ class MQNotificator extends ContainerAware
             ]]), 'user.' . $companion->getId());
 
         } catch (\ErrorException $e){
+            restore_error_handler();
             $this->container->get('logger')->addCritical($e->getMessage());
         }
     }

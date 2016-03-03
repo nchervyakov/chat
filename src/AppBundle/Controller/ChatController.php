@@ -166,6 +166,7 @@ class ChatController extends Controller
                 }
 
             } catch (\ErrorException $e){
+                restore_error_handler();
                 $this->container->get('logger')->addCritical($e->getMessage());
             }
 

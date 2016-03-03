@@ -30,6 +30,7 @@ class SendMQTaskCommand extends ContainerAwareCommand
         try {
             $this->getContainer()->get('old_sound_rabbit_mq.notifications_producer')->publish($input->getArgument('message'));
         } catch (\ErrorException $e){
+            restore_error_handler();
             $this->getContainer()->get('logger')->addCritical($e->getMessage());
         }
     }

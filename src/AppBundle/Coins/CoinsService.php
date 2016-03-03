@@ -77,6 +77,7 @@ class CoinsService extends ContainerAware
             }
 
         } catch (\ErrorException $e){
+            restore_error_handler();
             $this->container->get('logger')->addCritical($e->getMessage());
         }
     }

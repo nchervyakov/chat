@@ -61,6 +61,7 @@ class Queue extends ContainerAware
             ])]), 'user.' . $author->getId());
 
         } catch (\ErrorException $e){
+            restore_error_handler();
             $this->container->get('logger')->addCritical($e->getMessage());
         }
 
@@ -101,6 +102,7 @@ class Queue extends ContainerAware
             $producer->publish(json_encode(['type' => 'messages-marked-read', 'data' => $messageData]), 'user.' . $targetUser->getId());
 
         } catch (\ErrorException $e){
+            restore_error_handler();
             $this->container->get('logger')->addCritical($e->getMessage());
         }
 
