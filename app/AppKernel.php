@@ -65,8 +65,10 @@ class AppKernel extends Kernel
         $loader->load(__DIR__.'/config/config_'.$this->getEnvironment().'.yml');
     }
 
-    public function init()
+    public function __construct($environment, $debug)
     {
+        parent::__construct($environment, $debug);
+
         if ($this->debug) {
             ini_set('display_errors', 1);
             // error_reporting(-1); @netandreus: не надо отображать все ошибки в деве (из-за драйвера монги)
