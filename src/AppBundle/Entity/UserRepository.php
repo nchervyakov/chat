@@ -18,9 +18,10 @@ class UserRepository extends EntityRepository
      * Populates model search query builder based on ModelSearch instance.
      * @param ModelSearch $search
      * @param bool $includeOnlineStatus
+     * @param bool $includeNotActivated
      * @return \Doctrine\ORM\QueryBuilder
      */
-    public function prepareQueryBuilderForModelSearch(ModelSearch $search, $includeOnlineStatus = true)
+    public function prepareQueryBuilderForModelSearch(ModelSearch $search, $includeOnlineStatus = true, $includeNotActivated = false)
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
 
@@ -46,6 +47,10 @@ class UserRepository extends EntityRepository
 //                ->andWhere('t.fileName != :thumbnail')
 //                ->setParameter('thumbnail', '');
 //        }
+
+        if ($includeNotActivated !== true) {
+            $qb->andWhere('u.activated = TRUE');
+        }
 
         if ($search->getName()) {
             $parts = preg_split('/\s+/', $search->getName(), -1, PREG_SPLIT_NO_EMPTY);
@@ -231,7 +236,9 @@ class UserRepository extends EntityRepository
         $qb->select('u')
             ->from('AppBundle:User', 'u')
             ->join('u.groups', 'g')
-            ->where('g.name LIKE :models_group')->setParameter('models_group', 'Models');
+            ->where('g.name LIKE :models_group')->setParameter('models_group', 'Models')
+            ->andWhere('u.activated = TRUE');
+
 
         if ($online) {
             $qb->andWhere(

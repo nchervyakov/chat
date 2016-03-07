@@ -1,0 +1,27 @@
+{% extends 'HWIOAuthBundle::layout.html.twig' %}
+
+{% block title -%}
+    {{ 'registration.model_success.title'|trans }}
+{%- endblock %}
+
+{% block page_title_text %}{{ 'registration.model_success.title'|trans }}{%  endblock %}
+
+{% block prev_title %}<a href="{{ path('homepage') }}">{{ sitename }}</a>{% endblock %}
+
+{% block header_title %}
+    <a href="#">{{ 'registration.model_success.title'|trans }}</a>
+{%  endblock %}
+
+{% block hwi_oauth_content %}
+    <div class="row">
+        <div class="col-lg-12">
+            <p>Thank you for the registration.</p>
+            <p>We will contact you in the next 24 hours.</p>
+            <p>After some verifications procedures</p>
+            <p>(Video chat may be included)</p>
+            <p>Your profile will be life on the service.</p>
+
+        </div>
+    </div>
+
+{% endblock hwi_oauth_content %}

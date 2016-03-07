@@ -6,6 +6,8 @@ registration:
     timeout_message: 'Your session is over. Please log in again.'
     title: 'Registration'
 
+    model_success:
+        title: 'Successful Registration'
 chat_with_models: 'Chat with Models'
 menu:
     go_to_homepage: 'Go to homepage'

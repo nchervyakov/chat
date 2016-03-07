@@ -13,6 +13,7 @@ namespace AppBundle\Event\Listener;
 use AppBundle\Entity\User;
 use AppBundle\Event\Event\UserRegisteredEvent;
 use Guzzle\Common\Exception\RuntimeException;
+use Guzzle\Http\Message\Response;
 use HWI\Bundle\OAuthBundle\OAuth\Response\UserResponseInterface;
 use Symfony\Component\DependencyInjection\ContainerAware;
 
@@ -47,7 +48,7 @@ class RegistrationListener extends ContainerAware
         $this->userInformation = $userInformation;
         $resourceOwnerName = $userInformation->getResourceOwner()->getName();
 
-        if ($resourceOwnerName == 'facebook') {
+        if ($resourceOwnerName === 'facebook') {
             $this->fbParams = ['access_token' => $userInformation->getAccessToken()];
 
             if ($event->getUser()->hasRole('ROLE_MODEL')) {
@@ -88,15 +89,17 @@ class RegistrationListener extends ContainerAware
     protected function fetchFacebookMaxCountAlbum()
     {
         $client = $this->container->get('app.facebook.client');
+        /** @var Response $albumsResult */
         $albumsResult = $client->get('/me/albums', null, [
             'query' => $this->fbParams
         ])->send();
+        /** @var array $data */
         $data = $albumsResult->json();
 
         // Find album with max photos
         $maxCountAlbum = null;
         foreach ($data['data'] as $album) {
-            if (!$maxCountAlbum || $maxCountAlbum['count'] < $album['count']) {
+            if (!is_array($maxCountAlbum) || $maxCountAlbum['count'] < $album['count']) {
                 $maxCountAlbum = $album;
             }
         }
@@ -114,6 +117,7 @@ class RegistrationListener extends ContainerAware
         $albumsResult = $client->get('/'.$album['id'].'/photos', null, [
             'query' => $this->fbParams
         ])->send();
+        /** @var array $data */
         $data = $albumsResult->json();
         if (is_numeric($photoNumber)) {
             $photos = array_slice($data['data'], 0, $photoNumber);

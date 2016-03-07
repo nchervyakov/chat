@@ -2,7 +2,6 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\AppBundle;
 use AppBundle\Entity\User;
 use AppBundle\Event\Event\UserRegisteredEvent;
 use AppBundle\Event\Events;
@@ -113,7 +112,7 @@ class ConnectController extends \HWI\Bundle\OAuthBundle\Controller\ConnectContro
                 $user->addGroup($modelsGroup);
                 $user->setActivated(false);
                 $user->setGender(User::GENDER_FEMALE);
-                $redirectUrl = $this->generateUrl('homepage');
+                $redirectUrl = $this->generateUrl('model_registration_success');
 
             } else {
                 $clientsGroup = $groupManager->findGroupByName('Clients');
@@ -127,8 +126,8 @@ class ConnectController extends \HWI\Bundle\OAuthBundle\Controller\ConnectContro
             $this->container->get('doctrine')->getManager()->flush();
 
             if ($registrationType === 'model_registration') {
-                $this->container->get('session')->getFlashBag()->add('success',
-                    $this->container->get('translator')->trans('header.model_registration_success', ['%username%' => $user->getFullName()], 'HWIOAuthBundle'));
+//                $this->container->get('session')->getFlashBag()->add('success',
+//                    $this->container->get('translator')->trans('header.model_registration_success', ['%username%' => $user->getFullName()], 'HWIOAuthBundle'));
 
             } else {
                 // Authenticate the user
@@ -207,5 +206,13 @@ class ConnectController extends \HWI\Bundle\OAuthBundle\Controller\ConnectContro
         }
 
         return new RedirectResponse($authorizationUrl);
+    }
+
+    /**
+     * @Route("/registration/success-model-registration", name="model_registration_success")
+     */
+    public function successfulModelRegistrationAction()
+    {
+        return $this->container->get('templating')->renderResponse(':Registration:model_success.html.twig');
     }
 }

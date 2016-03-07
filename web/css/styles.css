@@ -523,7 +523,8 @@ b.large {
 .page_title {
     overflow: hidden;
     visibility: hidden;
-    height: 0px;
+    height: 0;
+    line-height: 1.3em;
 }
 
 @media (min-width: 768px) {
